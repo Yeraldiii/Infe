@@ -1,1 +1,1 @@
-# Infe
+# Inferencia-Estadistica
