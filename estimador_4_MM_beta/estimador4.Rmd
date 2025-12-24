@@ -1,0 +1,432 @@
+---
+title: "Estimador 4"
+author: "Héctor G"
+date: "`r format(Sys.Date(), '%d de %B de %Y')`"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+geometry: margin=1in
+fontsize: 12pt
+linestretch: 1.5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE)
+```
+
+```{r librerias, echo=FALSE, results="hide"}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)   # (incluye dplyr, ggplot2)
+```
+
+```{r, include=FALSE}
+# 1. UNA SOLA BASE DE DATOS ORIGINAL (n = 1000)
+set.seed(123)
+alpha_true <- 2
+beta_true <- 3
+n <- 1000
+reclamos <- alpha_true / (1 - runif(n))^(1/beta_true)
+```
+
+
+## Distribución Pareto:
+
+$$
+\begin{aligned}
+f(x) &= \frac{\beta\,\alpha^{\beta}}{x^{\beta+1}}
+\,\mathbf{1}_{(\alpha,\infty)}(x), \\[0.3cm]
+E(X) &= \frac{\alpha\beta}{\beta-1},
+\qquad
+\operatorname{Var}(X)
+= \left(\frac{\alpha}{\beta-1}\right)^2
+\frac{\beta}{\beta-2}.
+\end{aligned}
+$$
+
+### **1.4 Estimador: Método de Momentos para el parámetro $\beta$**
+
+Dado que la distribución Pareto presenta dos parámetros desconocidos, $\alpha$ y $\beta$, es posible aplicar el **Método de Momentos (MM)** utilizando los dos primeros momentos teóricos de la distribución. Este método consiste en igualar los momentos teóricos con sus correspondientes momentos muestrales y resolver el sistema resultante.
+
+
+
+### **1.4.1 Procedimiento**
+
+#### Paso 1: Identificación de los Momentos Teóricos:
+
+Para una variable aleatoria $X \sim \text{Pareto}(\alpha,\beta)$, con $\beta>2$, los dos primeros momentos teóricos están dados por:
+
+$$
+E(X)=\frac{\alpha\beta}{\beta-1},
+\qquad
+\operatorname{Var}(X)=\left(\frac{\alpha}{\beta-1}\right)^2\frac{\beta}{\beta-2}.
+$$
+
+
+#### Paso 2: Igualación con los Momentos Muestrales:
+
+Sea $\bar X$ la media muestral y $S^2$ la varianza muestral.  
+El método de momentos propone igualar los momentos teóricos con los momentos empíricos:
+
+$$
+\begin{cases}
+\bar X = \dfrac{\alpha\beta}{\beta-1}, \\[0.3cm]
+S^2 = \left(\dfrac{\alpha}{\beta-1}\right)^2\dfrac{\beta}{\beta-2}.
+\end{cases}
+$$
+
+
+#### Paso 3: Eliminación del parámetro $\alpha$:
+
+Dividiendo el cuadrado de la primera ecuación entre la segunda, se obtiene una expresión que depende únicamente del parámetro $\beta$:
+
+$$
+\frac{\bar X^2}{S^2}
+=
+\frac{\left(\dfrac{\alpha\beta}{\beta-1}\right)^2}
+{\left(\dfrac{\alpha}{\beta-1}\right)^2\dfrac{\beta}{\beta-2}}
+=
+\beta(\beta-2).
+$$
+
+Reordenando términos:
+
+$$
+\beta^2 - 2\beta - \frac{\bar X^2}{S^2} = 0.
+$$
+
+
+#### Paso 4: Obtención del Estimador de Método de Momentos:
+
+Resolviendo la ecuación cuadrática y considerando que $\beta>0$, se obtiene el estimador de método de momentos para el parámetro $\beta$:
+
+$$
+\boxed{
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}}
+}.
+$$
+
+
+##### Conclusión:
+
+El estimador $\hat{\beta}_{MM}$ se obtiene aplicando el método de momentos utilizando la media y la varianza muestral. Este estimador es consistente bajo la condición $\beta>2$, aunque no es insesgado ni óptimo en términos de varianza, como es característico del método de momentos.
+
+
+### **1.4.2 Propiedades del Estimador $\hat{\beta}_{MM}$**
+
+#### **a) Insesgamiento:**
+
+Un estimador $\hat{\beta}$ es **insesgado** si su esperanza coincide con el parámetro verdadero:
+
+$$
+E(\hat{\beta})=\beta.
+$$
+
+En nuestro caso, el estimador de método de momentos para $\beta$ es:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ es la media muestral y $S^2$ es la varianza muestral.
+
+Como $\hat{\beta}_{MM}$ es una **función no lineal** de $(\bar X,S^2)$, no se espera que cumpla en general que:
+
+$$
+E\left(1+\sqrt{1+\frac{\bar X^2}{S^2}}\right)=1+\sqrt{1+\frac{E(\bar X)^2}{E(S^2)}},
+$$
+
+por lo que **no es insesgado en muestras finitas**.  
+Para verificarlo de manera empírica, estimamos el sesgo mediante simulación Monte Carlo:
+
+$$
+\text{Sesgo}(\hat{\beta}_{MM}) = E(\hat{\beta}_{MM})-\beta.
+$$
+
+```{r, echo=FALSE, }
+# ============================================================
+# INSesgamiento: SESGO EMPÍRICO DEL ESTIMADOR MM PARA BETA
+# ============================================================
+
+set.seed(123)
+B <- 3000
+n <- length(reclamos)
+
+betaMM_sim <- numeric(B)
+
+for(b in 1:B){
+  x <- alpha_true / (1 - runif(n))^(1/beta_true)
+  xbar <- mean(x)
+  s2   <- var(x)
+  betaMM_sim[b] <- 1 + sqrt(1 + (xbar^2 / s2))
+}
+
+sesgo_betaMM <- mean(betaMM_sim) - beta_true
+sesgo_betaMM
+
+```
+
+
+```{r}
+library(ggplot2)
+
+df_betaMM <- data.frame(betaMM = betaMM_sim)
+
+ggplot(df_betaMM, aes(x = betaMM)) +
+geom_density(fill = "skyblue", alpha = 0.6) +
+geom_vline(xintercept = beta_true, linetype = "dashed", 
+           color = "red", linewidth = 1) +
+labs(title = "Insesgamiento del Estimador MM para β",
+subtitle = "Si fuese insesgado, la distribución estaría centrada 
+exactamente en β",
+x = "Estimaciones de β (MM)",
+y = "Densidad") +
+theme_minimal()
+
+```
+
+
+**Conclusión:**
+
+Dado que $E(\hat{\beta}{MM})\neq\beta$ (sesgo empírico distinto de 0), se concluye que el estimador $\hat{\beta}{MM}$ no es insesgado en muestras finitas.
+
+
+
+
+#### **b) Consistencia:**
+
+Un estimador $\hat{\beta}_n$ es **consistente** para el parámetro $\beta$ si converge en probabilidad al valor verdadero cuando el tamaño muestral tiende a infinito, es decir,
+
+$$
+\hat{\beta}_n \xrightarrow{p} \beta \quad \text{cuando } n \to \infty.
+$$
+
+El estimador de método de momentos para el parámetro $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ y $S^2$ representan la media y la varianza muestral, respectivamente.
+
+Para la distribución Pareto con $\beta>2$, se cumple que:
+
+$$
+\bar X \xrightarrow{p} E(X),
+\qquad
+S^2 \xrightarrow{p} \operatorname{Var}(X),
+$$
+
+por la Ley de los Grandes Números y la consistencia de la varianza muestral cuando la varianza existe.
+
+Definiendo la función:
+
+$$
+g(u,v)=1+\sqrt{1+\frac{u^2}{v}},
+$$
+
+la cual es continua para $v>0$, y dado que:
+
+$$
+\hat{\beta}_{MM}=g(\bar X,S^2),
+$$
+
+por el **Teorema de la Función Continua** se obtiene:
+
+$$
+\hat{\beta}_{MM}
+\xrightarrow{p}
+g\big(E(X),\operatorname{Var}(X)\big)
+=
+\beta.
+$$
+
+Por lo tanto, el estimador de método de momentos $\hat{\beta}_{MM}$ es **consistente** para el parámetro $\beta$.
+
+Para visualizar esta propiedad, se analiza el comportamiento del estimador al aumentar el tamaño muestral.
+
+
+```{r, echo=FALSE}
+# ============================================================
+# CONSISTENCIA: CONVERGENCIA DEL ESTIMADOR MM
+# ============================================================
+
+n_seq <- seq(20, 1000, by = 10)
+betaMM_path <- numeric(length(n_seq))
+
+for(i in seq_along(n_seq)){
+  k <- n_seq[i]
+  x_sub <- reclamos[1:k]
+  betaMM_path[i] <- 1 + sqrt(1 + (mean(x_sub)^2 / var(x_sub)))
+}
+
+df_cons <- data.frame(n = n_seq, betaMM = betaMM_path)
+
+library(ggplot2)
+ggplot(df_cons, aes(x = n, y = betaMM)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = beta_true, linetype = "dashed", color = "red", linewidth = 1) +
+  labs(title = "Consistencia del Estimador MM para β",
+       subtitle = "Convergencia en probabilidad al valor verdadero al aumentar n",
+       x = "Tamaño de muestra (n)",
+       y = "Estimación de β") +
+  theme_minimal()
+
+```
+
+**Conclusión:**
+
+Al cumplirse que $\bar X \xrightarrow{p} E(X)$ y $S^2 \xrightarrow{p} \operatorname{Var}(X)$, y dado que $\hat{\beta}{MM}$ es una función continua de estos estadísticos, se concluye que el estimador $\hat{\beta}{MM}$ es consistente para el parámetro $\beta$.
+
+
+
+
+#### **c) Suficiencia:**
+
+Un estadístico $T=T(X_1,\dots,X_n)$ es **suficiente** para un parámetro $\beta$ si la distribución condicional de la muestra, dado $T$, no depende de dicho parámetro.
+
+El estimador de método de momentos para $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ y $S^2$ corresponden a la media y varianza muestral, respectivamente.
+
+En la distribución Pareto, cuando ambos parámetros $\alpha$ y $\beta$ son desconocidos, la estadística suficiente para $\beta$ está asociada a la estructura de la función de verosimilitud y viene dada por funciones del estadístico
+
+$$
+T = \sum_{i=1}^{n} \ln\left(\frac{X_i}{X_{(1)}}\right).
+$$
+
+Dado que el estimador $\hat{\beta}_{MM}$ depende únicamente de $(\bar X,S^2)$ y no es función del estadístico suficiente $T$, se concluye que **no se basa en una estadística suficiente** para el parámetro $\beta$.
+
+**Conclusión:**
+
+El estimador $\hat{\beta}_{MM}$ **no es suficiente**.
+
+
+
+
+#### **d) Ancilaridad**
+
+Un estadístico $T$ se denomina **ancilar** si su distribución no depende del parámetro de interés. Es decir, $T$ es ancilar para $\beta$ si la ley de probabilidad de $T$ es independiente de $\beta$.
+
+El estimador de método de momentos para el parámetro $\beta$ está definido como:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}}.
+$$
+
+Este estimador está construido con el objetivo explícito de aproximar el valor del parámetro $\beta$. En consecuencia, su distribución muestral depende del valor de dicho parámetro.
+
+Por lo tanto, la distribución de $\hat{\beta}_{MM}$ **no es invariante respecto a $\beta$**, lo que implica que el estimador no cumple la propiedad de ancilaridad.
+
+**Conclusión:**
+
+El estimador $\hat{\beta}_{MM}$ **no es ancilar**.
+
+
+
+
+#### **e) Completitud**
+
+La **completitud** es una propiedad que se define para **estadísticas suficientes**.  
+Un estadístico suficiente $T$ para un parámetro $\beta$ es completo si, para toda función medible $g(\cdot)$, se cumple que:
+
+$$
+E_\beta[g(T)] = 0 \ \text{para todo } \beta
+\quad \Longrightarrow \quad
+P_\beta\big(g(T)=0\big)=1.
+$$
+
+Esta propiedad resulta fundamental en la teoría de la estimación óptima, ya que permite garantizar la unicidad del estimador insesgado de varianza mínima mediante el Teorema de Lehmann--Scheffé.
+
+En el presente caso, el estimador de método de momentos para el parámetro $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+el cual depende de la media y la varianza muestral $(\bar X, S^2)$.  
+Sin embargo, como se mostró en la sección anterior, estos estadísticos **no constituyen una estadística suficiente** para el parámetro $\beta$ en la distribución Pareto.
+
+Por lo tanto, **no corresponde analizar la propiedad de completitud** para el estimador $\hat{\beta}_{MM}$, ya que dicha propiedad solo es aplicable a estadísticas suficientes.
+
+**Conclusión:**
+
+La propiedad de completitud **no aplica** al estimador de método de momentos $\hat{\beta}_{MM}$.
+
+
+
+
+
+#### **f) Optimalidad:**  
+
+Un estimador se considera **óptimo** si alcanza la mínima varianza posible dentro de una clase determinada de estimadores, usualmente dentro de la clase de estimadores insesgados.
+
+El estimador de método de momentos para el parámetro $\beta$ se obtiene igualando momentos teóricos y muestrales, sin hacer uso de la función de verosimilitud ni de la estructura de la distribución muestral completa. En consecuencia, el método de momentos **no garantiza eficiencia ni mínima varianza**.
+
+Además, como se mostró previamente, el estimador $\hat{\beta}_{MM}$ **no es insesgado** en muestras finitas, lo que impide que pueda ser considerado óptimo bajo criterios clásicos de optimalidad, como los establecidos por el Teorema de Lehmann--Scheffé.
+
+Por el contrario, el estimador EIVUM obtenido en la sección correspondiente es insesgado, función de una estadística suficiente y completa, y por tanto posee varianza uniformemente mínima dentro de su clase.
+
+
+**Conclusión:**
+
+El estimador de método de momentos $\hat{\beta}_{MM}$ **no es óptimo** para el parámetro $\beta$ de la distribución Pareto.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
