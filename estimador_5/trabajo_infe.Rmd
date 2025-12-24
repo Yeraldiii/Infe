@@ -1,0 +1,380 @@
+---
+title: "Título de tu Informe"
+author: "Tu Nombre"
+date: "`r format(Sys.Date(), '%d de %B de %Y')`"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: false
+    latex_engine: xelatex
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amssymb}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage{threeparttablex}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
+geometry: margin=1in
+fontsize: 12pt
+linestretch: 1.5
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE, 
+  warning = FALSE)
+```
+
+```{r librerias, echo=FALSE, results="hide"}
+library(haven)
+library(forcats)
+library(MASS)          # Para polr
+library(tidyverse)
+library(sjPlot)        # Para view_df, plot_frq, tab_model
+library(gtsummary)     # Para tbl_summary, tbl_regression
+library(ggstatsplot)   # Para ggbarstats
+library(caret)         # Para confusionMatrix
+library(randomForest)  # Para importancia de variables
+library(vip)           # Para gráfico de importancia
+library(readxl)
+library(brant)
+library(car)
+library(gt)
+library(ggplot2)
+library(dplyr)
+
+```
+
+```{r , echo = F, fig.align='center'}
+
+# --- Generación de la Base de Datos "reclamos" ---
+
+# 1. Fijar la semilla (IMPORTANTE: Esto asegura que salgan los mismos números)
+set.seed(123)
+
+# 2. Definir los parámetros verdaderos según tu texto
+alpha_true <- 2
+beta_true <- 3
+n_total <- 1000 # Tamaño de la muestra
+
+# 3. Generar la data (Simulación de Pareto)
+# Fórmula de la inversa: x = alpha / (1 - u)^(1/beta)
+reclamos <- alpha_true / (1 - runif(n_total))^(1/beta_true)
+
+```
+
+## 1. Estimadores y propiedades
+
+### 1.5.1 Estimador : Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM) para el parámetro $\beta$
+
+Dado que en la sección anterior se determinó que el Estimador de Máxima Verosimilitud (EMV) para $\beta$ es sesgado, procederemos a obtener el estimador óptimo aplicando el **Teorema de Lehmann-Scheffé**.  
+
+Según la teoría de la optimalidad, si logramos construir un estimador insesgado que sea función de una estadística suficiente y completa, dicho estimador será el **Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM)**.
+
+El procedimiento se detalla en los siguientes cuatro pasos.
+
+
+#### Paso 1: Identificación de la Estadística Suficiente y Completa
+
+Analizando la función de densidad de la distribución Pareto, observamos que pertenece a la familia exponencial *k*-paramétrica respecto al parámetro de forma $\beta$.
+
+Bajo la condición de que el parámetro de escala $\alpha$ es desconocido y estimado mediante el mínimo muestral $X_{(1)}$, la teoría de suficiencia indica que la estadística $T$ que captura toda la información sobre $\beta$ es la suma de los logaritmos de las razones muestrales:
+
+$$
+T = \sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \right)
+$$
+
+Esta estadística $T$ es **suficiente y completa** para el parámetro $\beta$, condición necesaria para aplicar el teorema de Lehmann-Scheffé.
+
+
+#### Paso 2: Distribución Muestral de la Estadística
+
+A partir de las propiedades de la transformación de variables aleatorias Pareto, se deduce que la estadística $T$ sigue una distribución Gamma.  
+
+Dado que se ha estimado un parámetro adicional ($\alpha$), los grados de libertad se ajustan a $(n-1)$. Por tanto:
+
+$$
+T \sim \text{Gamma}(n-1, \beta)
+$$
+
+
+#### Paso 3: Verificación del Sesgo y Corrección (Método de la Esperanza)
+
+Partimos del Estimador de Máxima Verosimilitud hallado previamente:
+
+$$
+\hat{\beta}_{EMV} = \frac{n}{T}
+$$
+
+Para verificar si es insesgado, calculamos su valor esperado $E[\hat{\beta}_{EMV}]$. Utilizando la propiedad de la esperanza inversa para una variable con distribución $\text{Gamma}(k, \lambda)$, donde:
+
+$$
+E\left[\frac{1}{T}\right] = \frac{\lambda}{k-1},
+$$
+
+se obtiene:
+
+$$
+E\left[\frac{1}{T}\right] = \frac{\beta}{(n-1)-1} = \frac{\beta}{n-2}
+$$
+
+Sustituyendo en la esperanza del EMV:
+
+$$
+E[\hat{\beta}_{EMV}] = n \cdot E\left[\frac{1}{T}\right]
+= n \left( \frac{\beta}{n-2} \right)
+= \left( \frac{n}{n-2} \right)\beta
+$$
+
+El resultado muestra que el EMV no es insesgado, ya que su valor esperado no es exactamente $\beta$, sino que está escalado por el factor $\frac{n}{n-2}$.
+
+
+#### Paso 4: Construcción del Estimador Óptimo (EIVUM)
+
+Para eliminar el sesgo, aplicamos una corrección multiplicativa usando el inverso del factor de sesgo encontrado $\left(\frac{n-2}{n}\right)$.  
+
+Definimos el nuevo estimador como:
+
+$$
+\hat{\beta}_{EIVUM} = \left( \frac{n-2}{n} \right) \cdot \hat{\beta}_{EMV}
+$$
+
+Reemplazando $\hat{\beta}_{EMV} = \frac{n}{T}$:
+
+$$
+\hat{\beta}_{EIVUM}
+= \left( \frac{n-2}{n} \right) \cdot \frac{n}{T}
+= \frac{n-2}{T}
+$$
+
+
+##### Conclusión
+
+La fórmula final del estimador óptimo es:
+
+$$
+\boxed{
+\hat{\beta}_{EIVUM}
+= \frac{n-2}{\sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \right)}
+}
+$$
+
+Al haber corregido el sesgo, cumpliéndose que $E[\hat{\beta}_{EIVUM}] = \beta$, y al depender únicamente de la estadística suficiente y completa $T$, el **Teorema de Lehmann-Scheffé** garantiza que este estimador es el de **menor varianza posible entre todos los estimadores insesgados (UMVUE)** para el parámetro $\beta$ de una distribución Pareto.
+
+
+
+
+
+### 1.5.2 Verificación de Propiedades del Estimador ($\hat{\beta}_{EIVUM}$)
+
+Recordamos la expresión del estimador y la distribución de la estadística suficiente sobre la cual se basa:
+
+$$
+\hat{\beta}_{EIVUM} = \frac{n-2}{T}, \quad \text{donde } T \sim \text{Gamma}(n-1, \beta)
+$$
+
+
+
+#### 1. Insesgabilidad
+
+Un estimador es insesgado si su esperanza matemática coincide con el parámetro a estimar. Calculamos:
+
+$$
+E[\hat{\beta}_{EIVUM}] = E\left[ \frac{n-2}{T} \right] = (n-2)\, E\left[\frac{1}{T}\right]
+$$
+
+Dado que para una variable $T \sim \text{Gamma}(k,\beta)$ se cumple $E[1/T] = \frac{\beta}{k-1}$ con $k = n-1$, resulta:
+
+$$
+E[\hat{\beta}_{EIVUM}] = (n-2)\cdot \frac{\beta}{n-2} = \beta
+$$
+
+**Conclusión:**
+Se verifica que $E[\hat{\beta}_{EIVUM}] = \beta$, por lo que el estimador es insesgado para todo $n > 2$.
+
+
+```{r }
+# Usamos la base de datos 'reclamos' generada en la sección 1.1
+n_obs <- length(reclamos) # n = 1000
+x_min_obs <- min(reclamos)
+
+# Cálculo del estadístico T
+T_obs <- sum(log(reclamos / x_min_obs))
+
+# Cálculo del Estimador 5 (EIVUM)
+beta_eivum_val <- (n_obs - 2) / T_obs
+
+print(paste("Valor Verdadero Beta:", beta_true))
+print(paste("Estimación EIVUM:", round(beta_eivum_val, 5)))
+print(paste("Diferencia (Sesgo muestral):", round(beta_eivum_val - beta_true, 5)))
+```
+
+
+#### 2. Eficiencia
+
+La eficiencia se evalúa a través de la varianza del estimador. Utilizando que para $T \sim \text{Gamma}(k,\beta)$, la varianza inversa es $\text{Var}(1/T) = \frac{\beta^2}{(k-1)^2(k-2)}$ con $k = n-1$, se obtiene:
+
+$$
+\text{Var}(\hat{\beta}_{EIVUM}) = (n-2)^2 \, \text{Var}\left(\frac{1}{T}\right)
+$$
+
+$$
+\text{Var}(\hat{\beta}_{EIVUM}) = (n-2)^2 \cdot \frac{\beta^2}{(n-2)^2 (n-3)} = \frac{\beta^2}{n-3}
+$$
+
+**Conclusión:**
+La varianza es finita para $n > 3$. Además, dado que el estimador es insesgado y depende únicamente de una estadística suficiente y completa, el Teorema de Lehmann-Scheffé garantiza que esta varianza es la mínima posible entre todos los estimadores insesgados, confirmando que $\hat{\beta}_{EIVUM}$ es el estimador más eficiente de su clase.
+
+```{r , echo = F, fig.align='center'}
+# =============================================================================
+# GRÁFICO: COMPARACIÓN DE EFICIENCIA (EIVUM vs EMV)
+# =============================================================================
+set.seed(123)
+n_sim <- 50  # Usamos n pequeño para notar diferencias visuales
+N_rep <- 5000 
+
+sim_eivum <- numeric(N_rep)
+sim_emv <- numeric(N_rep)
+
+for(i in 1:N_rep){
+  # Generar Pareto
+  u <- runif(n_sim)
+  x <- alpha_true / (1 - u)^(1/beta_true)
+  
+  T_val <- sum(log(x / min(x)))
+  
+  sim_eivum[i] <- (n_sim - 2) / T_val
+  sim_emv[i] <- n_sim / T_val
+}
+
+df_eff <- data.frame(
+  Valor = c(sim_eivum, sim_emv),
+  Estimador = rep(c("EIVUM (Insesgado)", "EMV (Sesgado)"), each = N_rep)
+)
+
+library(ggplot2)
+ggplot(df_eff, aes(x = Valor, fill = Estimador)) +
+  geom_density(alpha = 0.5) +
+  geom_vline(xintercept = beta_true, linetype = "dashed", size = 1) +
+  scale_fill_manual(values = c("green3", "tomato")) +
+  labs(title = "Comparación de Eficiencia: EIVUM vs EMV",
+       subtitle = "El EIVUM (Verde) está centrado en 3. El EMV (Rojo) está desplazado a la derecha.",
+       x = "Estimación de Beta", y = "Densidad") +
+  theme_minimal() +
+  xlim(1.5, 5)
+```
+
+#### 3. Consistencia
+
+Un estimador es consistente si converge en probabilidad al parámetro verdadero cuando el tamaño muestral tiende a infinito. Una condición suficiente es:
+
+1. $E[\hat{\beta}_{EIVUM}] \to \beta$ cuando $n \to \infty$
+2. $\text{Var}(\hat{\beta}_{EIVUM}) \to 0$ cuando $n \to \infty$
+
+Verificación:
+
+- Condición 1:
+$$
+\lim_{n \to \infty} E[\hat{\beta}_{EIVUM}] = \beta
+$$
+
+- Condición 2:
+$$
+\lim_{n \to \infty} \text{Var}(\hat{\beta}_{EIVUM}) = \lim_{n \to \infty} \frac{\beta^2}{n-3} = 0
+$$
+
+**Conclusión:**
+Al cumplirse ambas condiciones, el estimador $\hat{\beta}_{EIVUM}$ converge en probabilidad al parámetro $\beta$, por lo que es un estimador consistente.
+
+
+```{r , echo = F, fig.align='center'}
+# =============================================================================
+# GRÁFICO: CONSISTENCIA DEL EIVUM (CONVERGENCIA)
+# =============================================================================
+# Usamos la base grande 'reclamos' (n=1000)
+n_seq <- seq(10, 1000, by = 5)
+est_trayectoria <- numeric(length(n_seq))
+
+for(i in 1:length(n_seq)){
+  k <- n_seq[i]
+  sub_x <- reclamos[1:k]
+  T_sub <- sum(log(sub_x / min(sub_x)))
+  est_trayectoria[i] <- (k - 2) / T_sub
+}
+
+df_cons <- data.frame(n = n_seq, Estimacion = est_trayectoria)
+
+ggplot(df_cons, aes(x = n, y = Estimacion)) +
+  geom_line(color = "blue", size = 0.8) +
+  geom_hline(yintercept = beta_true, color = "red", linetype = "dashed", size = 1) +
+  labs(title = "Consistencia del Estimador 5 (EIVUM)",
+       subtitle = "Convergencia al valor verdadero (3) al aumentar la muestra",
+       x = "Tamaño de muestra (n)", y = "Valor Estimado") +
+  theme_minimal() +
+  ylim(2.5, 3.5)
+```
+
+
+
+#### 4. Suficiencia
+
+La propiedad de suficiencia indica que el estimador utiliza toda la información disponible en la muestra sobre el parámetro, sin desperdiciar datos.
+
+**Conclusión:**
+Como se demostró en el **Paso 1** de la construcción del estimador, $\hat{\beta}_{EIVUM}$ es una función inyectiva de la estadística $T = \sum \ln(X_i/X_{(1)})$. Dado que se probó que $T$ es una estadística suficiente para $\beta$ (por pertenecer a la Familia Exponencial), el estimador hereda esta propiedad. Por tanto, es un estimador **suficiente**.
+
+
+#### 5. Ancilaridad
+
+Según la definición teórica, una estadística es ancilar si su distribución no depende del parámetro de interés.
+
+En este caso, el estimador construido es $\hat{\beta}_{EIVUM} = \frac{n-2}{T}$. Para evaluar si el estimador es ancilar, analizamos sus momentos:
+
+$$
+E[\hat{\beta}_{EIVUM}] = \beta, \qquad \text{Var}(\hat{\beta}_{EIVUM}) = \frac{\beta^2}{n-3}
+$$
+
+Dado que la esperanza y la varianza dependen explícitamente de $\beta$, la distribución del estimador cambia según el valor del parámetro.
+
+**Conclusión:**
+El estimador $\hat{\beta}_{EIVUM}$ **no es una estadística ancilar**, ya que su distribución depende del parámetro $\beta$. Este comportamiento es esperado y adecuado para un estimador puntual del parámetro de interés.
+
+
+#### 6. Completitud
+
+La propiedad de completitud es fundamental para garantizar la unicidad del estimador óptimo según el Teorema de Lehmann-Scheffé.
+
+La estadística suficiente es $T = \sum_{i=1}^{n} \ln\left(\frac{X_i}{X_{(1)}}\right)$. Se ha demostrado previamente que $T \sim \text{Gamma}(n-1, \beta)$. La distribución Gamma con uno de sus parámetros desconocidos pertenece a la familia exponencial regular de un parámetro. Dado que el espacio paramétrico es abierto ($\beta > 0$), se cumple que la estadística suficiente $T$ es completa.
+
+Esto implica que si una función medible $g(T)$ satisface $E[g(T)] = 0$ para todo $\beta$, entonces $P(g(T) = 0) = 1$.
+
+**Conclusión:**
+La estadística $T$ es una estadística suficiente y completa para el parámetro $\beta$.
+
+
+#### 7. Optimalidad (Conclusión Final)
+
+Se ha verificado que el estimador $\hat{\beta}_{EIVUM} = \frac{n-2}{T}$ cumple las siguientes propiedades:
+
+- Es insesgado: $E[\hat{\beta}_{EIVUM}] = \beta$.
+- Es función de una estadística suficiente y completa ($T$).
+- Posee varianza mínima dentro de la clase de estimadores insesgados.
+
+Por lo tanto, aplicando el **Teorema de Lehmann-Scheffé**, se concluye que:
+
+> Un estimador insesgado que sea función de una estadística suficiente y completa es el Estimador Insesgado de Varianza Uniformemente Mínima.
+
+**Conclusión General:**
+$\hat{\beta}_{EIVUM}$ es el **Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM)** para el parámetro $\beta$ de la distribución Pareto. No existe otro estimador insesgado con menor varianza que este.
