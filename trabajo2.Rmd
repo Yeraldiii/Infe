@@ -365,3 +365,105 @@ $$
 $$
 
 Por ende, no es un estimador insesgado. Ademas al ser positivo podemos decir que sobrestima al parametro.   
+
+
+## **1.3 Estimador para la Media Poblacional ($\mu$):**
+
+Consideramos la media muestral como estimador natural del valor esperado de la distribución:
+
+$$ \bar{X} = T(X_1, \dots, X_n) = \frac{1}{n} \sum_{i=1}^n X_i $$
+
+Para que los momentos existan en una distribución Pareto, debemos asumir que $\beta > 1$ (para la esperanza) y $\beta > 2$ (para la varianza). El parámetro a estimar es:
+$$ \mu = E(X) = \frac{\beta \alpha}{\beta - 1} $$
+
+### **1.3.1 Propiedades:**
+
+#### **a) Insesgamiento:**
+
+Calculamos el valor esperado del estimador:
+
+$$
+\begin{aligned}
+E[\bar{X}] &= E\left[ \frac{1}{n} \sum_{i=1}^n X_i \right] \\
+&= \frac{1}{n} \sum_{i=1}^n E[X_i] \\
+&= \frac{1}{n} \cdot n \cdot \left( \frac{\beta \alpha}{\beta - 1} \right) = \frac{\beta \alpha}{\beta - 1} = \mu
+\end{aligned}
+$$
+
+El estimador es **estrictamente insesgado** para $\mu$. Verificamos esto con la base de datos:
+
+```{r}
+# 1. Valor observado de la media muestral
+mu_muestral_obs <- mean(reclamos)
+
+# 2. Valor esperado teórico (mu)
+mu_teorico <- (beta_true * alpha_true) / (beta_true - 1)
+```
+
+```{r, echo=FALSE}
+print(paste("La media muestral observada es:", round(mu_muestral_obs, 5), 
+            "y el valor esperado teórico es:", round(mu_teorico, 5)))
+```
+
+#### **b) Consistencia:**
+
+Para demostrar la consistencia, verificamos las condiciones del Teorema de Chebyshev (asumiendo $\beta > 2$):
+
+1. **Insesgadez:** $\lim_{n \rightarrow \infty} E(\bar{X}) = \mu$ (ya demostrado).
+2. **Varianza tiende a cero:**
+$$
+\begin{aligned}
+\operatorname{Var}(\bar{X}) &= \frac{\operatorname{Var}(X)}{n} \\
+&= \frac{1}{n} \left[ \left( \frac{\alpha}{\beta - 1} \right)^2 \frac{\beta}{\beta - 2} \right] \\
+\lim_{n \rightarrow \infty} \operatorname{Var}(\bar{X}) &= \lim_{n \rightarrow \infty} \frac{C}{n} = 0
+\end{aligned}
+$$
+
+Al cumplirse ambas condiciones, $\bar{X}$ es un estimador **consistente** para $\mu$.
+
+```{r, echo=FALSE}
+# Simulación de convergencia de la media
+n_seq <- seq(10, 1000, by = 10)
+medias_n <- sapply(n_seq, function(nn) mean(reclamos[1:nn]))
+
+df_consistencia <- data.frame(n = n_seq, media = medias_n)
+
+ggplot(df_consistencia, aes(x = n, y = media)) +
+  geom_line(color = "darkgreen") +
+  geom_hline(yintercept = mu_teorico, linetype = "dashed", color = "red") +
+  labs(title = "Consistencia de la Media Muestral",
+       x = "Tamaño de muestra (n)", y = "Media Muestral") +
+  theme_minimal()
+```
+
+#### **c) Suficiencia:**
+
+Aplicamos el Teorema de Factorización de Fisher-Neyman a la función de verosimilitud:
+
+$$
+L(\alpha, \beta) = \underbrace{\beta^n \alpha^{n\beta} \cdot I_{(\alpha, \infty)}(x_{(1)})}_{g(x_{(1)}, \alpha, \beta)} \cdot \underbrace{\left( \prod_{i=1}^n x_i \right)^{-(\beta+1)}}_{h(x_1, \dots, x_n)}
+$$
+
+Como se observa, los estadísticos suficientes conjuntos para $(\alpha, \beta)$ son el mínimo $X_{(1)}$ y el producto $\prod X_i$ (o equivalentemente $\sum \ln X_i$). La media muestral $\bar{X} = \frac{1}{n} \sum X_i$ **no puede factorizarse** de manera que contenga toda la información de los parámetros.
+
+Por lo tanto, $\bar{X}$ **no es un estadístico suficiente** para los parámetros de la distribución Pareto.
+
+#### **d) Ancilaridad:**
+
+Un estadístico es ancilar si su distribución no depende de los parámetros. La distribución de $\bar{X}$ para una Pareto no tiene una forma cerrada sencilla (es una suma de variables Pareto), pero su esperanza $E(\bar{X}) = \frac{\alpha \beta}{\beta - 1}$ y su varianza dependen directamente de $\alpha$ y $\beta$.
+
+Al depender sus momentos (y por ende su distribución) de los parámetros, el estimador **no es ancilar**.
+
+#### **e) Completitud:**
+
+Dado que $\bar{X}$ no es un estadístico suficiente para la familia Pareto, no se suele analizar su completitud como estimador. Sin embargo, sabemos que el estadístico suficiente conjunto $(X_{(1)}, \sum \ln X_i)$ es completo, pero la suma aritmética $\sum X_i$ no lo es bajo esta estructura de familia no exponencial (en el sentido de los parámetros naturales de la Pareto).
+
+#### **f) Optimalidad:**
+
+Un estimador es óptimo (UMVUE) si es insesgado y su varianza alcanza la Cota Inferior de Cramér-Rao (CICR) o si es función de un estadístico suficiente y completo.
+
+1. **Eficiencia:** Al no ser función del estadístico suficiente $(X_{(1)}, \sum \ln X_i)$, la media muestral pierde información.
+2. **Comparación:** Existe otro estimador para $\mu$, basado en los EMV de $\alpha$ y $\beta$ ($\hat{\mu} = \frac{\hat{\beta} \hat{\alpha}}{\hat{\beta}-1}$), que asintóticamente tiene menor varianza que $\bar{X}$.
+
+**Conclusión:** $\bar{X}$ **no es un estimador óptimo** para la media de una población Pareto, aunque sea fácil de calcular e insesgado.
+
