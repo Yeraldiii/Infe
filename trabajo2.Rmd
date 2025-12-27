@@ -2,7 +2,7 @@
 title: "**UNIVERSIDAD NACIONAL AGRARIA LA MOLINA**"
 output:
   pdf_document:
-    latex_engine: pdflatex
+    latex_engine: xelatex
     highlight: tango
     toc: false
 header-includes:
@@ -526,7 +526,7 @@ suficiente y completo.
 una población Pareto, aunque sea fácil de calcular e insesgado.
 
 
- ## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto 
+## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto 
 
 El método de momentos consiste en igualar los $k$ primeros momentos poblacionales con los correspondientes momentos muestrales, donde $k$ es el número de parámetros a estimar. 
 Para la distribución Pareto con dos parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
