@@ -2031,7 +2031,61 @@ $\beta$ de la distribución Pareto. No existe otro estimador insesgado
 con menor varianza que este.
 
 
-# Pregunta 2
+# 2) Pregunta 2 - Intervalos de confianza
+
+## 2.1 Estimador 1 (el mínimo para alfa)
+
+Vamos a hallar un intervalo de confianza del 90%:   
+
+$$
+\begin{aligned}
+\hat{\alpha}_{EMV} &= y_1 = \min(x_1, \ldots, x_n); \\
+f_Y(y) &= \frac{n\beta \alpha^{n\beta}}{y^{n\beta+1}}, \quad y > \alpha
+\end{aligned}
+$$
+  
+Un posible pivote es $W = Y_1 / \alpha$, porque su distribución no debería depender de $\alpha$. Hacemos un cambio de variable $Q = W = \frac{Y_1}{\alpha}$. Con el jacobiano $dy_1 = \alpha \, dw$, se tiene:
+
+\[
+f_W(w) = f_{Y_1}(\alpha w) \cdot \alpha
+= n\beta \, \alpha^{n\beta} (\alpha w)^{-(n\beta+1)} \cdot \alpha
+\]
+\[
+= n\beta \, \alpha^{n\beta} \alpha^{-n\beta-1} w^{-(n\beta+1)} \alpha
+\]
+\[
+= n\beta \, w^{-(n\beta+1)}, \quad w > 1.
+\]
+
+La densidad resultante \text{no depende de $\alpha$}, por lo tanto $W$ es un \text{pivote}.
+
+Hallamos la función de distribución de W:  
+
+$$
+\begin{aligned}
+F_W(w) &= \int_1^w n\beta t^{-(n\beta+1)} \, dt \\
+&= n\beta \left[ \frac{t^{-n\beta}}{-n\beta} \right]_1^w \\
+&= n\beta \left[ -\frac{t^{-n\beta}}{n\beta} \right]_1^w \\
+&= 1 - w^{-n\beta}, \quad w > 1.
+\end{aligned}
+$$  
+
+Usando el método de pivote: $P(a \le W \le b) = 0.90$. Un posible intervalo sería el siguiente: 
+
+$$
+\begin{aligned}
+P(w \leq a) = F_W(a) &= 1 - a^{-n\beta} = 0.05 \quad \rightarrow \quad a = (0.95)^{-1/(n\beta)} \\
+P(w \leq b) = F_W(b) &= 1 - b^{-n\beta} = 0.95 \quad \rightarrow \quad b = (0.05)^{-1/(n\beta)}
+\end{aligned}
+$$  
+Entonces:   
+
+$$
+\begin{array}{r}
+P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1}{b} \leq \alpha \leq \frac{Y_1}{a}\right]=P\left[\frac{Y_1}{(0.6)^{-1 / n \beta}} \leqslant \alpha \leqslant \frac{Y_1}{(0.95)^{-1 / n \beta}}\right] \\ \\
+\text { I.C }=\left[Y_1 \cdot(0.05)^{1 /(n \beta)} ; Y_1 \cdot(0.95)^{1 /(n \beta)}\right]
+\end{array}
+$$
 
 ## 2.5 Intervalos de Confianza para $\beta$ con el EIVUM
 
