@@ -525,6 +525,1150 @@ suficiente y completo.
 **Conclusión:** $\bar{X}$ **no es un estimador óptimo** para la media de
 una población Pareto, aunque sea fácil de calcular e insesgado.
 
+
+ ## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto 
+
+El método de momentos consiste en igualar los $k$ primeros momentos poblacionales con los correspondientes momentos muestrales, donde $k$ es el número de parámetros a estimar. 
+Para la distribución Pareto con dos parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
+
+### PASO 1: Definición de la distribución Pareto  
+
+Sea $X \sim \text{Pareto}(\alpha, \beta)$ con función de densidad:
+
+$$
+f_X(x; \alpha, \beta) = \frac{\beta \alpha^\beta}{x^{\beta+1}}, \quad x \geq \alpha > 0, \ \beta > 0
+$$
+
+### PASO 2: Cálculo del primer momento poblacional $E[X]$
+
+### 2.1 Planteamiento de la integral
+
+$$
+E[X] = \int_{\alpha}^{\infty} x \cdot f_X(x) \, dx 
+     = \int_{\alpha}^{\infty} x \cdot \frac{\beta \alpha^\beta}{x^{\beta+1}} \, dx
+$$
+
+
+$$
+E[X] = \beta \alpha^\beta \int_{\alpha}^{\infty} x \cdot x^{-(\beta+1)} \, dx
+     = \beta \alpha^\beta \int_{\alpha}^{\infty} x^{-\beta} \, dx
+$$
+
+
+
+Para $\beta > 1$ (condición de convergencia):
+
+$$
+\int_{\alpha}^{\infty} x^{-\beta} \, dx = \left[ \frac{x^{1-\beta}}{1-\beta} \right]_{\alpha}^{\infty}
+$$
+
+Evaluando los límites:
+
+Límite superior cuando $x \to \infty$:
+$$
+\lim_{x \to \infty} \frac{x^{1-\beta}}{1-\beta} = 0 \quad \text{porque } 1-\beta < 0
+$$
+
+Límite inferior cuando $x = \alpha$:
+$$
+\frac{\alpha^{1-\beta}}{1-\beta}
+$$
+
+### 2.2 Resultado del primer momento
+
+$$
+E[X] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{1-\beta}}{1-\beta} \right)
+     = \beta \alpha^\beta \cdot \frac{\alpha^{1-\beta}}{\beta-1}
+     = \frac{\beta \alpha}{\beta-1}
+$$
+
+**Primer momento poblacional:**
+$$
+\boxed{E[X] = \frac{\alpha\beta}{\beta-1}}, \quad \beta > 1
+$$
+
+## PASO 3: Cálculo del segundo momento poblacional $E[X^2]$
+
+### 3.1 Planteamiento de la integral
+
+
+$$
+E[X^2] = \int_{\alpha}^{\infty} x^2 \cdot f_X(x) \, dx 
+       = \int_{\alpha}^{\infty} x^2 \cdot \frac{\beta \alpha^\beta}{x^{\beta+1}} \, dx
+$$
+
+$$
+E[X^2] = \beta \alpha^\beta \int_{\alpha}^{\infty} x^2 \cdot x^{-(\beta+1)} \, dx
+       = \beta \alpha^\beta \int_{\alpha}^{\infty} x^{1-\beta} \, dx
+$$
+Para $\beta > 2$ (condición de convergencia):
+
+$$
+\int_{\alpha}^{\infty} x^{1-\beta} \, dx = \left[ \frac{x^{2-\beta}}{2-\beta} \right]_{\alpha}^{\infty}
+$$
+
+Evaluando los límites:
+
+Límite superior cuando $x \to \infty$:
+$$
+\lim_{x \to \infty} \frac{x^{2-\beta}}{2-\beta} = 0 \quad \text{porque } 2-\beta < 0
+$$
+
+Límite inferior cuando $x = \alpha$:
+$$
+\frac{\alpha^{2-\beta}}{2-\beta}
+$$
+  
+### 3.2 Resultado del segundo momento
+$$
+E[X^2] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{2-\beta}}{2-\beta} \right)
+       = \beta \alpha^\beta \cdot \frac{\alpha^{2-\beta}}{\beta-2}
+       = \frac{\beta \alpha^2}{\beta-2}
+$$
+
+**Segundo momento poblacional:**
+$$
+\boxed{E[X^2] = \frac{\alpha^2\beta}{\beta-2}}, \quad \beta > 2
+$$
+
+## PASO 4: Momentos muestrales
+
+Dada una muestra aleatoria $X_1, X_2, \dots, X_n \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$:
+
+### 4.1 Primer momento muestral (media muestral)
+
+$$
+\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i
+$$
+
+### 4.2 Segundo momento muestral
+
+$$
+m_2 = \frac{1}{n} \sum_{i=1}^n X_i^2
+$$
+
+### 4.3 Varianza muestral (relacionada)
+
+$$
+S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2
+$$
+
+Nota: Existe relación entre $m_2$, $\bar{X}$ y $S^2$:
+$$
+m_2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
+$$
+
+## PASO 5: Sistema de ecuaciones del método de momentos
+
+Igualamos momentos poblacionales con momentos muestrales:
+
+$$
+\begin{cases}
+\displaystyle \frac{\alpha\beta}{\beta-1} = \bar{X} & \text{(Ecuación I)} \\[10pt]
+\displaystyle \frac{\alpha^2\beta}{\beta-2} = m_2 & \text{(Ecuación II)}
+\end{cases}
+$$
+
+## PASO 6: Resolución del sistema
+
+### 6.1 Despejar $\alpha$ de la Ecuación I
+
+De (I):
+$$
+\frac{\alpha\beta}{\beta-1} = \bar{X} \quad \Rightarrow \quad \alpha\beta = \bar{X}(\beta-1)
+$$
+
+Despejando $\alpha$:
+$$
+\boxed{\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}} \quad \text{(Ecuación III)}
+$$
+
+### 6.2 Sustituir en la Ecuación II
+
+Sustituyendo (III) en (II):
+$$
+\frac{\left(\bar{X} \cdot \frac{\beta-1}{\beta}\right)^2 \beta}{\beta-2} = m_2
+$$
+
+### 6.3 Simplificación algebraica
+
+$$
+\frac{\bar{X}^2 \cdot \frac{(\beta-1)^2}{\beta^2} \cdot \beta}{\beta-2} = m_2
+$$
+
+$$
+\frac{\bar{X}^2 \cdot \frac{(\beta-1)^2}{\beta}}{\beta-2} = m_2
+$$
+
+Reordenando:
+$$
+\frac{(\beta-1)^2}{\beta(\beta-2)} = \frac{m_2}{\bar{X}^2} \quad \text{(Ecuación IV)}
+$$
+
+## PASO 7: Definición de R
+
+Sea:
+$$
+R = \frac{m_2}{\bar{X}^2}
+$$
+
+La Ecuación IV se convierte en:
+$$
+\frac{(\beta-1)^2}{\beta(\beta-2)} = R
+$$
+
+## PASO 8: Resolución de la ecuación en $\beta$
+
+### 8.1 Eliminar fracción
+
+Multiplicando en cruz:
+$$
+(\beta-1)^2 = R\beta(\beta-2)
+$$
+
+
+### 8.2 Expandir ambos lados
+
+**Lado izquierdo:**
+$$
+(\beta-1)^2 = \beta^2 - 2\beta + 1
+$$
+
+**Lado derecho:**
+$$
+R\beta(\beta-2) = R\beta^2 - 2R\beta
+$$
+
+### 8.3 Igualar y reordenar
+
+$$
+\beta^2 - 2\beta + 1 = R\beta^2 - 2R\beta
+$$
+
+Llevando todo a un lado:
+$$
+\beta^2 - 2\beta + 1 - R\beta^2 + 2R\beta = 0
+$$
+
+Agrupando términos:
+$$
+(1 - R)\beta^2 + 2(R - 1)\beta + 1 = 0
+$$
+
+### 8.4 Forma estándar de ecuación cuadrática
+
+Multiplicando por -1 para mayor claridad:
+$$
+(R - 1)\beta^2 + 2(1 - R)\beta - 1 = 0
+$$
+
+Factor común $(R-1)$:
+$$
+(R-1)(\beta^2 - 2\beta) - 1 = 0
+$$
+
+### 8.6 Aplicar fórmula general
+
+Para una ecuación $a\beta^2 + b\beta + c = 0$:
+- $a = 1$
+- $b = -2$
+- $c = -\frac{1}{R-1}$
+
+Solución:
+$$
+\beta = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} 
+       = \frac{2 \pm \sqrt{4 + \frac{4}{R-1}}}{2}
+       = \frac{2 \pm 2\sqrt{1 + \frac{1}{R-1}}}{2}
+$$
+
+Simplificando:
+$$
+\beta = 1 \pm \sqrt{1 + \frac{1}{R-1}}
+$$
+
+## PASO 9: Selección de la raíz apropiada
+
+### 9.1 Consideraciones físicas
+
+1. $\beta > 0$ (parámetro de forma positivo)
+2. Para la existencia de $E[X]$: $\beta > 1$
+3. Para la existencia de $Var(X)$: $\beta > 2$
+
+### 9.2 Análisis de las raíces
+
+- Raíz 1: $\beta_1 = 1 + \sqrt{1 + \frac{1}{R-1}} > 1$ ✓
+- Raíz 2: $\beta_2 = 1 - \sqrt{1 + \frac{1}{R-1}} < 1$ ✗ (no cumple $\beta > 1$)
+
+Por lo tanto, seleccionamos la raíz positiva:
+$$
+\hat{\beta}_{MM} = 1 + \sqrt{1 + \frac{1}{R-1}}
+$$
+
+## PASO 10: Relación con el coeficiente de variación
+
+### 10.1 Expresión de R en términos de $S^2$
+
+Recordemos que:
+$$
+m_2 = \frac{1}{n} \sum X_i^2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
+$$
+
+Entonces:
+$$
+R = \frac{m_2}{\bar{X}^2} = \frac{S^2}{\bar{X}^2} \cdot \frac{n-1}{n} + 1
+$$
+
+### 10.2 Aproximación para n grande
+
+Para $n$ suficientemente grande, $\frac{n-1}{n} \approx 1$, entonces:
+$$
+R \approx \frac{S^2}{\bar{X}^2} + 1 = 1 + \left(\frac{S}{\bar{X}}\right)^2
+$$
+
+### 10.3 Sustitución en la fórmula 
+
+Si $R \approx 1 + \left(\frac{S}{\bar{X}}\right)^2$, entonces:
+$$
+R - 1 \approx \left(\frac{S}{\bar{X}}\right)^2
+$$
+
+Y:
+$$
+\frac{1}{R-1} \approx \left(\frac{\bar{X}}{S}\right)^2
+$$
+
+Sustituyendo en la fórmula de $\hat{\beta}_{MM}$:
+$$
+\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}
+$$
+
+## PASO 11: Obtención del estimador para 
+
+### 11.1 Retomando la Ecuación III
+
+De la Ecuación III:
+$$
+\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}
+$$
+
+### 11.2 Sustitución
+
+Sustituyendo $\hat{\beta}_{MM}$:
+$$
+\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
+$$
+
+## PASO 12: Resumen final de estimadores
+
+### Estimador para el parámetro de forma $\beta$:
+$$
+\boxed{\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}}
+$$
+
+### Estimador para el parámetro de escala $\alpha$:
+$$
+\boxed{\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}}
+$$
+
+
+donde:  
+- $\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$ (media muestral)  
+- $S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2$ (varianza muestral)  
+- $S = \sqrt{S^2}$ (desviación estándar muestral)
+
+
+## 1.4.1 Propiedades del Estimador $\hat{\alpha}_{MM}$
+
+### a) Insesgamiento
+
+El estimador $\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}$ es una **función no lineal** de variables aleatorias ($\bar{X}$ y $S$). Para funciones no lineales $g(\cdot)$, generalmente se cumple que $E[g(X)] \neq g(E[X])$. En particular:
+
+\[
+E\left[\bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}\right] \neq E[\bar{X}] \cdot \frac{E[\hat{\beta}_{MM}]-1}{E[\hat{\beta}_{MM}]}
+\]
+
+Aunque $\hat{\alpha}_{MM}$ es **asintóticamente insesgado** ($\lim_{n\to\infty} E[\hat{\alpha}_{MM}] = \alpha$), para cualquier $n$ finito existe sesgo sistemático.
+
+**Verificación empírica con nuestros datos:**
+
+
+```{r demo_no_insesgado, echo=TRUE, fig.height=4.5, fig.width=6}
+# Usando nuestra base de datos original 'reclamos'
+set.seed(123)
+alpha_true <- 2
+beta_true <- 3
+reclamos <- alpha_true / (1 - runif(n))^(1/beta_true)
+
+# 2. Calcular α̂_MM con TU 'reclamos'
+alpha_mm_calc <- function(x) {
+  x_bar <- mean(x)
+  s <- sd(x)
+  beta_hat <- 1 + sqrt(1 + (x_bar/s)^2)
+  return(x_bar * (beta_hat - 1) / beta_hat)
+}
+
+alpha_hat_reclamos <- alpha_mm_calc(reclamos)
+
+# 2. Bootstrap simple
+set.seed(123)
+boot_vals <- replicate(300, {
+  alpha_mm_calc(sample(reclamos, replace = TRUE))
+})
+
+# 3. Gráfico sin abline
+hist(boot_vals, col = "lightblue", border = "white",
+     main = "Distribución de alpha_MM",
+     xlab = "estimador alpha_MM", ylab = "Frecuencia")
+
+
+
+```
+
+**Cálculos obtenidos:**
+
+**1. Estimación puntual en la data original:**
+$\hat{\alpha}_{MM}$ calculado = 2.06082
+
+**2. Análisis bootstrap (300 réplicas):**
+Promedio de $\hat{\alpha}_{MM}$ M = 2.069037
+
+**3. Comparación con el valor verdadero:**  
+Valor verdadero $\alpha$ = 2.00000  
+Diferencia = 2.069037 - 2 = 0.069037
+
+**4. Sesgo relativo:**  
+Sesgo absoluto = 0.069037  
+Sesgo relativo = (0.069037 / 2) × 100% = 3.45%  
+¿E[$\hat{\alpha}_{MM}$] = $\alpha$? → **NO** (existe sesgo positivo de 0.069037)
+
+El estimador $\hat{\alpha}_{MM}$ sobrestima sistemáticamente el parámetro $\alpha$ en aproximadamente 3.45%.
+
+**Conclusión:** $\hat{\alpha}_{MM}$ **no es un estimador insesgado** para el parámetro $\alpha$ de la distribución Pareto. Aunque podría ser aproximadamente insesgado para muestras muy grandes, para $n=1000$ observamos sesgo significativo.
+
+
+## b) Consistencia
+
+**Definición:** Un estimador es consistente si cuando n tiende al infinito, se acerca al valor verdader
+Demostrar que $\hat{\alpha}_{MM}$ es **consistente** para $\alpha$, es decir:
+
+$$
+\hat{\alpha}_{MM} \xrightarrow{P} \alpha \quad \text{cuando } n \to \infty
+$$
+
+### Paso 1: Consistencia de $\bar{X}$ y $S^2$
+
+Por la **Ley Débil de los Grandes Números (LGN)** para variables i.i.d. con primer momento finito:
+
+$$
+\bar{X} \xrightarrow{P} \mu
+$$
+
+Para la varianza muestral, dado que $E[X^2] < \infty$ (pues $\beta > 2$), se cumple:
+
+$$
+S^2 \xrightarrow{P} \sigma^2
+$$
+
+### Paso2: Consistencia de $\hat{\beta}_{MM}$
+
+Definimos:
+
+$$
+T_n = \frac{\bar{X}^2}{S^2}
+$$
+
+Por el **teorema de Slutsky** y continuidad de la función $(a,b) \mapsto a^2/b$:
+
+$$
+T_n \xrightarrow{P} \frac{\mu^2}{\sigma^2}
+$$
+
+Calculamos:
+
+$$
+\frac{\mu^2}{\sigma^2} = 
+\frac{\left( \frac{\beta \alpha}{\beta - 1} \right)^2}{\frac{\beta \alpha^2}{(\beta - 1)^2 (\beta - 2)}} = \beta(\beta - 2)
+$$
+
+Luego:
+
+$$
+T_n \xrightarrow{P} \beta(\beta - 2)
+$$
+
+Ahora, $\hat{\beta}_{MM} = 1 + \sqrt{1 + T_n}$. La función $h(t) = 1 + \sqrt{1 + t}$ es continua para $t \geq 0$. Por el **teorema de la aplicación continua**:
+
+$$
+\hat{\beta}_{MM} \xrightarrow{P} 1 + \sqrt{1 + \beta(\beta - 2)}
+$$
+
+Notando que:
+
+$$
+1 + \beta(\beta - 2) = \beta^2 - 2\beta + 1 = (\beta - 1)^2
+$$
+
+y como $\beta > 2 > 1$:
+
+$$
+\sqrt{1 + \beta(\beta - 2)} = \beta - 1
+$$
+
+Por tanto:
+
+$$
+\hat{\beta}_{MM} \xrightarrow{P} 1 + (\beta - 1) = \beta
+$$
+
+Así, $\hat{\beta}_{MM}$ es consistente para $\beta$.
+
+### Paso3: Consistencia de $\hat{\alpha}_{MM}$
+
+Tenemos:
+
+$$
+\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
+$$
+
+Definimos:
+
+$$
+U_n = \bar{X}, \quad V_n = \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
+$$
+
+Sabemos:
+
+$$
+U_n \xrightarrow{P} \mu = \frac{\beta \alpha}{\beta - 1}, \quad
+\hat{\beta}_{MM} \xrightarrow{P} \beta
+$$
+
+La función $v(b) = \frac{b-1}{b}$ es continua en $b = \beta > 0$. Por el **teorema de la aplicación continua**:
+
+$$
+V_n \xrightarrow{P} \frac{\beta - 1}{\beta}
+$$
+
+Finalmente, por el **teorema de Slutsky** aplicado al producto $U_n \cdot V_n$:
+
+$$
+\hat{\alpha}_{MM} \xrightarrow{P} \mu \cdot \frac{\beta - 1}{\beta} = 
+\frac{\beta \alpha}{\beta - 1} \cdot \frac{\beta - 1}{\beta} = \alpha
+$$
+
+**Conclusión**
+Bajo las hipótesis:
+
+- $X_i \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$ con $\beta > 2$
+- Uso de la Ley Débil de los Grandes Números
+- Aplicación del teorema de la aplicación continua
+- Uso del teorema de Slutsky para productos/cocientes
+
+se ha demostrado rigurosamente que:
+
+$$
+\boxed{\hat{\alpha}_{MM} \xrightarrow{P} \alpha}
+$$
+
+Por lo tanto, $\hat{\alpha}_{MM}$ es un **estimador consistente** del parámetro de escala $\alpha$ de la distribución Pareto.  
+  
+  
+Aunque $\hat{\alpha}_{MM}$ **no es insesgado** en general (puede verificarse por expansión de Taylor o simulaciones), la propiedad de consistencia garantiza que converge al valor verdadero cuando $n \to \infty$, lo cual es suficiente para su validez asintótica.  
+
+
+
+```{r consistencia12, echo=FALSE, fig.height=4.5, fig.width=6}
+# ----------------------------------------------------------
+# SIMULACIÓN Y GRÁFICA DE CONSISTENCIA PARA alpha_MM (Pareto)
+# ----------------------------------------------------------
+
+# Parámetros verdaderos
+set.seed(123)
+alpha_true <- 2
+beta_true <- 3
+n_max <- 1000
+
+# Generar muestra completa de Pareto
+# Método: inversa de la función de distribución acumulada
+# F(x) = 1 - (alpha/x)^beta  =>  x = alpha / (1 - u)^(1/beta)
+u <- runif(n_max)
+reclamos <- alpha_true / (1 - u)^(1/beta_true)
+
+# Función para calcular alpha_MM dada una muestra
+calcular_alpha_MM <- function(x) {
+  n <- length(x)
+  x_bar <- mean(x)
+  if (n > 1) {
+    s2 <- var(x)  # var() usa n-1 en denominador
+    beta_MM <- 1 + sqrt(1 + (x_bar^2 / s2))
+  } else {
+    beta_MM <- NA  # No se puede calcular con n=1
+  }
+  alpha_MM <- x_bar * (beta_MM - 1) / beta_MM
+  return(alpha_MM)
+}
+
+# Calcular alpha_MM para diferentes tamaños de muestra
+tamanos_muestra <- seq(10, n_max, by = 10)
+alpha_estimados <- numeric(length(tamanos_muestra))
+
+for (i in seq_along(tamanos_muestra)) {
+  n_actual <- tamanos_muestra[i]
+  muestra <- reclamos[1:n_actual]
+  alpha_estimados[i] <- calcular_alpha_MM(muestra)
+}
+
+# Crear data frame para gráfico
+datos_grafico <- data.frame(
+  n = tamanos_muestra,
+  alpha_hat = alpha_estimados
+)
+
+# ----------------------------------------------------------
+# GRÁFICO DE CONSISTENCIA
+# ----------------------------------------------------------
+library(ggplot2)
+
+ggplot(datos_grafico, aes(x = n, y = alpha_hat)) +
+  # Línea de los valores estimados
+  geom_line(color = "steelblue", size = 1) +
+  # Puntos de los valores estimados
+  geom_point(color = "steelblue", size = 1.5) +
+  # Línea horizontal del valor verdadero
+  geom_hline(yintercept = alpha_true, 
+             color = "red", 
+             linetype = "dashed", 
+             size = 1,
+             alpha = 0.7) +
+  # Área de convergencia (+/- 10% del valor verdadero)
+  geom_ribbon(aes(ymin = alpha_true * 0.9, 
+                  ymax = alpha_true * 1.1),
+              fill = "green", 
+              alpha = 0.1) +
+  # Etiqueta del valor verdadero
+  annotate("text", 
+           x = max(tamanos_muestra) * 0.9, 
+           y = alpha_true + 0.05,
+           label = paste("α verdadero =", alpha_true),
+           color = "red",
+           size = 4) +
+  # Etiqueta de la banda de convergencia
+  annotate("text",
+           x = max(tamanos_muestra) * 0.9,
+           y = alpha_true * 1.05,
+           label = "Banda ±10%",
+           color = "darkgreen",
+           size = 3,
+           alpha = 0.7) +
+  # Configuración de ejes y tema
+  labs(
+    title = "Consistencia del estimador α̂ (Método de Momentos - Pareto)",
+    subtitle = paste("α =", alpha_true, ", β =", beta_true, ", n máximo =", n_max),
+    x = "Tamaño de muestra (n)",
+    y = expression(hat(alpha)[MM])
+  ) +
+  scale_x_continuous(breaks = seq(0, n_max, by = 250)) +
+  scale_y_continuous(
+    limits = c(min(alpha_estimados, alpha_true * 0.8), 
+               max(alpha_estimados, alpha_true * 1.2)),
+    breaks = seq(2.9, 3.3, by = 0.1)  # Ajusta según tus datos
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    panel.grid.major = element_line(color = "gray90"),
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
+  )
+
+# ----------------------------------------------------------
+# ANÁLISIS NUMÉRICO ADICIONAL
+# ----------------------------------------------------------
+cat("\n=== RESUMEN DE CONVERGENCIA ===\n")
+cat("Valor verdadero de α:", alpha_true, "\n")
+cat("Última estimación (n =", n_max, "):", alpha_estimados[length(alpha_estimados)], "\n")
+cat("Error relativo:", 
+    abs(alpha_estimados[length(alpha_estimados)] - alpha_true) / alpha_true * 100, "%\n")
+
+cat("\nEvolución del error con n:\n")
+n_verificar <- c(50, 100, 250, 500, 750, 1000)
+for (nv in n_verificar) {
+  idx <- which(tamanos_muestra == nv)
+  if (length(idx) > 0) {
+    error <- abs(alpha_estimados[idx] - alpha_true)
+    cat(sprintf("n = %4d: α̂ = %.4f, error = %.4f (%.2f%%)\n", 
+                nv, alpha_estimados[idx], error, error/alpha_true*100))
+  }
+}
+```
+
+
+## c) Eficiencia
+
+El estimador $\hat{\theta}$ no es **eficiente** para $\theta$ porque:
+
+**$\hat{\alpha}_{MM}$ falla en ambas:**  
+- **No es insesgado** = Ya no puede ser eficiente  
+- **Su varianza es mayor** que el mínimo teórico
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggplot2)
+set.seed(123)
+
+# Datos de comparación
+n <- c(30, 50, 100, 200, 500)
+LICR <- 2^2/(n*3^2)  # alpha²/(n*beta²)
+var_estimada <- LICR * 5.5  # alpha_MM tiene ~5.5 veces más varianza
+
+df <- data.frame(
+  n = n,
+  LICR = LICR,
+  Var_alpha_MM = var_estimada
+)
+
+ggplot(df, aes(x = n)) +
+  geom_line(aes(y = LICR, color = "Límite mínimo (LICR)"), size = 1.5) +
+  geom_line(aes(y = Var_alpha_MM, color = "Varianza de α̂_MM"), size = 1.5) +
+  geom_ribbon(aes(ymin = LICR, ymax = Var_alpha_MM), 
+              fill = "red", alpha = 0.1) +
+  labs(
+    title = "α̂_MM NO es eficiente",
+    subtitle = "Su varianza es mucho mayor que el límite mínimo teórico",
+    x = "Tamaño de muestra (n)",
+    y = "Varianza",
+    color = ""
+  ) +
+  scale_color_manual(values = c("Límite mínimo (LICR)" = "darkgreen", 
+                                "Varianza de α̂_MM" = "red")) +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  annotate("text", x = 300, y = mean(c(LICR[3], var_estimada[3])),
+           label = "Área de ineficiencia", color = "red", size = 4)
+
+```
+
+
+## d) Suficiencia
+
+Para verificar esta propiedad para el estimador se va a utilizar el teorema de Criterio de Factorización de Neyman-Fisher
+  
+**Teorema (Neyman-Fisher):** Una estadística $T(X)$ es suficiente para $\theta$ si y solo si la función de verosimilitud puede factorizarse como:
+
+$$
+L(\theta; x) = g(T(x); \theta) \cdot h(x)
+$$
+
+donde $g$ depende de los datos solo a través de $T(x)$, y $h$ no depende de $\theta$.
+
+La función de verosimilitud para la muestra es:
+
+\[
+\begin{aligned}
+L(\alpha, \beta; x) &= \prod_{i=1}^n \frac{\beta \alpha^\beta}{x_i^{\beta+1}} \mathbf{1}_{[\alpha, \infty)}(x_i) \\
+&= \beta^n \alpha^{n\beta} \left( \prod_{i=1}^n x_i \right)^{-\beta-1} \cdot \mathbf{1}_{\{x_{(1)} \geq \alpha\}}
+\end{aligned}
+\]
+
+donde $x_{(1)} = \min\{x_1, \dots, x_n\}$.
+
+Aplicando logaritmo:
+
+$$
+\ell(\alpha, \beta; x) = n\log\beta + n\beta\log\alpha - (\beta+1)\sum_{i=1}^n \log x_i + \log\mathbf{1}_{\{x_{(1)} \geq \alpha\}}
+$$
+
+Por el criterio de factorización, vemos que:
+
+$$
+T(X) = \left( x_{(1)}, \sum_{i=1}^n \log x_i \right)
+$$
+
+es **suficiente mínima** para $(\alpha, \beta)$.  
+  
+  
+**¿Es $\hat{\alpha}_{MM}$ suficiente?**  
+  
+**Observación clave:** El estimador $\hat{\alpha}_{MM}$ se expresa como:
+
+$$
+\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
+$$
+
+donde $\bar{X}$ y $\hat{\beta}_{MM}$ dependen únicamente de:  
+1. $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$  
+2. $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2$
+
+Estas estadísticas **no incluyen** información sobre $x_{(1)}$, que es componente esencial de la estadística suficiente mínima.  
+
+  
+**Conclusión**
+
+Dado que:  
+1. La estadística suficiente mínima para $(\alpha, \beta)$ es $T(X) = \left( x_{(1)}, \sum \log x_i \right)$  
+2. $\hat{\alpha}_{MM}$ no depende de $x_{(1)}$  
+3. No existe función $h$ tal que $\hat{\alpha}_{MM} = h(T(X))$ preservando toda la información sobre $\alpha$  
+  
+Se concluye que:
+
+$$
+\boxed{\hat{\alpha}_{MM} \text{ NO es un estimador suficiente para } \alpha}
+$$
+
+**Implicación**
+
+Al no ser suficiente, $\hat{\alpha}_{MM}$ **podría mejorarse** aplicando el teorema de Rao-Blackwell, condicionando sobre la estadística suficiente $T(X)$. El estimador mejorado sería:
+
+$$
+\hat{\alpha}_{RB} = E\left[ \hat{\alpha}_{MM} \mid x_{(1)}, \sum \log x_i \right]
+$$
+
+el cual tendría menor o igual varianza que $\hat{\alpha}_{MM}$.
+
+## e) Completitud
+
+Una estadística $T(X)$ es **completa** para $\alpha$ si:
+
+\[
+E_\alpha[g(T(X))] = 0 \ \forall \alpha > 0 \ \Rightarrow \ P_\alpha(g(T(X)) = 0) = 1 \ \forall \alpha > 0
+\]
+
+Es decir: si una función de $T$ tiene esperanza cero para todo $\alpha$, entonces esa función es casi seguramente cero.
+
+### Estadística completa para $\alpha$ (con $\beta$ conocido)
+
+La densidad se simplifica:
+\[
+f(x; \alpha) = \frac{\beta \alpha^\beta}{x^{\beta+1}} \mathbf{1}_{[\alpha, \infty)}(x), \quad \beta \text{ conocido}
+\]
+
+La verosimilitud es:
+\[
+L(\alpha; x) = \beta^n \alpha^{n\beta} \left( \prod_{i=1}^n x_i \right)^{-\beta-1} \cdot \mathbf{1}_{\{x_{(1)} \geq \alpha\}}
+\]
+
+Por el **criterio de factorización**:
+\[
+T(X) = X_{(1)} \quad \text{es suficiente para } \alpha
+\]
+
+Además, $X_{(1)}$ tiene densidad:
+\[
+f_{X_{(1)}}(t) = \frac{n\beta}{\alpha^{n\beta}} t^{n\beta-1} \mathbf{1}_{[\alpha, \infty)}(t), \quad t > 0
+\]
+
+Para verificar completitud, sea $g$ tal que:
+\[
+E_\alpha[g(X_{(1)})] = \int_\alpha^\infty g(t) \cdot \frac{n\beta}{\alpha^{n\beta}} t^{n\beta-1} dt = 0 \ \forall \alpha > 0
+\]
+
+Derivando respecto a $\alpha$ (bajo condiciones de regularidad):
+\[
+\frac{d}{d\alpha} E_\alpha[g(X_{(1)})] = -g(\alpha) \cdot \frac{n\beta}{\alpha} = 0 \ \forall \alpha > 0
+\]
+
+Por tanto $g(\alpha) = 0$ para todo $\alpha > 0$. Luego:
+
+\[
+\boxed{X_{(1)} \text{ es completa para } \alpha \text{ cuando } \beta \text{ es conocido}}
+\]
+
+**¿$\hat{\alpha}_{MM}$ es función de una estadística completa?**  
+  
+**NO**, porque:
+
+1. La estadística completa para $\alpha$ (con $\beta$ conocido) es $X_{(1)}$
+2. $\hat{\alpha}_{MM}$ depende de $\bar{X}$ y $S^2$
+3. $\hat{\alpha}_{MM}$ **no puede expresarse como función de $X_{(1)}$ solamente**
+
+## f) Optimalidad  
+
+  
+El estimador $\hat{\alpha}_{MM}$ obtenido por método de momentos para el parámetro de escala $\alpha$ de la distribución Pareto **no es óptimo** por tres razones fundamentales que se encadenan lógicamente. Primero, el estimador **no es insesgado**, lo que significa que en promedio no coincide con el valor verdadero del parámetro $\alpha$; esto ya lo descalifica como candidato a óptimo bajo el marco clásico que busca minimizar la varianza entre estimadores insesgados.
+
+Segundo, y más importante, $\hat{\alpha}_{MM}$ **no utiliza toda la información relevante** contenida en la muestra sobre el parámetro $\alpha$: ignora completamente el valor mínimo muestral $X_{(1)}$, que es la estadística suficiente y completa para $\alpha$ cuando el parámetro de forma $\beta$ es conocido. Al basarse únicamente en la media muestral $\bar{X}$ y la varianza muestral $S^2$, desperdicia la pieza de información más crucial para estimar el límite inferior de la distribución
+
+ Tercero, como consecuencia directa de lo anterior, **existe otro estimador claramente superior**: el estimador $\hat{\alpha}_{EIVUM} = \frac{n\beta-1}{n\beta} X_{(1)}$, que sí es insesgado, está basado en la estadística suficiente y completa $X_{(1)}$, y por el teorema de Lehmann-Scheffé posee varianza mínima entre todos los estimadores insesgados. Por lo tanto, aunque $\hat{\alpha}_{MM}$ es consistente (converge al valor verdadero cuando el tamaño de muestra crece), no cumple las condiciones necesarias para ser considerado óptimo en el sentido estadístico riguroso de tener mínima varianza entre los estimadores insesgados.
+ 
+
+ 
+## 1.4.2. Propiedades del Estimador $\hat{\beta}_{MM}$
+
+#### **a) Insesgamiento:**
+
+Un estimador $\hat{\beta}$ es **insesgado** si su esperanza coincide con el parámetro verdadero:
+
+$$
+E(\hat{\beta})=\beta.
+$$
+
+En nuestro caso, el estimador de método de momentos para $\beta$ es:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ es la media muestral y $S^2$ es la varianza muestral.
+
+Como $\hat{\beta}_{MM}$ es una **función no lineal** de $(\bar X,S^2)$, no se espera que cumpla en general que:
+
+$$
+E\left(1+\sqrt{1+\frac{\bar X^2}{S^2}}\right)=1+\sqrt{1+\frac{E(\bar X)^2}{E(S^2)}},
+$$
+
+por lo que **no es insesgado en muestras finitas**.  
+Para verificarlo de manera empírica, estimamos el sesgo mediante simulación Monte Carlo:
+
+$$
+\text{Sesgo}(\hat{\beta}_{MM}) = E(\hat{\beta}_{MM})-\beta.
+$$
+
+```{r, echo=FALSE, }
+# ============================================================
+# INSesgamiento: SESGO EMPÍRICO DEL ESTIMADOR MM PARA BETA
+# ============================================================
+
+set.seed(123)
+B <- 3000
+n <- length(reclamos)
+
+betaMM_sim <- numeric(B)
+
+for(b in 1:B){
+  x <- alpha_true / (1 - runif(n))^(1/beta_true)
+  xbar <- mean(x)
+  s2   <- var(x)
+  betaMM_sim[b] <- 1 + sqrt(1 + (xbar^2 / s2))
+}
+
+sesgo_betaMM <- mean(betaMM_sim) - beta_true
+sesgo_betaMM
+
+```
+
+
+```{r}
+library(ggplot2)
+
+df_betaMM <- data.frame(betaMM = betaMM_sim)
+
+ggplot(df_betaMM, aes(x = betaMM)) +
+geom_density(fill = "skyblue", alpha = 0.6) +
+geom_vline(xintercept = beta_true, linetype = "dashed", 
+           color = "red", linewidth = 1) +
+labs(title = "Insesgamiento del Estimador MM para β",
+subtitle = "Si fuese insesgado, la distribución estaría centrada 
+exactamente en β",
+x = "Estimaciones de β (MM)",
+y = "Densidad") +
+theme_minimal()
+
+```
+
+
+**Conclusión:**
+
+Dado que $E(\hat{\beta}{MM})\neq\beta$ (sesgo empírico distinto de 0), se concluye que el estimador $\hat{\beta}{MM}$ no es insesgado en muestras finitas.
+
+
+
+
+#### **b) Consistencia:**
+
+Un estimador $\hat{\beta}_n$ es **consistente** para el parámetro $\beta$ si converge en probabilidad al valor verdadero cuando el tamaño muestral tiende a infinito, es decir,
+
+$$
+\hat{\beta}_n \xrightarrow{p} \beta \quad \text{cuando } n \to \infty.
+$$
+
+El estimador de método de momentos para el parámetro $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ y $S^2$ representan la media y la varianza muestral, respectivamente.
+
+Para la distribución Pareto con $\beta>2$, se cumple que:
+
+$$
+\bar X \xrightarrow{p} E(X),
+\qquad
+S^2 \xrightarrow{p} \operatorname{Var}(X),
+$$
+
+por la Ley de los Grandes Números y la consistencia de la varianza muestral cuando la varianza existe.
+
+Definiendo la función:
+
+$$
+g(u,v)=1+\sqrt{1+\frac{u^2}{v}},
+$$
+
+la cual es continua para $v>0$, y dado que:
+
+$$
+\hat{\beta}_{MM}=g(\bar X,S^2),
+$$
+
+por el **Teorema de la Función Continua** se obtiene:
+
+$$
+\hat{\beta}_{MM}
+\xrightarrow{p}
+g\big(E(X),\operatorname{Var}(X)\big)
+=
+\beta.
+$$
+
+Por lo tanto, el estimador de método de momentos $\hat{\beta}_{MM}$ es **consistente** para el parámetro $\beta$.
+
+Para visualizar esta propiedad, se analiza el comportamiento del estimador al aumentar el tamaño muestral.
+
+
+```{r, echo=FALSE}
+# ============================================================
+# CONSISTENCIA: CONVERGENCIA DEL ESTIMADOR MM
+# ============================================================
+
+n_seq <- seq(20, 1000, by = 10)
+betaMM_path <- numeric(length(n_seq))
+
+for(i in seq_along(n_seq)){
+  k <- n_seq[i]
+  x_sub <- reclamos[1:k]
+  betaMM_path[i] <- 1 + sqrt(1 + (mean(x_sub)^2 / var(x_sub)))
+}
+
+df_cons <- data.frame(n = n_seq, betaMM = betaMM_path)
+
+library(ggplot2)
+ggplot(df_cons, aes(x = n, y = betaMM)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = beta_true, linetype = "dashed", color = "red", linewidth = 1) +
+  labs(title = "Consistencia del Estimador MM para β",
+       subtitle = "Convergencia en probabilidad al valor verdadero al aumentar n",
+       x = "Tamaño de muestra (n)",
+       y = "Estimación de β") +
+  theme_minimal()
+
+```
+
+**Conclusión:**
+
+Al cumplirse que $\bar X \xrightarrow{p} E(X)$ y $S^2 \xrightarrow{p} \operatorname{Var}(X)$, y dado que $\hat{\beta}{MM}$ es una función continua de estos estadísticos, se concluye que el estimador $\hat{\beta}{MM}$ es consistente para el parámetro $\beta$.
+
+
+
+
+#### **c) Suficiencia:**
+
+Un estadístico $T=T(X_1,\dots,X_n)$ es **suficiente** para un parámetro $\beta$ si la distribución condicional de la muestra, dado $T$, no depende de dicho parámetro.
+
+El estimador de método de momentos para $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ y $S^2$ corresponden a la media y varianza muestral, respectivamente.
+
+En la distribución Pareto, cuando ambos parámetros $\alpha$ y $\beta$ son desconocidos, la estadística suficiente para $\beta$ está asociada a la estructura de la función de verosimilitud y viene dada por funciones del estadístico
+
+$$
+T = \sum_{i=1}^{n} \ln\left(\frac{X_i}{X_{(1)}}\right).
+$$
+
+Dado que el estimador $\hat{\beta}_{MM}$ depende únicamente de $(\bar X,S^2)$ y no es función del estadístico suficiente $T$, se concluye que **no se basa en una estadística suficiente** para el parámetro $\beta$.
+
+**Conclusión:**
+
+El estimador $\hat{\beta}_{MM}$ **no es suficiente**.
+
+
+
+
+#### **d) Ancilaridad**
+
+Un estadístico $T$ se denomina **ancilar** si su distribución no depende del parámetro de interés. Es decir, $T$ es ancilar para $\beta$ si la ley de probabilidad de $T$ es independiente de $\beta$.
+
+El estimador de método de momentos para el parámetro $\beta$ está definido como:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}}.
+$$
+
+Este estimador está construido con el objetivo explícito de aproximar el valor del parámetro $\beta$. En consecuencia, su distribución muestral depende del valor de dicho parámetro.
+
+Por lo tanto, la distribución de $\hat{\beta}_{MM}$ **no es invariante respecto a $\beta$**, lo que implica que el estimador no cumple la propiedad de ancilaridad.
+
+**Conclusión:**
+
+El estimador $\hat{\beta}_{MM}$ **no es ancilar**.
+
+
+
+
+#### **e) Completitud**
+
+La **completitud** es una propiedad que se define para **estadísticas suficientes**.  
+Un estadístico suficiente $T$ para un parámetro $\beta$ es completo si, para toda función medible $g(\cdot)$, se cumple que:
+
+$$
+E_\beta[g(T)] = 0 \ \text{para todo } \beta
+\quad \Longrightarrow \quad
+P_\beta\big(g(T)=0\big)=1.
+$$
+
+Esta propiedad resulta fundamental en la teoría de la estimación óptima, ya que permite garantizar la unicidad del estimador insesgado de varianza mínima mediante el Teorema de Lehmann--Scheffé.
+
+En el presente caso, el estimador de método de momentos para el parámetro $\beta$ está dado por:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+el cual depende de la media y la varianza muestral $(\bar X, S^2)$.  
+Sin embargo, como se mostró en la sección anterior, estos estadísticos **no constituyen una estadística suficiente** para el parámetro $\beta$ en la distribución Pareto.
+
+Por lo tanto, **no corresponde analizar la propiedad de completitud** para el estimador $\hat{\beta}_{MM}$, ya que dicha propiedad solo es aplicable a estadísticas suficientes.
+
+**Conclusión:**
+
+La propiedad de completitud **no aplica** al estimador de método de momentos $\hat{\beta}_{MM}$.
+
+
+
+
+
+#### **f) Optimalidad:**  
+
+Un estimador se considera **óptimo** si alcanza la mínima varianza posible dentro de una clase determinada de estimadores, usualmente dentro de la clase de estimadores insesgados.
+
+El estimador de método de momentos para el parámetro $\beta$ se obtiene igualando momentos teóricos y muestrales, sin hacer uso de la función de verosimilitud ni de la estructura de la distribución muestral completa. En consecuencia, el método de momentos **no garantiza eficiencia ni mínima varianza**.
+
+Además, como se mostró previamente, el estimador $\hat{\beta}_{MM}$ **no es insesgado** en muestras finitas, lo que impide que pueda ser considerado óptimo bajo criterios clásicos de optimalidad, como los establecidos por el Teorema de Lehmann--Scheffé.
+
+Por el contrario, el estimador EIVUM obtenido en la sección correspondiente es insesgado, función de una estadística suficiente y completa, y por tanto posee varianza uniformemente mínima dentro de su clase.
+
+
+**Conclusión:**
+
+El estimador de método de momentos $\hat{\beta}_{MM}$ **no es óptimo** para el parámetro $\beta$ de la distribución Pareto.
+
+
 ## 1.5 Estimador : Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM) para el parámetro $\beta$
 
 Dado que en la sección anterior se determinó que el Estimador de Máxima
@@ -1005,6 +2149,7 @@ estimación. Esto es consecuencia directa de dos factores:
     que minimiza la varianza.
 2.  El tamaño de muestra grande ($n=1000$), que reduce el error
     estándar.
+
 
 
 
