@@ -2087,13 +2087,11 @@ P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1
 \end{array}
 $$
 
-## 2.5 Intervalos de Confianza para $\beta$ con el EIVUM
+
+## 2.5 Estimador 5 (para $\beta$ con el EIVUM)
 
 Para la construcción del intervalo de confianza para el parámetro de
-forma $\beta$, se emplea el **Método de la Cantidad Pivotal**. Este
-procedimiento utiliza la distribución muestral de la estadística
-suficiente $T$, lo que garantiza que el intervalo resultante sea exacto.
-
+forma $\beta$, usaremos el **Método de la Cantidad Pivotal**. 
 
 ### 2.5.1 Deducción de la Cantidad Pivotal
 
@@ -2152,7 +2150,7 @@ IC(\beta) = \left[ \frac{\chi^2_{\alpha/2, \, 2(n-1)}}{2T} \, ; \, \frac{\chi^2_
 $$
 
 
-### 2.5.3 Aplicación a la Base de Datos Simulada
+### 2.5.3 Aplicación 
 
 A continuación, aplicamos este método a nuestra base de datos `reclamos`
 generada en la simulación ($n=1000$, $\alpha=2$, $\beta=3$).
