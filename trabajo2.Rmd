@@ -50,7 +50,7 @@ Villanueva Huamani Alexander Ruben & 20230419 \\
 \hline
 \end{tabular}
 
-\vspace{1.5cm}
+\vspace{1.3cm}
 \textbf{Docente:} Fernando Miranda Villagómez
 
 \vspace{1cm}
@@ -526,12 +526,12 @@ suficiente y completo.
 una población Pareto, aunque sea fácil de calcular e insesgado.
 
 
+
 ## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto 
 
-El método de momentos consiste en igualar los $k$ primeros momentos poblacionales con los correspondientes momentos muestrales, donde $k$ es el número de parámetros a estimar. 
-Para la distribución Pareto con dos parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
+El método de momentos consiste en igualar los $k$ primeros momentos poblacionales con los correspondientes momentos muestrales, donde $k$ es el número de parámetros a estimar. Para la distribución Pareto con dos parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
 
-### PASO 1: Definición de la distribución Pareto  
+### Definición de la distribución Pareto  
 
 Sea $X \sim \text{Pareto}(\alpha, \beta)$ con función de densidad:
 
@@ -539,9 +539,9 @@ $$
 f_X(x; \alpha, \beta) = \frac{\beta \alpha^\beta}{x^{\beta+1}}, \quad x \geq \alpha > 0, \ \beta > 0
 $$
 
-### PASO 2: Cálculo del primer momento poblacional $E[X]$
+### P1: Cálculo del primer momento poblacional $E[X]$
 
-### 2.1 Planteamiento de la integral
+#### Planteamiento de la integral
 
 $$
 E[X] = \int_{\alpha}^{\infty} x \cdot f_X(x) \, dx 
@@ -574,7 +574,7 @@ $$
 \frac{\alpha^{1-\beta}}{1-\beta}
 $$
 
-### 2.2 Resultado del primer momento
+### Resultado del primer momento
 
 $$
 E[X] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{1-\beta}}{1-\beta} \right)
@@ -587,9 +587,9 @@ $$
 \boxed{E[X] = \frac{\alpha\beta}{\beta-1}}, \quad \beta > 1
 $$
 
-## PASO 3: Cálculo del segundo momento poblacional $E[X^2]$
+### P2:Cálculo del segundo momento poblacional $E[X^2]$
 
-### 3.1 Planteamiento de la integral
+#### Planteamiento de la integral
 
 
 $$
@@ -619,7 +619,7 @@ $$
 \frac{\alpha^{2-\beta}}{2-\beta}
 $$
   
-### 3.2 Resultado del segundo momento
+### Resultado del segundo momento
 $$
 E[X^2] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{2-\beta}}{2-\beta} \right)
        = \beta \alpha^\beta \cdot \frac{\alpha^{2-\beta}}{\beta-2}
@@ -631,23 +631,23 @@ $$
 \boxed{E[X^2] = \frac{\alpha^2\beta}{\beta-2}}, \quad \beta > 2
 $$
 
-## PASO 4: Momentos muestrales
+### P3: Momentos muestrales
 
 Dada una muestra aleatoria $X_1, X_2, \dots, X_n \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$:
 
-### 4.1 Primer momento muestral (media muestral)
+#### Primer momento muestral (media muestral)
 
 $$
 \bar{X} = \frac{1}{n} \sum_{i=1}^n X_i
 $$
 
-### 4.2 Segundo momento muestral
+#### Segundo momento muestral
 
 $$
 m_2 = \frac{1}{n} \sum_{i=1}^n X_i^2
 $$
 
-### 4.3 Varianza muestral (relacionada)
+#### Varianza muestral (relacionada)
 
 $$
 S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2
@@ -658,7 +658,7 @@ $$
 m_2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
 $$
 
-## PASO 5: Sistema de ecuaciones del método de momentos
+### P4: Sistema de ecuaciones del método de momentos
 
 Igualamos momentos poblacionales con momentos muestrales:
 
@@ -669,9 +669,9 @@ $$
 \end{cases}
 $$
 
-## PASO 6: Resolución del sistema
+### Resolución del sistema
 
-### 6.1 Despejar $\alpha$ de la Ecuación I
+#### Despejar $\alpha$ de la Ecuación I
 
 De (I):
 $$
@@ -683,14 +683,14 @@ $$
 \boxed{\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}} \quad \text{(Ecuación III)}
 $$
 
-### 6.2 Sustituir en la Ecuación II
+#### Sustituir en la Ecuación II
 
 Sustituyendo (III) en (II):
 $$
 \frac{\left(\bar{X} \cdot \frac{\beta-1}{\beta}\right)^2 \beta}{\beta-2} = m_2
 $$
 
-### 6.3 Simplificación algebraica
+#### Simplificación algebraica
 
 $$
 \frac{\bar{X}^2 \cdot \frac{(\beta-1)^2}{\beta^2} \cdot \beta}{\beta-2} = m_2
@@ -705,7 +705,7 @@ $$
 \frac{(\beta-1)^2}{\beta(\beta-2)} = \frac{m_2}{\bar{X}^2} \quad \text{(Ecuación IV)}
 $$
 
-## PASO 7: Definición de R
+### P5: Definición de R
 
 Sea:
 $$
@@ -717,9 +717,9 @@ $$
 \frac{(\beta-1)^2}{\beta(\beta-2)} = R
 $$
 
-## PASO 8: Resolución de la ecuación en $\beta$
+### P6: Resolución de la ecuación en $\beta$
 
-### 8.1 Eliminar fracción
+#### Eliminar fracción
 
 Multiplicando en cruz:
 $$
@@ -727,7 +727,7 @@ $$
 $$
 
 
-### 8.2 Expandir ambos lados
+#### Expandir ambos lados
 
 **Lado izquierdo:**
 $$
@@ -739,7 +739,7 @@ $$
 R\beta(\beta-2) = R\beta^2 - 2R\beta
 $$
 
-### 8.3 Igualar y reordenar
+#### Igualar y reordenar
 
 $$
 \beta^2 - 2\beta + 1 = R\beta^2 - 2R\beta
@@ -755,7 +755,7 @@ $$
 (1 - R)\beta^2 + 2(R - 1)\beta + 1 = 0
 $$
 
-### 8.4 Forma estándar de ecuación cuadrática
+#### Forma estándar de ecuación cuadrática
 
 Multiplicando por -1 para mayor claridad:
 $$
@@ -767,7 +767,7 @@ $$
 (R-1)(\beta^2 - 2\beta) - 1 = 0
 $$
 
-### 8.6 Aplicar fórmula general
+#### Aplicar fórmula general
 
 Para una ecuación $a\beta^2 + b\beta + c = 0$:
 - $a = 1$
@@ -786,15 +786,15 @@ $$
 \beta = 1 \pm \sqrt{1 + \frac{1}{R-1}}
 $$
 
-## PASO 9: Selección de la raíz apropiada
+### P7: Selección de la raíz apropiada
 
-### 9.1 Consideraciones físicas
+#### Consideraciones físicas
 
 1. $\beta > 0$ (parámetro de forma positivo)
 2. Para la existencia de $E[X]$: $\beta > 1$
 3. Para la existencia de $Var(X)$: $\beta > 2$
 
-### 9.2 Análisis de las raíces
+#### Análisis de las raíces
 
 - Raíz 1: $\beta_1 = 1 + \sqrt{1 + \frac{1}{R-1}} > 1$ ✓
 - Raíz 2: $\beta_2 = 1 - \sqrt{1 + \frac{1}{R-1}} < 1$ ✗ (no cumple $\beta > 1$)
@@ -804,35 +804,46 @@ $$
 \hat{\beta}_{MM} = 1 + \sqrt{1 + \frac{1}{R-1}}
 $$
 
-## PASO 10: Relación con el coeficiente de variación
+### P8: Relación con el coeficiente de variación
 
-### 10.1 Expresión de R en términos de $S^2$
+#### Expresión de R en términos de $S^2$
+
 
 Recordemos que:
+
 $$
 m_2 = \frac{1}{n} \sum X_i^2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
 $$
 
+
 Entonces:
+
 $$
 R = \frac{m_2}{\bar{X}^2} = \frac{S^2}{\bar{X}^2} \cdot \frac{n-1}{n} + 1
 $$
 
-### 10.2 Aproximación para n grande
+
+#### Aproximación para n grande
+
 
 Para $n$ suficientemente grande, $\frac{n-1}{n} \approx 1$, entonces:
+
 $$
 R \approx \frac{S^2}{\bar{X}^2} + 1 = 1 + \left(\frac{S}{\bar{X}}\right)^2
 $$
 
-### 10.3 Sustitución en la fórmula 
+
+
+#### Sustitución en la fórmula 
 
 Si $R \approx 1 + \left(\frac{S}{\bar{X}}\right)^2$, entonces:
 $$
 R - 1 \approx \left(\frac{S}{\bar{X}}\right)^2
 $$
 
+
 Y:
+
 $$
 \frac{1}{R-1} \approx \left(\frac{\bar{X}}{S}\right)^2
 $$
@@ -842,30 +853,35 @@ $$
 \hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}
 $$
 
-## PASO 11: Obtención del estimador para 
+### P9: Obtención del estimador
 
-### 11.1 Retomando la Ecuación III
+
+#### Retomando la Ecuación III
+
 
 De la Ecuación III:
+
 $$
 \alpha = \bar{X} \cdot \frac{\beta-1}{\beta}
 $$
 
-### 11.2 Sustitución
+#### Sustitución
+
 
 Sustituyendo $\hat{\beta}_{MM}$:
+
 $$
 \hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
 $$
 
-## PASO 12: Resumen final de estimadores
+### P10: Resumen final de estimadores
 
-### Estimador para el parámetro de forma $\beta$:
+#### Estimador para el parámetro de forma $\beta$:
 $$
 \boxed{\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}}
 $$
 
-### Estimador para el parámetro de escala $\alpha$:
+#### Estimador para el parámetro de escala $\alpha$:
 $$
 \boxed{\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}}
 $$
@@ -946,7 +962,7 @@ El estimador $\hat{\alpha}_{MM}$ sobrestima sistemáticamente el parámetro $\al
 **Conclusión:** $\hat{\alpha}_{MM}$ **no es un estimador insesgado** para el parámetro $\alpha$ de la distribución Pareto. Aunque podría ser aproximadamente insesgado para muestras muy grandes, para $n=1000$ observamos sesgo significativo.
 
 
-## b) Consistencia
+### b) Consistencia
 
 **Definición:** Un estimador es consistente si cuando n tiende al infinito, se acerca al valor verdader
 Demostrar que $\hat{\alpha}_{MM}$ es **consistente** para $\alpha$, es decir:
@@ -955,7 +971,7 @@ $$
 \hat{\alpha}_{MM} \xrightarrow{P} \alpha \quad \text{cuando } n \to \infty
 $$
 
-### Paso 1: Consistencia de $\bar{X}$ y $S^2$
+#### Consistencia de $\bar{X}$ y $S^2$
 
 Por la **Ley Débil de los Grandes Números (LGN)** para variables i.i.d. con primer momento finito:
 
@@ -969,7 +985,7 @@ $$
 S^2 \xrightarrow{P} \sigma^2
 $$
 
-### Paso2: Consistencia de $\hat{\beta}_{MM}$
+#### Consistencia de $\hat{\beta}_{MM}$
 
 Definimos:
 
@@ -1022,7 +1038,7 @@ $$
 
 Así, $\hat{\beta}_{MM}$ es consistente para $\beta$.
 
-### Paso3: Consistencia de $\hat{\alpha}_{MM}$
+#### Consistencia de $\hat{\alpha}_{MM}$
 
 Tenemos:
 
@@ -1205,7 +1221,7 @@ for (nv in n_verificar) {
 ```
 
 
-## c) Eficiencia
+### c) Eficiencia
 
 El estimador $\hat{\theta}$ no es **eficiente** para $\theta$ porque:
 
@@ -1251,7 +1267,7 @@ ggplot(df, aes(x = n)) +
 ```
 
 
-## d) Suficiencia
+### d) Suficiencia
 
 Para verificar esta propiedad para el estimador se va a utilizar el teorema de Criterio de Factorización de Neyman-Fisher
   
@@ -1327,7 +1343,7 @@ $$
 
 el cual tendría menor o igual varianza que $\hat{\alpha}_{MM}$.
 
-## e) Completitud
+### e) Completitud
 
 Una estadística $T(X)$ es **completa** para $\alpha$ si:
 
@@ -1383,7 +1399,7 @@ Por tanto $g(\alpha) = 0$ para todo $\alpha > 0$. Luego:
 2. $\hat{\alpha}_{MM}$ depende de $\bar{X}$ y $S^2$
 3. $\hat{\alpha}_{MM}$ **no puede expresarse como función de $X_{(1)}$ solamente**
 
-## f) Optimalidad  
+### f) Optimalidad  
 
   
 El estimador $\hat{\alpha}_{MM}$ obtenido por método de momentos para el parámetro de escala $\alpha$ de la distribución Pareto **no es óptimo** por tres razones fundamentales que se encadenan lógicamente. Primero, el estimador **no es insesgado**, lo que significa que en promedio no coincide con el valor verdadero del parámetro $\alpha$; esto ya lo descalifica como candidato a óptimo bajo el marco clásico que busca minimizar la varianza entre estimadores insesgados.
@@ -1396,7 +1412,7 @@ Segundo, y más importante, $\hat{\alpha}_{MM}$ **no utiliza toda la informació
  
 ## 1.4.2. Propiedades del Estimador $\hat{\beta}_{MM}$
 
-#### **a) Insesgamiento:**
+### a) Insesgamiento:
 
 Un estimador $\hat{\beta}$ es **insesgado** si su esperanza coincide con el parámetro verdadero:
 
@@ -1476,8 +1492,7 @@ Dado que $E(\hat{\beta}{MM})\neq\beta$ (sesgo empírico distinto de 0), se concl
 
 
 
-
-#### **b) Consistencia:**
+### b) Consistencia:
 
 Un estimador $\hat{\beta}_n$ es **consistente** para el parámetro $\beta$ si converge en probabilidad al valor verdadero cuando el tamaño muestral tiende a infinito, es decir,
 
@@ -1566,8 +1581,7 @@ Al cumplirse que $\bar X \xrightarrow{p} E(X)$ y $S^2 \xrightarrow{p} \operatorn
 
 
 
-
-#### **c) Suficiencia:**
+### c) Suficiencia:
 
 Un estadístico $T=T(X_1,\dots,X_n)$ es **suficiente** para un parámetro $\beta$ si la distribución condicional de la muestra, dado $T$, no depende de dicho parámetro.
 
@@ -1596,7 +1610,7 @@ El estimador $\hat{\beta}_{MM}$ **no es suficiente**.
 
 
 
-#### **d) Ancilaridad**
+### d) Ancilaridad
 
 Un estadístico $T$ se denomina **ancilar** si su distribución no depende del parámetro de interés. Es decir, $T$ es ancilar para $\beta$ si la ley de probabilidad de $T$ es independiente de $\beta$.
 
@@ -1619,7 +1633,7 @@ El estimador $\hat{\beta}_{MM}$ **no es ancilar**.
 
 
 
-#### **e) Completitud**
+### e) Completitud
 
 La **completitud** es una propiedad que se define para **estadísticas suficientes**.  
 Un estadístico suficiente $T$ para un parámetro $\beta$ es completo si, para toda función medible $g(\cdot)$, se cumple que:
@@ -1653,7 +1667,7 @@ La propiedad de completitud **no aplica** al estimador de método de momentos $\
 
 
 
-#### **f) Optimalidad:**  
+### f) Optimalidad:
 
 Un estimador se considera **óptimo** si alcanza la mínima varianza posible dentro de una clase determinada de estimadores, usualmente dentro de la clase de estimadores insesgados.
 
@@ -1667,6 +1681,10 @@ Por el contrario, el estimador EIVUM obtenido en la sección correspondiente es 
 **Conclusión:**
 
 El estimador de método de momentos $\hat{\beta}_{MM}$ **no es óptimo** para el parámetro $\beta$ de la distribución Pareto.
+
+
+
+
 
 
 ## 1.5 Estimador : Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM) para el parámetro $\beta$
