@@ -3340,8 +3340,7 @@ Q_{cal} = 2\beta_0 T = 2\beta_0 \sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \ri
 $$
 
 Sabemos que bajo $H_0$: $$
-Q_{cal} \sim \chi^2_{(2(n-1))}
-$$
+Q_{cal} \sim \chi^2_{(2(n-1))} $$
 
 ### 4.5.3 Regla de Decisión
 
@@ -3461,4 +3460,5 @@ generados son consistentes con el verdadero parámetro poblacional
 utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
+
 
