@@ -34,19 +34,19 @@ editor_options:
 \hline
 \textbf{Integrante} & \textbf{Código} \\
 \hline
-Montúfar Paiva Yeraldi Mercedes & 20230400 \\
-\hline
-Kay Daniela L. Zavala Malpartida & 20230420 \\
-\hline
-Rojas Taco Fabiana & 20220956  \\
-\hline
-Paucar Arango Marcos David Alexander & 20221412  \\
-\hline
 Castillo Ruiz Mauricio Gabriel & 20230384 \\
 \hline
 Gómez Vigo Héctor Estefano & 20230397 \\
 \hline
+Montúfar Paiva Yeraldi Mercedes & 20230400 \\
+\hline
+Paucar Arango Marcos David Alexander & 20221412 \\
+\hline
+Rojas Taco Fabiana & 20220956 \\
+\hline
 Villanueva Huamani Alexander Ruben & 20230419 \\
+\hline
+Zavala Malpartida Kay Daniela L. & 20230420 \\
 \hline
 \end{tabular}
 
@@ -1547,7 +1547,7 @@ Por lo tanto, el estimador de método de momentos $\hat{\beta}_{MM}$ es **consis
 Para visualizar esta propiedad, se analiza el comportamiento del estimador al aumentar el tamaño muestral.
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,warning=FALSE}
 # ============================================================
 # CONSISTENCIA: CONVERGENCIA DEL ESTIMADOR MM
 # ============================================================
@@ -1930,7 +1930,7 @@ Verificación:
 $\hat{\beta}_{EIVUM}$ converge en probabilidad al parámetro $\beta$, por
 lo que es un estimador consistente.
 
-```{r , echo = F, fig.align='center'}
+```{r , echo = F, fig.align='center',warning=FALSE}
 # =============================================================================
 # GRÁFICO: CONSISTENCIA DEL EIVUM (CONVERGENCIA)
 # =============================================================================
@@ -2323,7 +2323,7 @@ Se rechaza $H_0$ si $|Z_{calc}| > Z_{1-\alpha/2}$, donde $Z_{0.975} = 1.96$. Alt
 
 Para darle mayor peso al análisis, incluiremos una gráfica de la densidad normal que muestre la ubicación de nuestro estadístico respecto a la zona de rechazo.
 
-```{r prueba_d_robusta, echo=TRUE, fig.height=5}
+```{r prueba_d_robusta, echo=TRUE, fig.height=5,warning=FALSE}
 # 1. Configuración de parámetros
 mu_0 <- 3
 n <- length(reclamos)
@@ -2363,3 +2363,140 @@ ggplot(df_plot, aes(x = x, y = y)) +
 4.  **Relación con el Intervalo de Confianza:** Esta conclusión refuerza lo hallado en el punto 2.3. Se cumple la propiedad de **Dualidad de la Inferencia**: un valor de hipótesis nula $\mu_0$ no se rechaza al nivel $\alpha$ si y solo si dicho valor está contenido en el intervalo de confianza del $(1-\alpha)100\%$.
 
 
+
+
+
+
+
+## 4.5 Prueba de Hipótesis para $\beta$ con el EIVUM
+
+Utilizando el estimador EIVUM y la cantidad pivotal deducida anteriormente, procederemos a verificar una hipótesis sobre el parámetro de forma $\beta$.
+
+### 4.5.1 Planteamiento de la Hipótesis
+
+Dado que en nuestra simulación el valor verdadero es 3, plantearemos una prueba bilateral para verificar si la evidencia muestral soporta este valor:
+
+$$
+\begin{cases}
+H_0: \beta = 3 \\
+H_1: \beta \neq 3
+\end{cases}
+$$
+
+### 4.5.2 Estadístico de Prueba
+
+Bajo el supuesto de que la Hipótesis Nula ($H_0$) es cierta ($\beta = \beta_0$), utilizamos la cantidad pivotal $Q$ como nuestro estadístico de prueba.
+
+$$
+Q_{cal} = 2\beta_0 T = 2\beta_0 \sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \right)
+$$
+
+Sabemos que bajo $H_0$:
+$$
+Q_{cal} \sim \chi^2_{(2(n-1))}
+$$
+
+### 4.5.3 Regla de Decisión
+
+Para un nivel de significancia $\alpha = 0.05$, rechazaremos $H_0$ si el estadístico calculado cae en la región de rechazo (colas de la distribución):
+
+* **Rechazar $H_0$ si:** $Q_{cal} < \chi^2_{\alpha/2}$  ó  $Q_{cal} > \chi^2_{1-\alpha/2}$
+* **No Rechazar $H_0$ si:** $\chi^2_{\alpha/2} \le Q_{cal} \le \chi^2_{1-\alpha/2}$
+
+Donde los grados de libertad son $gl = 2(n-1)$.
+
+### 4.5.4 Aplicación a la Base de Datos Simulada
+
+```{r prueba_hipotesis_beta, echo=TRUE}
+# ==============================================================================
+# PRUEBA DE HIPÓTESIS EXACTA PARA BETA (MÉTODO DEL PIVOTE)
+# ==============================================================================
+
+# 1. Datos y Parámetros
+datos_ph <- reclamos
+n <- length(datos_ph)
+beta_hipotesis <- 3  # Valor bajo H0
+alfa <- 0.05
+
+# 2. Cálculo del Estadístico de Prueba
+# a) Estadística Suficiente T
+x_min <- min(datos_ph)
+T_stat <- sum(log(datos_ph / x_min))
+
+# b) Estadístico Pivotal Q (Bajo H0)
+Q_cal <- 2 * beta_hipotesis * T_stat
+
+# 3. Valores Críticos (Chi-Cuadrado)
+gl <- 2 * (n - 1)
+chi_inf <- qchisq(alfa / 2, df = gl)
+chi_sup <- qchisq(1 - alfa / 2, df = gl)
+
+# 4. Cálculo del P-valor (Bilateral)
+# p = 2 * min(P(X < Q), P(X > Q))
+p_val_lower <- pchisq(Q_cal, df = gl)
+p_val_upper <- 1 - pchisq(Q_cal, df = gl)
+p_valor <- 2 * min(p_val_lower, p_val_upper)
+
+# Decisión Automática
+decision <- ifelse(p_valor < alfa, "Rechazar H0", "No Rechazar H0")
+
+# 5. Reporte de Resultados (Estilo limpio)
+cat(
+  "PRUEBA DE HIPÓTESIS PARA BETA (H0: B=3)\n\n",
+  "Estadístico T: ", round(T_stat, 4), "\n",
+  "Estadístico Q (Calc): ", round(Q_cal, 4), "\n",
+  "Grados de Libertad: ", gl, "\n\n",
+  "Valor Crítico Inf: ", round(chi_inf, 4), "\n",
+  "Valor Crítico Sup: ", round(chi_sup, 4), "\n\n",
+  "P-valor: ", format(p_valor, scientific = FALSE), "\n",
+  "Decisión al 5%: ", decision, "\n"
+)
+
+```
+
+```{r , echo = F, fig.align='center',warning=FALSE}
+# --- GRÁFICO DE LA PRUEBA ---
+library(ggplot2)
+
+# Crear datos para la curva Chi-cuadrado
+x_vals <- seq(min(chi_inf) - 100, max(chi_sup) + 100, length.out = 1000)
+y_vals <- dchisq(x_vals, df = gl)
+df_plot <- data.frame(x = x_vals, y = y_vals)
+
+# Graficar
+ggplot(df_plot, aes(x = x, y = y)) +
+  # Curva de densidad
+  geom_line(color = "black", linewidth = 1) +
+  
+  # Áreas de rechazo (Colas rojas)
+  geom_area(data = subset(df_plot, x < chi_inf), fill = "tomato", alpha = 0.5) +
+  geom_area(data = subset(df_plot, x > chi_sup), fill = "tomato", alpha = 0.5) +
+  
+  # Área de no rechazo (Centro verde)
+  geom_area(data = subset(df_plot, x >= chi_inf & x <= chi_sup), fill = "lightgreen", alpha = 0.3) +
+  
+  # Líneas verticales
+  geom_vline(xintercept = c(chi_inf, chi_sup), linetype = "dashed", color = "red") +
+  geom_vline(xintercept = Q_cal, color = "blue", linewidth = 1.2) +
+  
+  # Textos y etiquetas
+  labs(title = "Prueba de Hipótesis Bilateral para Beta",
+       subtitle = paste("El estadístico calculado Q =", round(Q_cal, 2), "cae en la zona de No Rechazo"),
+       x = "Estadístico Chi-Cuadrado", y = "Densidad") +
+  
+  annotate("text", x = Q_cal, y = max(y_vals)*0.2, label = "Q_cal", color = "blue", vjust = -1) +
+  annotate("text", x = chi_inf, y = max(y_vals)*0.5, label = "Lím. Inf", color = "red", angle = 90, vjust = 1.5) +
+  annotate("text", x = chi_sup, y = max(y_vals)*0.5, label = "Lím. Sup", color = "red", angle = 90, vjust = -1) +
+  theme_minimal()
+```
+
+### 4.5.5 Interpretación de la Prueba
+
+Basándonos en los resultados obtenidos con la muestra simulada ($n=1000$):
+
+1.  **Evidencia Estadística:** El estadístico de prueba calculado ($Q_{cal} \approx 1971.38$) se encuentra dentro de la región de aceptación definida por los valores críticos $[1876.01, \, 2123.78]$.
+2.  **P-valor:** El P-valor obtenido ($0.68$) es muy superior al nivel de significancia ($\alpha = 0.05$).
+
+**Conclusión:**
+
+No existe evidencia suficiente para rechazar la hipótesis nula $H_0: \beta = 3$. Esto confirma que el estimador EIVUM y los datos generados son consistentes con el verdadero parámetro poblacional utilizado en la simulación. Gráficamente, observamos claramente cómo la línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona de no rechazo).
