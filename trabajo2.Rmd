@@ -2779,6 +2779,156 @@ estimación. Esto es consecuencia directa de dos factores:
 
 # 4) Pregunta 4 - Pruebas de hipótesis para los estimadores
 
+## 4.2 Prueba de Hipótesis para el parámetro $\beta$ (EMV)
+
+En esta sección se realiza una prueba de hipótesis para el parámetro $\beta$ utilizando su estimador de máxima verosimilitud, basado en
+la distribución Pareto$(\alpha,\beta)$.
+
+### 4.2.1 Fundamento Teórico
+
+Sea $X_1, \ldots, X_n$ una muestra aleatoria de una distribución
+Pareto$(\alpha,\beta)$, y sea
+$$
+\hat{\alpha}_{EMV} = X_{(1)} = \min(X_1,\ldots,X_n).
+$$
+
+Definimos la estadística suficiente:
+$$
+T = \sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right).
+$$
+
+Se sabe que la cantidad pivotal:
+$$
+Q = 2\beta T
+$$
+sigue una distribución Chi–cuadrado con $2(n-1)$ grados de libertad, es
+decir:
+$$
+Q \sim \chi^2_{2(n-1)}.
+$$
+
+Esta propiedad permite realizar una prueba de hipótesis exacta para el
+parámetro $\beta$.
+
+### 4.2.2 Planteamiento de la Hipótesis
+
+Se plantea una prueba bilateral para contrastar el valor del parámetro
+$\beta$:
+
+$$
+\begin{cases}
+H_0: \beta = 3, \\
+H_1: \beta \neq 3.
+\end{cases}
+$$
+
+El nivel de significancia considerado es $\alpha = 0.05$.
+
+### 4.2.3 Estadístico de Prueba
+
+Bajo la hipótesis nula $H_0$, el estadístico de prueba está dado por:
+$$
+Q_{cal} = 2\beta_0 T = 2(3)\sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right),
+\]
+y bajo $H_0$ se cumple que:
+\[
+Q_{cal} \sim \chi^2_{2(n-1)}.
+$$
+
+### 4.2.4 Regla de Decisión
+
+Se rechaza la hipótesis nula $H_0$ si:
+$$
+Q_{cal} < \chi^2_{2(n-1),\,\alpha/2}
+\quad \text{o} \quad
+Q_{cal} > \chi^2_{2(n-1),\,1-\alpha/2}.
+$$
+
+Equivalentemente, se rechaza $H_0$ si el p-valor es menor que $\alpha$.
+
+### 4.2.5 Aplicación a la Base de Datos
+
+```{r echo=FALSE}
+# ==============================================================================
+# PRUEBA DE HIPÓTESIS PARA BETA USANDO EL EMV
+# ==============================================================================
+
+# Datos
+n <- length(reclamos)
+beta_0 <- 3
+alfa <- 0.05
+
+# Estadística suficiente T
+x_min <- min(reclamos)
+T_stat <- sum(log(reclamos / x_min))
+
+# Estadístico de prueba
+Q_cal <- 2 * beta_0 * T_stat
+
+# Grados de libertad
+gl <- 2 * (n - 1)
+
+# Valores críticos
+chi_inf <- qchisq(alfa / 2, df = gl)
+chi_sup <- qchisq(1 - alfa / 2, df = gl)
+
+# P-valor bilateral
+p_val <- 2 * min(
+  pchisq(Q_cal, df = gl),
+  1 - pchisq(Q_cal, df = gl)
+)
+
+# Resultados
+cat(
+  "PRUEBA DE HIPÓTESIS PARA BETA (EMV)\n\n",
+  "T =", round(T_stat, 4), "\n",
+  "Q_cal =", round(Q_cal, 4), "\n",
+  "gl =", gl, "\n\n",
+  "Valor crítico inferior =", round(chi_inf, 4), "\n",
+  "Valor crítico superior =", round(chi_sup, 4), "\n\n",
+  "P-valor =", round(p_val, 4), "\n"
+)
+
+```
+### 4.2.6 Interpretación de los Resultados
+
+A partir de la muestra analizada se obtuvo el estadístico suficiente
+$$
+T = 328.563,
+$$
+lo que condujo a un estadístico de prueba
+$$
+Q_{cal} = 1971.378,
+$$
+con $gl = 1998$ grados de libertad.
+
+Para un nivel de significancia $\alpha = 0.05$, los valores críticos de
+la distribución Chi–cuadrado fueron:
+$$
+\chi^2_{1998,\,0.025} = 1876.008
+\quad \text{y} \quad
+\chi^2_{1998,\,0.975} = 2123.78.
+$$
+
+Se observa que el estadístico calculado satisface:
+$$
+1876.008 \le 1971.378 \le 2123.78,
+$$
+por lo que se encuentra dentro de la región de no rechazo.
+
+Adicionalmente, el p-valor obtenido fue:
+$$
+p\text{-valor} = 0.68,
+$$
+el cual es considerablemente mayor que el nivel de significancia
+$\alpha = 0.05$.
+
+En consecuencia, no existe evidencia estadística suficiente para
+rechazar la hipótesis nula $H_0: \beta = 3$. Se concluye que, al nivel de
+significancia considerado, el estimador de máxima verosimilitud de
+$\beta$ y los datos observados son consistentes con el valor verdadero
+del parámetro poblacional.
+
 ## 4.3 Prueba de Hipótesis para la Media Poblacional ($\mu$)
 
 En esta sección, evaluamos la validez de una afirmación sobre el valor
