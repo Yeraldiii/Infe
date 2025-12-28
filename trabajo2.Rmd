@@ -221,7 +221,8 @@ $$
 $$
 
 Como podemos obervar cumple ambas condiciones, por ende decimos que
-nuestro estimador es consistente, en otras palabras el estimador converge en probabilidades al parametro.
+nuestro estimador es consistente, en otras palabras el estimador
+converge en probabilidades al parametro.
 
 ```{r, include=FALSE}
 ## Aca vemos la var de la muestra total, para ver que es cercana a 0
@@ -368,8 +369,7 @@ $$
 \frac{n}{\beta} + n \ln \alpha - \sum_{i=1}^n \ln X_i = 0.
 $$
 
-Despejando $\beta$, 
-$$
+Despejando $\beta$, $$
 \begin{aligned}
 \frac{n}{\beta}
 &= \sum_{i=1}^n \ln X_i - n \ln \alpha \\
@@ -430,7 +430,7 @@ $$
 Por ende, no es un estimador insesgado. Ademas al ser positivo podemos
 decir que sobrestima al parametro.
 
-Ahora lo aplicaremos a nuestra data: 
+Ahora lo aplicaremos a nuestra data:
 
 ```{r include=FALSE}
 # =============================================================================
@@ -456,6 +456,7 @@ print(paste("E[beta_emv] teorico:", E_beta_emv_teorico))
 print(paste("beta verdadero:", beta_true))
 
 ```
+
 El valor observado del estimador fue ligeramente mayor que el valor
 verdadero del parámetro $\beta$, mientras que el valor esperado teórico
 también se encuentra por encima de $\beta$.
@@ -522,13 +523,13 @@ ggplot(results, aes(x = n)) +
 ```
 
 De nuestra base de datos se tomaron submuestras de tamaño creciente con
-el fin de analizar el comportamiento del estimador EMV de $\beta$.
-Se observa que el valor esperado teórico del estimador se mantiene por
+el fin de analizar el comportamiento del estimador EMV de $\beta$. Se
+observa que el valor esperado teórico del estimador se mantiene por
 encima del parámetro verdadero, confirmando el sesgo positivo.
 
 No obstante, a medida que el tamaño muestral aumenta, el valor esperado
-de $\hat\beta$ se aproxima cada vez más a $\beta$, lo que evidencia
-la propiedad de insesgamiento asintótico del estimador.
+de $\hat\beta$ se aproxima cada vez más a $\beta$, lo que evidencia la
+propiedad de insesgamiento asintótico del estimador.
 
 #### b) Consistencia
 
@@ -563,7 +564,11 @@ Por lo tanto, $\hat{\beta}$ es un estimador consistente del parámetro
 $\beta$.
 
 Como se mostró previamente, el estimador EMV de $\beta$ presenta sesgo
-positivo para muestras finitas. Además, la varianza del estimador disminuye conforme aumenta el tamaño muestral. Al cumplirse que el sesgo y la varianza tienden a cero, se concluye que $\hat\beta$ es un estimador consistente del parámetro $\beta$.
+positivo para muestras finitas. Además, la varianza del estimador
+disminuye conforme aumenta el tamaño muestral. Al cumplirse que el sesgo
+y la varianza tienden a cero, se concluye que $\hat\beta$ es un
+estimador consistente del parámetro $\beta$.
+
 ```{r include=FALSE}
 # =============================================================================
 # VARIANZA TEÓRICA DEL EMV DE beta
@@ -596,10 +601,12 @@ ggplot(results_var, aes(x = n, y = varianza)) +
   )
 
 ```
-Como se observa, la varianza del estimador EMV de $\beta$ tiende a
-cero conforme el tamaño muestral aumenta. Dado que el sesgo del
-estimador también tiende a cero, se concluye que el estimador $\hat\beta$ es consistente. En otras palabras, el estimador
-converge en probabilidad al verdadero valor del parámetro $\beta$.
+
+Como se observa, la varianza del estimador EMV de $\beta$ tiende a cero
+conforme el tamaño muestral aumenta. Dado que el sesgo del estimador
+también tiende a cero, se concluye que el estimador $\hat\beta$ es
+consistente. En otras palabras, el estimador converge en probabilidad al
+verdadero valor del parámetro $\beta$.
 
 #### c) Suficiencia
 
@@ -655,17 +662,21 @@ $$
 T = \sum_{i=1}^n (Y_i - Y_{(1)})
 $$
 
-tiene distribución Gamma$(n-1,\beta)$, que pertenece a la familia exponencial
-de un solo parámetro.
+tiene distribución Gamma$(n-1,\beta)$, que pertenece a la familia
+exponencial de un solo parámetro.
 
-Dado que la familia Gamma con parámetro de forma conocido es completa, se
-concluye que el estadístico $T$ es completo para el parámetro $\beta$.
+Dado que la familia Gamma con parámetro de forma conocido es completa,
+se concluye que el estadístico $T$ es completo para el parámetro
+$\beta$.
 
 #### f) Optimalidad
 
-El estimador de máxima verosimilitud $\hat{\beta}$ es un estimador sesgado, por lo que no puede ser óptimo en el sentido clásico de mínima varianza entre los estimadores insesgados (UMVU).
+El estimador de máxima verosimilitud $\hat{\beta}$ es un estimador
+sesgado, por lo que no puede ser óptimo en el sentido clásico de mínima
+varianza entre los estimadores insesgados (UMVU).
 
-No obstante, al ser un estimador de máxima verosimilitud, $\hat{\beta}$ es consistente y asintóticamente eficiente, alcanzando la cota de
+No obstante, al ser un estimador de máxima verosimilitud, $\hat{\beta}$
+es consistente y asintóticamente eficiente, alcanzando la cota de
 Cramér--Rao cuando $n \to \infty$.
 
 Por lo tanto, $\hat{\beta}$ no es óptimo en muestras finitas, pero sí es
@@ -680,8 +691,6 @@ $$
 el cual depende únicamente del estadístico suficiente y completo $T$.
 Por el teorema de Lehmann--Scheffé, $\tilde{\beta}$ es el estimador UMVU
 del parámetro $\beta$.
-
-
 
 ## 1.3 Estimador para la Media Poblacional ($\mu$)
 
@@ -1142,9 +1151,9 @@ donde:\
 muestral)\
 - $S = \sqrt{S^2}$ (desviación estándar muestral)
 
-## 1.4.1 Propiedades del Estimador $\hat{\alpha}_{MM}$
+### 1.4.1 Propiedades del Estimador $\hat{\alpha}_{MM}$
 
-### a) Insesgamiento
+#### a) Insesgamiento
 
 El estimador
 $\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}$
@@ -1220,7 +1229,7 @@ para el parámetro $\alpha$ de la distribución Pareto. Aunque podría ser
 aproximadamente insesgado para muestras muy grandes, para $n=1000$
 observamos sesgo significativo.
 
-### b) Consistencia
+#### b) Consistencia
 
 **Definición:** Un estimador es consistente si cuando n tiende al
 infinito, se acerca al valor verdader Demostrar que $\hat{\alpha}_{MM}$
@@ -1230,7 +1239,7 @@ $$
 \hat{\alpha}_{MM} \xrightarrow{P} \alpha \quad \text{cuando } n \to \infty
 $$
 
-#### Consistencia de $\bar{X}$ y $S^2$
+##### Consistencia de $\bar{X}$ y $S^2$
 
 Por la **Ley Débil de los Grandes Números (LGN)** para variables i.i.d.
 con primer momento finito:
@@ -1246,7 +1255,7 @@ $$
 S^2 \xrightarrow{P} \sigma^2
 $$
 
-#### Consistencia de $\hat{\beta}_{MM}$
+##### Consistencia de $\hat{\beta}_{MM}$
 
 Definimos:
 
@@ -1302,7 +1311,7 @@ $$
 
 Así, $\hat{\beta}_{MM}$ es consistente para $\beta$.
 
-#### Consistencia de $\hat{\alpha}_{MM}$
+##### Consistencia de $\hat{\alpha}_{MM}$
 
 Tenemos:
 
@@ -1487,7 +1496,7 @@ for (nv in n_verificar) {
 }
 ```
 
-### c) Eficiencia
+#### c) Eficiencia
 
 El estimador $\hat{\theta}$ no es **eficiente** para $\theta$ porque:
 
@@ -1531,7 +1540,7 @@ ggplot(df, aes(x = n)) +
 
 ```
 
-### d) Suficiencia
+#### d) Suficiencia
 
 Para verificar esta propiedad para el estimador se va a utilizar el
 teorema de Criterio de Factorización de Neyman-Fisher
@@ -1614,7 +1623,7 @@ $$
 
 el cual tendría menor o igual varianza que $\hat{\alpha}_{MM}$.
 
-### e) Completitud
+#### e) Completitud
 
 Una estadística $T(X)$ es **completa** para $\alpha$ si:
 
@@ -1625,7 +1634,7 @@ $$
 Es decir: si una función de $T$ tiene esperanza cero para todo $\alpha$,
 entonces esa función es casi seguramente cero.
 
-### Estadística completa para $\alpha$ (con $\beta$ conocido)
+##### Estadística completa para $\alpha$ (con $\beta$ conocido)
 
 La densidad se simplifica: $$
 f(x; \alpha) = \frac{\beta \alpha^\beta}{x^{\beta+1}} \mathbf{1}_{[\alpha, \infty)}(x), \quad \beta \text{ conocido}
@@ -1667,7 +1676,7 @@ $$
 3.  $\hat{\alpha}_{MM}$ **no puede expresarse como función de**
     $X_{(1)}$ solamente
 
-### f) Optimalidad
+#### f) Optimalidad
 
 El estimador $\hat{\alpha}_{MM}$ obtenido por método de momentos para el
 parámetro de escala $\alpha$ de la distribución Pareto **no es óptimo**
@@ -1697,7 +1706,7 @@ el tamaño de muestra crece), no cumple las condiciones necesarias para
 ser considerado óptimo en el sentido estadístico riguroso de tener
 mínima varianza entre los estimadores insesgados.
 
-## 1.4.2. Propiedades del Estimador $\hat{\beta}_{MM}$
+### 1.4.2. Propiedades del Estimador $\hat{\beta}_{MM}$
 
 ### a) Insesgamiento:
 
@@ -2370,11 +2379,9 @@ tiene:
 $$
 f_W(w) = f_{Y_1}(\alpha w) \cdot \alpha
 = n\beta \, \alpha^{n\beta} (\alpha w)^{-(n\beta+1)} \cdot \alpha
-$$ 
-$$
+$$ $$
 = n\beta \, \alpha^{n\beta} \alpha^{-n\beta-1} w^{-(n\beta+1)} \alpha
-$$ 
-$$
+$$ $$
 = n\beta \, w^{-(n\beta+1)}, \quad w > 1.
 $$
 
@@ -2408,8 +2415,7 @@ $$
 P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1}{b} \leq \alpha \leq \frac{Y_1}{a}\right]=P\left[\frac{Y_1}{(0.6)^{-1 / n \beta}} \leqslant \alpha \leqslant \frac{Y_1}{(0.95)^{-1 / n \beta}}\right] \\ \\
 \text { I.C }=\left[Y_1 \cdot(0.05)^{1 /(n \beta)} ; Y_1 \cdot(0.95)^{1 /(n \beta)}\right]
 \end{array}
-$$
-## 2.2 Estimador 2: Suma Log de T
+$$ \## 2.2 Estimador 2: Suma Log de T
 
 Sea $X_1, \ldots, X_n$ una muestra aleatoria i.i.d. de una distribución
 Pareto$(\alpha,\beta)$ con densidad
@@ -2432,8 +2438,7 @@ T = \sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right).
 $$
 
 Sabemos que, si $X \sim \text{Pareto}(\alpha,\beta)$, entonces
-$\ln(X/\alpha) \sim \text{Exponencial}(\beta)$.
-Por lo tanto,
+$\ln(X/\alpha) \sim \text{Exponencial}(\beta)$. Por lo tanto,
 
 $$
 T \sim \text{Gamma}(n,\beta).
@@ -2451,7 +2456,8 @@ $$
 W \sim \chi^2_{2n}.
 $$
 
-Para un nivel de confianza del $90\%$ se tiene $\alpha = 0.10$, por lo que
+Para un nivel de confianza del $90\%$ se tiene $\alpha = 0.10$, por lo
+que
 
 $$
 P\left(
@@ -2488,7 +2494,8 @@ $$
 En la práctica, si $\alpha$ es desconocido, se reemplaza por
 $\hat{\alpha}_{EMV} = \min(X_1,\ldots,X_n)$.
 
-### 2.3.1 Aplicación 
+### 2.3.1 Aplicación
+
 ```{r include=FALSE}
 # tamaño de muestra
 n <- length(reclamos)
@@ -2501,18 +2508,18 @@ T <- sum(log(reclamos / alpha_hat))
 
 T
 ```
-Sea
-$$
+
+Sea $$
 T = \sum_{i=1}^n \ln\left(\frac{X_i}{\hat{\alpha}_{EMV}}\right).
 $$
 
-Bajo el supuesto de una distribución Pareto$(\alpha,\beta)$ se tiene que:
-$$
+Bajo el supuesto de una distribución Pareto$(\alpha,\beta)$ se tiene
+que: $$
 2\beta T \sim \chi^2_{2n}.
 $$
 
-Entonces, un intervalo de confianza del 90\% para el parámetro $\beta$ está dado por:
-$$
+Entonces, un intervalo de confianza del 90% para el parámetro $\beta$
+está dado por: $$
 \text{IC}_{90\%}(\beta)=
 \left[
 \frac{\chi^2_{2n,\,0.05}}{2T}
@@ -2521,11 +2528,10 @@ $$
 \right].
 $$
 
-Para los datos observados se obtuvo:
-$$
+Para los datos observados se obtuvo: $$
 T = 328.563,
-$$
-por lo que el intervalo queda completamente determinado al sustituir dicho valor.
+$$ por lo que el intervalo queda completamente determinado al sustituir
+dicho valor.
 
 ```{r include=FALSE}
 # ===============================
@@ -2552,14 +2558,19 @@ paste0(
 )
 
 ```
-Esto significa que, bajo el supuesto de que la muestra proviene de una
-distribución Pareto$(\alpha,\beta)$, el intervalo contiene al verdadero valor del parámetro $\beta$ con una probabilidad del 90\%.
 
-Asimismo, se observa que el valor verdadero del parámetro
-($\beta = 3$) pertenece al intervalo estimado, lo cual es consistente con las propiedades teóricas del estimador de máxima verosimilitud y respalda la adecuación del modelo ajustado.
+Esto significa que, bajo el supuesto de que la muestra proviene de una
+distribución Pareto$(\alpha,\beta)$, el intervalo contiene al verdadero
+valor del parámetro $\beta$ con una probabilidad del 90%.
+
+Asimismo, se observa que el valor verdadero del parámetro ($\beta = 3$)
+pertenece al intervalo estimado, lo cual es consistente con las
+propiedades teóricas del estimador de máxima verosimilitud y respalda la
+adecuación del modelo ajustado.
 
 Finalmente, el ancho relativamente reducido del intervalo se explica por
-el tamaño muestral grande ($n = 1000$), lo que refleja una mayor precisión en la estimación del parámetro.
+el tamaño muestral grande ($n = 1000$), lo que refleja una mayor
+precisión en la estimación del parámetro.
 
 ## 2.3 Estimador 3: Media Muestral ($\bar{X}$) para la media poblacional $\mu$
 
@@ -2777,7 +2788,6 @@ estimación. Esto es consecuencia directa de dos factores:
 2.  El tamaño de muestra grande ($n=1000$), que reduce el error
     estándar.
 
-
 # 3) Pregunta 3: Prueba de Hipótesis con Datos Pareados
 
 ## 3.1 Simulación de una segunda variable correlacionada
@@ -2958,22 +2968,23 @@ legend("bottomright",
        lty = c(1, 2, 2), lwd = c(2, 1.5, 1.5))
 ```
 
-# 4) Pregunta 4 - Pruebas de hipótesis para los estimadores 
+# 4) Pregunta 4 - Pruebas de hipótesis para los estimadores
 
-## 4.1 Prueba de hipótesis para el parámetro $\alpha$ (EMV)    
+## 4.1 Prueba de hipótesis para el parámetro $\alpha$ (EMV)
 
-En esta sección se realiza una prueba de hipótesis para el parámetro $\alpha$ utilizando su estimador de máxima verosimilitud, basado en
-la distribución Pareto$(\alpha,\beta)$.  
+En esta sección se realiza una prueba de hipótesis para el parámetro
+$\alpha$ utilizando su estimador de máxima verosimilitud, basado en la
+distribución Pareto$(\alpha,\beta)$.
 
-### 4.1.1 Fundamento teórico     
+### 4.1.1 Fundamento teórico
 
 Sea $X_1, \ldots, X_n$ una muestra aleatoria de una distribución
-Pareto$(\alpha,\beta)$, y sea beta conocido, definimos nuestro estadístico suficiente:  
+Pareto$(\alpha,\beta)$, y sea beta conocido, definimos nuestro
+estadístico suficiente:
 
 $$
 \hat{\alpha}_{EMV} = X_{(1)} = \min(X_1,\ldots,X_n).
-$$
-### 4.1.2 Planteamiento de la hipótesis:   
+$$ \### 4.1.2 Planteamiento de la hipótesis:
 
 Se plantea una prueba bilateral para contrastar el valor del parámetro
 $\beta$:
@@ -2987,30 +2998,36 @@ $$
 
 El nivel de significancia considerado es $\alpha = 0.05$.
 
-### 4.1.3.Estadístico de Prueba  
+### 4.1.3.Estadístico de Prueba
 
-Bajo $H_0$, cuando $\alpha = \alpha_0 = 2$, se tiene que:  
+Bajo $H_0$, cuando $\alpha = \alpha_0 = 2$, se tiene que:
 
 $$
 \frac{\hat{\alpha}_{\text{EMV}}}{\alpha_0} \sim \text{Pareto}(1, n\beta)
-$$  
-Definimos la variable aleatoria:  
+$$\
+Definimos la variable aleatoria:
 
-$R = \hat{\alpha}_{\text{EMV}} / \alpha_0$, cuya distribución cumple que: $R^{n\beta} \sim U(0,1)$.   
+$R = \hat{\alpha}_{\text{EMV}} / \alpha_0$, cuya distribución cumple
+que: $R^{n\beta} \sim U(0,1)$.
 
-Para una prueba bilateral con nivel de significancia $\alpha^* = 0.05$, se rechaza $H_0$ cuando $\hat{\alpha}_{\text{EMV}}$ es demasiado pequeño o demasiado grande.
+Para una prueba bilateral con nivel de significancia $\alpha^* = 0.05$,
+se rechaza $H_0$ cuando $\hat{\alpha}_{\text{EMV}}$ es demasiado pequeño
+o demasiado grande.
 
 Bajo $H_0$:
 
-- Cola inferior: valores pequeños de $\hat{\alpha}_{\text{EMV}}$ corresponden a valores grandes de $R$.
-Rechazamos si $R^{n\beta} > 1 - \frac{\alpha^*}{2}$.
+-   Cola inferior: valores pequeños de $\hat{\alpha}_{\text{EMV}}$
+    corresponden a valores grandes de $R$. Rechazamos si
+    $R^{n\beta} > 1 - \frac{\alpha^*}{2}$.
 
-- Cola superior: valores grandes de $\hat{\alpha}_{\text{EMV}}$ corresponden a valores pequeños de $R$.
-Rechazamos si $R^{n\beta} < \frac{\alpha^*}{2}$.  
+-   Cola superior: valores grandes de $\hat{\alpha}_{\text{EMV}}$
+    corresponden a valores pequeños de $R$. Rechazamos si
+    $R^{n\beta} < \frac{\alpha^*}{2}$.
 
-Definimos los valores críticos: $c_1 = \alpha_0 \cdot \left(\frac{\alpha^*}{2}\right)^{-1/(n\beta)},\quad c_2 = \alpha_0 \cdot \left(1 - \frac{\alpha^*}{2}\right)^{-1/(n\beta)}$.  
+Definimos los valores críticos:
+$c_1 = \alpha_0 \cdot \left(\frac{\alpha^*}{2}\right)^{-1/(n\beta)},\quad c_2 = \alpha_0 \cdot \left(1 - \frac{\alpha^*}{2}\right)^{-1/(n\beta)}$.
 
-### 4.1.4 Calculo de valores críticos:    
+### 4.1.4 Calculo de valores críticos:
 
 ```{r, include=FALSE}
 alpha0 <- 2    
@@ -3027,46 +3044,50 @@ c2 <- alpha0 * (1 - alpha_star/2)^(-1/(n*beta))
 c1
 c2
 ```
-Rechazar $H_0: \alpha = 2$ si: $\hat{\alpha}_{\text{EMV}} < 2.000017$ o $\hat{\alpha}_{\text{EMV}} > 2.002461$
 
-No rechazar $H_0$ si: $2.000017 \leq \hat{\alpha}_{\text{EMV}} \leq 2.002461$  
+Rechazar $H_0: \alpha = 2$ si: $\hat{\alpha}_{\text{EMV}} < 2.000017$ o
+$\hat{\alpha}_{\text{EMV}} > 2.002461$
 
-### 4.1.5 Aplicación y conclusiones  
+No rechazar $H_0$ si:
+$2.000017 \leq \hat{\alpha}_{\text{EMV}} \leq 2.002461$
+
+### 4.1.5 Aplicación y conclusiones
 
 ```{r}
 alpha_EMV <- min(reclamos)
 alpha_EMV 
 ```
-Como el estadístico $\hat{\alpha}_{\text{EMV}} = 2.00031$ cae dentro del intervalo de aceptación $[2.000017, 2.002461]$: 
 
-$\text{\textbf{NO RECHAZAR }} H_0: \alpha = 2$  
+Como el estadístico $\hat{\alpha}_{\text{EMV}} = 2.00031$ cae dentro del
+intervalo de aceptación $[2.000017, 2.002461]$:
 
-No se rechaza la hipótesis nula $H_0: \alpha = 2$ al nivel de significancia del 5\%. El valor estimado $\hat{\alpha}_{\text{EMV}} = 2.00031$ es estadísticamente compatible con $\alpha = 2$, dado que la diferencia de $0.00031$ unidades no es significativa considerando el tamaño muestral de $n = 1000$.
+$\text{\textbf{NO RECHAZAR }} H_0: \alpha = 2$
+
+No se rechaza la hipótesis nula $H_0: \alpha = 2$ al nivel de
+significancia del 5%. El valor estimado
+$\hat{\alpha}_{\text{EMV}} = 2.00031$ es estadísticamente compatible con
+$\alpha = 2$, dado que la diferencia de $0.00031$ unidades no es
+significativa considerando el tamaño muestral de $n = 1000$.
 
 ## 4.2 Prueba de Hipótesis para el parámetro $\beta$ (EMV)
 
-En esta sección se realiza una prueba de hipótesis para el parámetro $\beta$ utilizando su estimador de máxima verosimilitud, basado en
-la distribución Pareto$(\alpha,\beta)$.  
+En esta sección se realiza una prueba de hipótesis para el parámetro
+$\beta$ utilizando su estimador de máxima verosimilitud, basado en la
+distribución Pareto$(\alpha,\beta)$.
 
 ### 4.2.1 Fundamento Teórico
 
 Sea $X_1, \ldots, X_n$ una muestra aleatoria de una distribución
-Pareto$(\alpha,\beta)$, y sea
-$$
+Pareto$(\alpha,\beta)$, y sea $$
 \hat{\alpha}_{EMV} = X_{(1)} = \min(X_1,\ldots,X_n).
-$$
-Definimos la estadística suficiente:
-$$
+$$ Definimos la estadística suficiente: $$
 T = \sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right).
 $$
 
-Se sabe que la cantidad pivotal:
-$$
+Se sabe que la cantidad pivotal: $$
 Q = 2\beta T
-$$
-sigue una distribución Chi–cuadrado con $2(n-1)$ grados de libertad, es
-decir:
-$$
+$$ sigue una distribución Chi–cuadrado con $2(n-1)$ grados de libertad,
+es decir: $$
 Q \sim \chi^2_{2(n-1)}.
 $$
 
@@ -3089,8 +3110,7 @@ El nivel de significancia considerado es $\alpha = 0.05$.
 
 ### 4.2.3 Estadístico de Prueba
 
-Bajo la hipótesis nula $H_0$, el estadístico de prueba está dado por:
-$$
+Bajo la hipótesis nula $H_0$, el estadístico de prueba está dado por: $$
 Q_{cal} = 2\beta_0 T = 2(3)\sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right),
 \]
 y bajo $H_0$ se cumple que:
@@ -3100,8 +3120,7 @@ $$
 
 ### 4.2.4 Regla de Decisión
 
-Se rechaza la hipótesis nula $H_0$ si:
-$$
+Se rechaza la hipótesis nula $H_0$ si: $$
 Q_{cal} < \chi^2_{2(n-1),\,\alpha/2}
 \quad \text{o} \quad
 Q_{cal} > \chi^2_{2(n-1),\,1-\alpha/2}.
@@ -3156,40 +3175,31 @@ cat(
 
 ### 4.2.6 Interpretación de los Resultados
 
-A partir de la muestra analizada se obtuvo el estadístico suficiente
-$$
+A partir de la muestra analizada se obtuvo el estadístico suficiente $$
 T = 328.563,
-$$
-lo que condujo a un estadístico de prueba
-$$
+$$ lo que condujo a un estadístico de prueba $$
 Q_{cal} = 1971.378,
-$$
-con $gl = 1998$ grados de libertad.
+$$ con $gl = 1998$ grados de libertad.
 
 Para un nivel de significancia $\alpha = 0.05$, los valores críticos de
-la distribución Chi–cuadrado fueron:
-$$
+la distribución Chi–cuadrado fueron: $$
 \chi^2_{1998,\,0.025} = 1876.008
 \quad \text{y} \quad
 \chi^2_{1998,\,0.975} = 2123.78.
 $$
 
-Se observa que el estadístico calculado satisface:
-$$
+Se observa que el estadístico calculado satisface: $$
 1876.008 \le 1971.378 \le 2123.78,
-$$
-por lo que se encuentra dentro de la región de no rechazo.
+$$ por lo que se encuentra dentro de la región de no rechazo.
 
-Adicionalmente, el p-valor obtenido fue:
-$$
+Adicionalmente, el p-valor obtenido fue: $$
 p\text{-valor} = 0.68,
-$$
-el cual es considerablemente mayor que el nivel de significancia
+$$ el cual es considerablemente mayor que el nivel de significancia
 $\alpha = 0.05$.
 
 En consecuencia, no existe evidencia estadística suficiente para
-rechazar la hipótesis nula $H_0: \beta = 3$. Se concluye que, al nivel de
-significancia considerado, el estimador de máxima verosimilitud de
+rechazar la hipótesis nula $H_0: \beta = 3$. Se concluye que, al nivel
+de significancia considerado, el estimador de máxima verosimilitud de
 $\beta$ y los datos observados son consistentes con el valor verdadero
 del parámetro poblacional.
 
@@ -3443,4 +3453,3 @@ generados son consistentes con el verdadero parámetro poblacional
 utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
-
