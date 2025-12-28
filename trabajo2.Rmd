@@ -38,7 +38,7 @@ Montúfar Paiva Yeraldi Mercedes & 20230400 \\
 \hline
 Kay Daniela L. Zavala Malpartida & 20230420 \\
 \hline
-Rojas Taco Fabiana & 2023  \\
+Rojas Taco Fabiana & 20220956  \\
 \hline
 Paucar Arango Marcos David Alexander & 20221412  \\
 \hline
@@ -2087,6 +2087,76 @@ P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1
 \end{array}
 $$
 
+## 2.3 Estimador 3: Media Muestral ($\bar{X}$) para la media poblacional $\mu$
+
+Para la construcción del intervalo de confianza de la media poblacional $\mu = E(X)$, utilizaremos el **Método Asintótico** basado en el Teorema del Límite Central (TLC).
+
+### 2.3.1 Justificación Teórica
+
+Dado que el tamaño de muestra es suficientemente grande ($n = 1000$) y que en nuestro modelo la varianza poblacional existe (puesto que $\beta = 3 > 2$), el estadístico media muestral $\bar{X}$ sigue una distribución aproximadamente normal:
+
+$$ \bar{X} \xrightarrow{d} N\left( \mu, \frac{\sigma^2}{n} \right) $$
+
+Como la varianza poblacional $\sigma^2$ es desconocida, utilizamos la varianza muestral $S^2$ como estimador consistente, definiendo la siguiente **Cantidad Pivotal Asintótica**:
+
+$$ Z = \frac{\bar{X} - \mu}{S / \sqrt{n}} \sim N(0, 1) $$
+
+### 2.3.2 Construcción del Intervalo
+
+Para un nivel de confianza del $(1 - \gamma)$, buscamos los valores críticos de la distribución normal estándar tales que:
+
+$$ P\left( -z_{1-\gamma/2} \leq \frac{\bar{X} - \mu}{S / \sqrt{n}} \leq z_{1-\gamma/2} \right) = 1 - \gamma $$
+
+Despejando el parámetro $\mu$, obtenemos la expresión del intervalo de confianza:
+
+$$ IC(\mu)_{1-\gamma} = \left[ \bar{X} - z_{1-\gamma/2} \frac{S}{\sqrt{n}} \quad ; \quad \bar{X} + z_{1-\gamma/2} \frac{S}{\sqrt{n}} \right] $$
+
+### 2.3.3 Aplicación en R
+
+Utilizamos los datos de la variable `reclamos` para calcular el intervalo al 95% de confianza.
+
+```{r intervalo_mu, echo=TRUE}
+# ==============================================================================
+# CÁLCULO DEL INTERVALO DE CONFIANZA ASINTÓTICO PARA LA MEDIA (MU)
+# ==============================================================================
+
+# 1. Parámetros de la muestra
+n <- length(reclamos)
+media_muestral <- mean(reclamos)
+desv_estandar <- sd(reclamos)
+confianza <- 0.95
+gamma <- 1 - confianza
+
+# 2. Valor crítico Z
+z_critico <- qnorm(1 - gamma/2)
+
+# 3. Error estándar y márgenes
+error_estandar <- desv_estandar / sqrt(n)
+margen_error <- z_critico * error_estandar
+
+# 4. Límites del intervalo
+lim_inf_mu <- media_muestral - margen_error
+lim_sup_mu <- media_muestral + margen_error
+
+# 5. Valor teórico para comparación
+mu_teorico <- (alpha_true * beta_true) / (beta_true - 1)
+
+# Reporte
+cat(
+  "INTERVALO DE CONFIANZA PARA LA MEDIA (TLC)\n\n",
+  "Media Muestral (X_bar): ", round(media_muestral, 5), "\n",
+  "Desviación Estándar (S): ", round(desv_estandar, 4), "\n",
+  "Nivel de Confianza: 95%\n\n",
+  "Límite Inferior: ", round(lim_inf_mu, 5), "\n",
+  "Límite Superior: ", round(lim_sup_mu, 5), "\n",
+  "Valor Teórico (mu): ", mu_teorico, "\n"
+)
+```
+
+### 2.3.4 Interpretación
+
+Con un nivel de confianza del 95%, el valor esperado de los reclamos se encuentra entre `r round(lim_inf_mu, 4)` y `r round(lim_sup_mu, 4)`. Observamos que el **valor teórico ($\mu = 3$)** se encuentra contenido dentro del intervalo, lo que valida la precisión del estimador $\bar{X}$ y la eficacia de la aproximación por el Teorema del Límite Central para este tamaño de muestra.
+
 
 ## 2.5 Estimador 5 (para $\beta$ con el EIVUM)
 
@@ -2220,7 +2290,76 @@ estimación. Esto es consecuencia directa de dos factores:
 2.  El tamaño de muestra grande ($n=1000$), que reduce el error
     estándar.
 
+# 4) Pregunta 4 - Pruebas de hipótesis para los estimadores
 
+## 4.3 Prueba de Hipótesis para la Media Poblacional ($\mu$)
 
+En esta sección, evaluamos la validez de una afirmación sobre el valor central de la población mediante la media muestral $\bar{X}$. A diferencia de los estimadores de los parámetros de forma ($\beta$), la media muestral nos permite realizar inferencia sobre el valor esperado de la variable "reclamos".
+
+### 4.3.1 Fundamento Asintótico
+Para la construcción de esta prueba, no nos basamos en una distribución exacta (como la Gamma), sino en el **Teorema del Límite Central (TLC)**. Dado que nuestra muestra $n=1000$ es grande y hemos verificado que $\beta > 2$ (lo que garantiza la existencia de una varianza finita), se cumple que:
+
+1.  Por TLC: $\bar{X} \sim N(\mu, \sigma^2/n)$ asintóticamente.
+2.  Por Consistencia: $S^2 \xrightarrow{P} \sigma^2$.
+3.  Por **Teorema de Slutsky**: El estadístico pivot $Z = \frac{\bar{X} - \mu}{S/\sqrt{n}}$ converge en distribución a una Normal Estándar $N(0,1)$.
+
+### 4.3.2 Planteamiento Formal de la Prueba
+
+Definimos una prueba de hipótesis de dos colas para verificar si la media poblacional es consistente con el valor teórico esperado bajo los parámetros originales ($\mu_0 = 3$).
+
+$$
+\begin{aligned}
+H_0: \mu = 3 \quad &\text{(Hipótesis Nula)} \\
+H_1: \mu \neq 3 \quad &\text{(Hipótesis Alternativa)}
+\end{aligned}
+$$
+
+**Nivel de Significancia ($\alpha$):** 0.05.
+
+**Regla de Decisión:**
+Se rechaza $H_0$ si $|Z_{calc}| > Z_{1-\alpha/2}$, donde $Z_{0.975} = 1.96$. Alternativamente, se rechaza si el $p-valor < 0.05$.
+
+### 4.3.3 Ejecución y Visualización en R
+
+Para darle mayor peso al análisis, incluiremos una gráfica de la densidad normal que muestre la ubicación de nuestro estadístico respecto a la zona de rechazo.
+
+```{r prueba_d_robusta, echo=TRUE, fig.height=5}
+# 1. Configuración de parámetros
+mu_0 <- 3
+n <- length(reclamos)
+x_bar <- mean(reclamos)
+s_dev <- sd(reclamos)
+
+# 2. Cálculo del estadístico y P-valor
+z_calc <- (x_bar - mu_0) / (s_dev / sqrt(n))
+p_val <- 2 * pnorm(-abs(z_calc))
+
+# 3. Visualización de la Región de Rechazo
+x_vals <- seq(-4, 4, length = 200)
+y_vals <- dnorm(x_vals)
+df_plot <- data.frame(x = x_vals, y = y_vals)
+
+library(ggplot2)
+ggplot(df_plot, aes(x = x, y = y)) +
+  geom_line(color = "black", linewidth = 1) +
+  # Sombreado de regiones de rechazo
+  geom_area(data = subset(df_plot, x <= -1.96), fill = "red", alpha = 0.5) +
+  geom_area(data = subset(df_plot, x >= 1.96), fill = "red", alpha = 0.5) +
+  # Línea del estadístico calculado
+  geom_vline(xintercept = z_calc, color = "blue", linetype = "dashed", linewidth = 1) +
+  annotate("text", x = z_calc, y = 0.2, label = paste("Z_calc =", round(z_calc, 3)), 
+           angle = 90, vjust = -0.5, color = "blue") +
+  labs(title = "Regiones de Rechazo y Estadístico Z para la Media",
+       subtitle = paste("P-valor =", round(p_val, 4)),
+       x = "Z", y = "Densidad") +
+  theme_minimal()
+```
+
+### 4.3.4 Análisis de Resultados y Dualidad
+
+1.  **Estadístico Observado:** El valor de $Z_{calc} = `r round(z_calc, 4)`$ cae dentro de la región de **no rechazo** (área blanca entre -1.96 y 1.96).
+2.  **Conclusión Estadística:** Dado que el $p-valor = `r round(p_val, 4)` > 0.05$, no existe evidencia suficiente para rechazar la hipótesis nula. Se concluye que la media de la muestra de reclamos es estadísticamente igual a 3.
+3.  **Diferencia con los estimadores de Beta:** A diferencia de las pruebas de hipótesis realizadas para los estimadores EIVUM o EMV, que se basan en la distribución Gamma o Chi-cuadrado, esta prueba utiliza la **Normalidad Asintótica**. Esto es válido únicamente por el gran tamaño de la muestra ($n=1000$).
+4.  **Relación con el Intervalo de Confianza:** Esta conclusión refuerza lo hallado en el punto 2.3. Se cumple la propiedad de **Dualidad de la Inferencia**: un valor de hipótesis nula $\mu_0$ no se rechaza al nivel $\alpha$ si y solo si dicho valor está contenido en el intervalo de confianza del $(1-\alpha)100\%$.
 
 
