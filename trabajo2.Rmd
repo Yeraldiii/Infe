@@ -2777,6 +2777,187 @@ estimación. Esto es consecuencia directa de dos factores:
 2.  El tamaño de muestra grande ($n=1000$), que reduce el error
     estándar.
 
+
+# 3) Pregunta 3: Prueba de Hipótesis con Datos Pareados
+
+## 3.1 Simulación de una segunda variable correlacionada
+
+Para realizar una prueba de hipótesis con datos pareados, necesitamos
+dos mediciones relacionadas de la misma unidad observacional.
+Simularemos una segunda variable llamada `reclamos_posteriores` que
+representa los mismos reclamos presentados inicialmente pero dentro de 6
+meses, con una leve modificación sistemática y ruido aleatorio.
+
+Se desea saber con la misma muestra de 1000 usuarios si la media
+poblacional de reclamos disminuyó en estos 6 meses
+
+```{r simulacion_pareados, echo=TRUE}
+set.seed(123)
+punto_corte <- median(reclamos)
+
+periodo_1 <- ifelse(reclamos > punto_corte, "Alto", "Bajo")
+
+efecto_sistematico <- 0.05  # 5% de aumento
+ruido <- rnorm(n, mean = 0, sd = 0.05 * mean(reclamos))
+
+reclamos_posteriores <- reclamos * (1 + efecto_sistematico) + ruido
+reclamos_posteriores <- pmax(reclamos_posteriores, alpha_true)
+
+periodo_2 <- ifelse(reclamos_posteriores > punto_corte, 'Alto', 'Bajo')
+
+# Creamos data frame con datos pareados
+datos_pareados <- data.frame(id = 1:n, reclamos, periodo_1, reclamos_posteriores, periodo_2, diferencia = reclamos_posteriores - reclamos)
+
+# Tabla de contingencia para datos pareados categóricos
+tabla_contingencia_original = table(Periodo1 = datos_pareados$periodo_1, Periodo2 = datos_pareados$periodo_2)
+tabla_contingencia_original
+```
+
+## 3.2 Prueba de McNemar
+
+```{r}
+mcnemar_test_original = mcnemar.test(tabla_contingencia_original, correct = FALSE)
+mcnemar_test_original
+```
+
+```{r}
+# También con corrección de Yates
+mcnemar_test_original_yates = mcnemar.test(tabla_contingencia_original, correct = TRUE)
+
+# Extraemos valores de la tabla
+a <- tabla_contingencia_original[1, 1]  # Bajo-Bajo
+b <- tabla_contingencia_original[1, 2]  # Bajo-Alto
+c <- tabla_contingencia_original[2, 1]  # Alto-Bajo
+d <- tabla_contingencia_original[2, 2]  # Alto-Alto
+
+cat("DETALLE DE LA TABLA DE CONTINGENCIA:\n")
+cat("------------------------------------\n")
+cat("                    Periodo 2\n")
+cat("Periodo 1       Bajo        Alto\n")
+cat("--------------------------------\n")
+cat(sprintf("Bajo          %4d        %4d\n", a, b))
+cat(sprintf("Alto          %4d        %4d\n", c, d))
+cat("\n")
+
+cat("ESTADÍSTICOS DE LA PRUEBA:\n")
+cat("---------------------------\n")
+cat("Sin corrección de continuidad:\n")
+cat(sprintf("  χ² = %.4f\n", mcnemar_test_original$statistic))
+cat(sprintf("  p-valor = %.4f\n", mcnemar_test_original$p.value))
+cat("\n")
+
+cat("Con corrección de Yates:\n")
+cat(sprintf("  χ² = %.4f\n", mcnemar_test_original_yates$statistic))
+cat(sprintf("  p-valor = %.4f\n", mcnemar_test_original_yates$p.value))
+cat("\n")
+
+# Cálculos adicionales
+cat("ANÁLISIS DE PARES DISCORDANTES:\n")
+cat("--------------------------------\n")
+cat(sprintf("Total de pares: %d\n", n))
+cat(sprintf("Pares concordantes: %d (%.1f%%)\n", a + d, (a + d)/n * 100))
+cat(sprintf("Pares discordantes: %d (%.1f%%)\n", b + c, (b + c)/n * 100))
+cat(sprintf("  Bajo → Alto: %d (%.1f%%)\n", b, b/n * 100))
+cat(sprintf("  Alto → Bajo: %d (%.1f%%)\n", c, c/n * 100))
+cat("\n")
+
+# Diferencia de proporciones
+diferencia_prop <- (b - c) / n
+cat("DIFERENCIA DE PROPORCIONES:\n")
+cat(sprintf("  p(Periodo 2 = Alto) - p(Periodo 1 = Alto) = %.4f\n", 
+    mean(periodo_2 == "Alto") - mean(periodo_1 == "Alto")))
+cat(sprintf("  Alternativamente: (b - c) / n = %.4f\n", diferencia_prop))
+cat("\n")
+```
+
+## 3.3 Intervalo de confianza para la diferencia de proporciones
+
+```{r}
+ic_diferencia_pareada <- function(b, c, n, conf.level = 0.95) {
+  p_diff <- (b - c) / n
+  se <- sqrt((b + c) - (b - c)^2 / n) / n
+  z <- qnorm(1 - (1 - conf.level) / 2)
+  lower <- p_diff - z * se
+  upper <- p_diff + z * se
+  return(list(diferencia = p_diff, error_estandar = se, limite_inferior = lower, limite_superior = upper, conf.level = conf.level))
+}
+
+# Calculamos el IC
+ic_result <- ic_diferencia_pareada(b, c, n)
+
+cat("INTERVALO DE CONFIANZA PARA LA DIFERENCIA DE PROPORCIONES\n")
+cat("=========================================================\n\n")
+cat(sprintf("Diferencia estimada: %.4f\n", ic_result$diferencia))
+cat(sprintf("Error estándar: %.4f\n", ic_result$error_estandar))
+cat(sprintf("IC %.0f%%: [%.4f, %.4f]\n", 
+            ic_result$conf.level * 100,
+            ic_result$limite_inferior,
+            ic_result$limite_superior))
+cat("\n")
+
+if (ic_result$limite_inferior > 0) {
+  cat("  El intervalo NO incluye el 0 → Diferencia significativamente positiva.\n")
+  cat("  La proporción en el Periodo 2 es mayor que en el Periodo 1.\n")
+} else if (ic_result$limite_superior < 0) {
+  cat("  El intervalo NO incluye el 0 → Diferencia significativamente negativa.\n")
+  cat("  La proporción en el Periodo 2 es menor que en el Periodo 1.\n")
+} else {
+  cat("  El intervalo INCLUYE el 0 → Diferencia no significativa.\n")
+  cat("  No hay evidencia de diferencia entre los períodos.\n")
+}
+```
+
+## 3.4 Análisis de Potencia de tamaño muestral
+
+```{r}
+potencia_mcnemar <- function(n, p12, p21, alpha = 0.05) {
+  if (p12 + p21 == 0) return(0)
+  p0 <- (p12 + p21) / 2
+  z_alpha <- qnorm(1 - alpha/2)
+  efecto <- (p12 - p21) / sqrt(p0 * (1 - p0) / (n * (p12 + p21)))
+  potencia <- pnorm(efecto - z_alpha) + pnorm(-efecto - z_alpha)
+  return(min(max(potencia, 0), 1))
+}
+
+p12_est <- b / n
+p21_est <- c / n
+
+potencia_obs <- potencia_mcnemar(n, p12_est, p21_est)
+
+cat(sprintf("Tamaño muestral: n = %d\n", n))
+cat(sprintf("Probabilidad estimada Bajo→Alto (p12): %.4f\n", p12_est))
+cat(sprintf("Probabilidad estimada Alto→Bajo (p21): %.4f\n", p21_est))
+cat(sprintf("Diferencia (p12 - p21): %.4f\n", p12_est - p21_est))
+cat(sprintf("Potencia observada (1 - β): %.4f\n\n", potencia_obs))
+
+tamanos <- seq(100, 5000, by = 100)
+potencias <- sapply(tamanos, function(nn) {
+  potencia_mcnemar(nn, p12_est, p21_est)
+})
+
+n_para_80 <- tamanos[which(potencias >= 0.8)[1]]
+
+if (!is.na(n_para_80)) {
+  cat(sprintf("Para alcanzar potencia 0.8: n = %d\n", n_para_80))
+} else {
+  cat("Se requiere n > 5000 para alcanzar potencia 0.8\n")
+}
+
+plot(tamanos, potencias, type = "l", col = "blue", lwd = 2,
+     xlab = "Tamaño muestral (n)", ylab = "Potencia (1 - β)",
+     main = "Curva de Potencia para Prueba de McNemar",
+     ylim = c(0, 1))
+abline(h = 0.8, col = "red", lty = 2, lwd = 1.5)
+abline(v = n, col = "green", lty = 2, lwd = 1.5)
+abline(h = 0.05, col = "gray", lty = 3)
+points(n, potencia_obs, col = "green", pch = 19, cex = 1.5)
+text(n, potencia_obs + 0.05, paste("n =", n), col = "green", pos = 4)
+legend("bottomright", 
+       legend = c("Potencia", "Potencia 0.8", "Nuestro estudio"),
+       col = c("blue", "red", "green"), 
+       lty = c(1, 2, 2), lwd = c(2, 1.5, 1.5))
+```
+
 # 4) Pregunta 4 - Pruebas de hipótesis para los estimadores 
 
 ## 4.1 Prueba de hipótesis para el parámetro $\alpha$ (EMV)    
@@ -3262,3 +3443,4 @@ generados son consistentes con el verdadero parámetro poblacional
 utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
+
