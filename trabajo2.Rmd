@@ -4,7 +4,6 @@ output:
   pdf_document:
     latex_engine: xelatex
     highlight: tango
-    toc: false
 header-includes:
 - \usepackage{graphicx}
 editor_options: 
@@ -13,6 +12,7 @@ editor_options:
 ---
 
 \pagenumbering{gobble}
+
 \begin{center}
 \vspace{0.1cm}
 {\large DEPARTAMENTO DE ESTADÍSTICA E INFORMÁTICA}
@@ -55,9 +55,15 @@ Zavala Malpartida Kay Daniela L. & 20230420 \\
 
 \vspace{1cm}
 \textbf{LA MOLINA - LIMA - PERÚ 2025}
-
 \end{center}
+
 \newpage
+
+\pagenumbering{roman}
+\setcounter{tocdepth}{2}
+\tableofcontents
+\newpage
+
 \pagenumbering{arabic}
 
 ```{r setup, include=FALSE}
