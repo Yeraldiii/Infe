@@ -2777,12 +2777,95 @@ estimación. Esto es consecuencia directa de dos factores:
 2.  El tamaño de muestra grande ($n=1000$), que reduce el error
     estándar.
 
-# 4) Pregunta 4 - Pruebas de hipótesis para los estimadores
+# 4) Pregunta 4 - Pruebas de hipótesis para los estimadores 
+
+## 4.1 Prueba de hipótesis para el parámetro $\alpha$ (EMV)    
+
+En esta sección se realiza una prueba de hipótesis para el parámetro $\alpha$ utilizando su estimador de máxima verosimilitud, basado en
+la distribución Pareto$(\alpha,\beta)$.  
+
+### 4.1.1 Fundamento teórico     
+
+Sea $X_1, \ldots, X_n$ una muestra aleatoria de una distribución
+Pareto$(\alpha,\beta)$, y sea beta conocido, definimos nuestro estadístico suficiente:  
+
+$$
+\hat{\alpha}_{EMV} = X_{(1)} = \min(X_1,\ldots,X_n).
+$$
+### 4.1.2 Planteamiento de la hipótesis:   
+
+Se plantea una prueba bilateral para contrastar el valor del parámetro
+$\beta$:
+
+$$
+\begin{cases}
+H_0: \alpha = 2, \\
+H_1: \alpha \neq 2.
+\end{cases}
+$$
+
+El nivel de significancia considerado es $\alpha = 0.05$.
+
+### 4.1.3.Estadístico de Prueba  
+
+Bajo $H_0$, cuando $\alpha = \alpha_0 = 2$, se tiene que:  
+
+$$
+\frac{\hat{\alpha}_{\text{EMV}}}{\alpha_0} \sim \text{Pareto}(1, n\beta)
+$$  
+Definimos la variable aleatoria:  
+
+$R = \hat{\alpha}_{\text{EMV}} / \alpha_0$, cuya distribución cumple que: $R^{n\beta} \sim U(0,1)$.   
+
+Para una prueba bilateral con nivel de significancia $\alpha^* = 0.05$, se rechaza $H_0$ cuando $\hat{\alpha}_{\text{EMV}}$ es demasiado pequeño o demasiado grande.
+
+Bajo $H_0$:
+
+- Cola inferior: valores pequeños de $\hat{\alpha}_{\text{EMV}}$ corresponden a valores grandes de $R$.
+Rechazamos si $R^{n\beta} > 1 - \frac{\alpha^*}{2}$.
+
+- Cola superior: valores grandes de $\hat{\alpha}_{\text{EMV}}$ corresponden a valores pequeños de $R$.
+Rechazamos si $R^{n\beta} < \frac{\alpha^*}{2}$.  
+
+Definimos los valores críticos: $c_1 = \alpha_0 \cdot \left(\frac{\alpha^*}{2}\right)^{-1/(n\beta)},\quad c_2 = \alpha_0 \cdot \left(1 - \frac{\alpha^*}{2}\right)^{-1/(n\beta)}$.  
+
+### 4.1.4 Calculo de valores críticos:    
+
+```{r, include=FALSE}
+alpha0 <- 2    
+beta <- 3      
+n <- 1000      
+alpha_star <- 0.05  
+```
+
+```{r}
+# Cálculo de valores críticos
+c1 <- alpha0 * (alpha_star/2)^(-1/(n*beta))
+c2 <- alpha0 * (1 - alpha_star/2)^(-1/(n*beta))  
+
+c1
+c2
+```
+Rechazar $H_0: \alpha = 2$ si: $\hat{\alpha}_{\text{EMV}} < 2.000017$ o $\hat{\alpha}_{\text{EMV}} > 2.002461$
+
+No rechazar $H_0$ si: $2.000017 \leq \hat{\alpha}_{\text{EMV}} \leq 2.002461$  
+
+### 4.1.5 Aplicación y conclusiones  
+
+```{r}
+alpha_EMV <- min(reclamos)
+alpha_EMV 
+```
+Como el estadístico $\hat{\alpha}_{\text{EMV}} = 2.00031$ cae dentro del intervalo de aceptación $[2.000017, 2.002461]$: 
+
+$\text{\textbf{NO RECHAZAR }} H_0: \alpha = 2$  
+
+No se rechaza la hipótesis nula $H_0: \alpha = 2$ al nivel de significancia del 5\%. El valor estimado $\hat{\alpha}_{\text{EMV}} = 2.00031$ es estadísticamente compatible con $\alpha = 2$, dado que la diferencia de $0.00031$ unidades no es significativa considerando el tamaño muestral de $n = 1000$.
 
 ## 4.2 Prueba de Hipótesis para el parámetro $\beta$ (EMV)
 
 En esta sección se realiza una prueba de hipótesis para el parámetro $\beta$ utilizando su estimador de máxima verosimilitud, basado en
-la distribución Pareto$(\alpha,\beta)$.
+la distribución Pareto$(\alpha,\beta)$.  
 
 ### 4.2.1 Fundamento Teórico
 
@@ -2791,7 +2874,6 @@ Pareto$(\alpha,\beta)$, y sea
 $$
 \hat{\alpha}_{EMV} = X_{(1)} = \min(X_1,\ldots,X_n).
 $$
-
 Definimos la estadística suficiente:
 $$
 T = \sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right).
@@ -2890,6 +2972,7 @@ cat(
 )
 
 ```
+
 ### 4.2.6 Interpretación de los Resultados
 
 A partir de la muestra analizada se obtuvo el estadístico suficiente
