@@ -2421,7 +2421,9 @@ $$
 P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1}{b} \leq \alpha \leq \frac{Y_1}{a}\right]=P\left[\frac{Y_1}{(0.6)^{-1 / n \beta}} \leqslant \alpha \leqslant \frac{Y_1}{(0.95)^{-1 / n \beta}}\right] \\ \\
 \text { I.C }=\left[Y_1 \cdot(0.05)^{1 /(n \beta)} ; Y_1 \cdot(0.95)^{1 /(n \beta)}\right]
 \end{array}
-$$ \## 2.2 Estimador 2: Suma Log de T
+$$\
+
+## 2.2 Estimador 2: Suma Log de T
 
 Sea $X_1, \ldots, X_n$ una muestra aleatoria i.i.d. de una distribución
 Pareto$(\alpha,\beta)$ con densidad
@@ -3459,3 +3461,4 @@ generados son consistentes con el verdadero parámetro poblacional
 utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
+
