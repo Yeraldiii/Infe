@@ -221,8 +221,7 @@ $$
 $$
 
 Como podemos obervar cumple ambas condiciones, por ende decimos que
-nuestro estimador es consitente n otras palabras el estimador converge
-en probabilidades al parametro.
+nuestro estimador es consistente, en otras palabras el estimador converge en probabilidades al parametro.
 
 ```{r, include=FALSE}
 ## Aca vemos la var de la muestra total, para ver que es cercana a 0
@@ -333,31 +332,66 @@ obtener mediante corrección del sesgo. (Teorema de Lehman-Scheffé)
 
 ## 1.2 EMV para parametro Beta:
 
-Para hallar el estimador debemos remplazar nuestro primer estimador para
-el parametro alfa:
+Para hallar el estimador de máxima verosimilitud del parámetro $\beta$,
+reemplazamos el estimador obtenido previamente para el parámetro
+$\alpha$, el cual es $$
+\hat{\alpha}_{MLE} = \min\{X_1, X_2, \dots, X_n\} = X_{(1)}.
+$$ Como el máximo de la función de verosimilitud es el mismo que el
+máximo de su logaritmo, trabajamos con la log-verosimilitud. La función
+de verosimilitud está dada por
 
 $$
-\hat{\alpha}_{MLE} = \min\{X_1, X_2, \dots, X_n\}
+L(\alpha, \beta)
+= \beta^n \cdot \alpha^{n\beta} \cdot \prod_{i=1}^n X_i^{-(\beta+1)}.
 $$
 
-Como sabemos el máximo en L(alpha,beta) es igual al máximo de
-Ln(Lalpha,beta)) entonces haremos uso del ln:
+Aplicando logaritmo natural,
 
 $$
-\begin{array}{r}
-L(\alpha, \beta) = \beta^n \cdot \alpha^{n\beta} \cdot \prod_{i=1}^n X_i^{-(\beta+1)} \\
-\ln(L(\alpha, \beta)) = n \cdot \ln(\beta) + n\beta \ln(\alpha) - (\beta+1)\sum_{i=1}^n \ln(X_i)
-\end{array}
+\ln(L(\alpha, \beta))
+= n \ln(\beta) + n\beta \ln(\alpha)
+- (\beta+1)\sum_{i=1}^n \ln(X_i).
 $$
+
+Derivando respecto de $\beta$,
 
 $$
 \begin{aligned}
-\frac{d \ln (L(\alpha, \beta))}{d \beta} &= \frac{n}{\beta} + n \ln \alpha - \sum_{i=1}^n \ln X_i \\
-&= \frac{n}{\beta} + n \ln \alpha - \sum_{i=1}^n \ln X_i = 0 \\
-&\Rightarrow \frac{n}{\beta} = \sum_{i=1}^n \ln X_i - n \ln \alpha \\
-&\Rightarrow \frac{n}{\beta} = \sum_{i=1}^n \ln \left(\frac{X_i}{\alpha}\right) \\
-&\Rightarrow \hat{\beta} = \frac{n}{\sum_{i=1}^n \ln \left(\frac{X_i}{x_1}\right)}
+\frac{d}{d\beta}\ln(L(\alpha, \beta))
+&= \frac{n}{\beta} + n \ln \alpha - \sum_{i=1}^n \ln X_i.
 \end{aligned}
+$$
+
+Igualando a cero,
+
+$$
+\frac{n}{\beta} + n \ln \alpha - \sum_{i=1}^n \ln X_i = 0.
+$$
+
+Despejando $\beta$, 
+$$
+\begin{aligned}
+\frac{n}{\beta}
+&= \sum_{i=1}^n \ln X_i - n \ln \alpha \\
+&= \sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right).
+\end{aligned}
+$$
+
+Por lo tanto,
+
+$$
+\hat{\beta}
+= \frac{n}{\sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right)}.
+$$
+
+Finalmente, reemplazando $\alpha$ por su estimador de máxima
+verosimilitud $\hat{\alpha}_{MLE} = X_{(1)}$, se obtiene
+
+$$
+\boxed{
+\hat{\beta}_{MLE}
+= \frac{n}{\sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right)}
+}.
 $$
 
 ### 1.2.1 Propiedades:
@@ -395,6 +429,259 @@ $$
 
 Por ende, no es un estimador insesgado. Ademas al ser positivo podemos
 decir que sobrestima al parametro.
+
+Ahora lo aplicaremos a nuestra data: 
+
+```{r include=FALSE}
+# =============================================================================
+# INSesgamiento del EMV de beta - aplicación con la data
+# =============================================================================
+
+# tamaño muestral
+n <- length(reclamos)
+
+# estimador emv de alfa
+alpha_emv_observado <- min(reclamos)
+
+# estimador emv de beta (observado)
+beta_emv_observado <- n / sum(log(reclamos / alpha_emv_observado))
+
+# valor esperado teórico del emv de beta
+E_beta_emv_teorico <- (n * beta_true) / (n - 2)
+```
+
+```{r echo=FALSE}
+print(paste("beta_emv observado:", beta_emv_observado))
+print(paste("E[beta_emv] teorico:", E_beta_emv_teorico))
+print(paste("beta verdadero:", beta_true))
+
+```
+El valor observado del estimador fue ligeramente mayor que el valor
+verdadero del parámetro $\beta$, mientras que el valor esperado teórico
+también se encuentra por encima de $\beta$.
+
+Esto confirma empíricamente que el estimador EMV de $\beta$ presenta
+sesgo positivo, es decir, sobrestima el parámetro verdadero para
+muestras finitas, por lo que no cumple la propiedad de insesgamiento.
+
+Sin embargo, la diferencia entre el valor observado y el valor verdadero
+es pequeña, lo cual sugiere que el sesgo disminuye conforme el tamaño
+muestral aumenta.
+
+```{r}
+# =============================================================================
+# DEMOSTRACIÓN VISUAL: SESGO POSITIVO Y CONVERGENCIA ASINTÓTICA DE beta_EMV
+# =============================================================================
+
+set.seed(123)
+
+alpha_true <- 2
+beta_true <- 3
+n_total <- 1000
+
+# base de datos original
+reclamos <- alpha_true / (1 - runif(n_total))^(1 / beta_true)
+
+# tamaños de submuestra
+n_values <- seq(10, 1000, by = 10)
+
+# esperanza teorica del emv de beta para cada n
+results <- data.frame(n = n_values)
+results$E_teorico <- (results$n * beta_true) / (results$n - 2)
+
+library(ggplot2)
+
+ggplot(results, aes(x = n)) +
+  geom_line(aes(y = E_teorico, color = "E[beta_EMV] teorico"), linewidth = 1.4) +
+  geom_hline(yintercept = beta_true, linetype = "dashed", linewidth = 1) +
+  geom_ribbon(aes(ymin = beta_true, ymax = E_teorico), alpha = 0.25) +
+  labs(
+    title = "Sesgo positivo y convergencia asintotica del EMV de beta",
+    x = "tamaño de muestra (n)",
+    y = "valor esperado E[beta_EMV]",
+    color = ""
+  ) +
+  theme_minimal() +
+  annotate(
+    "text",
+    x = 300,
+    y = max(results$E_teorico),
+    label = "sesgo positivo: E[beta_EMV] > beta",
+    size = 4,
+    hjust = 0
+  ) +
+  annotate(
+    "text",
+    x = 700,
+    y = beta_true + 0.05,
+    label = paste("limite asintotico: beta =", beta_true),
+    size = 4,
+    hjust = 0
+  )
+
+```
+
+De nuestra base de datos se tomaron submuestras de tamaño creciente con
+el fin de analizar el comportamiento del estimador EMV de $\beta$.
+Se observa que el valor esperado teórico del estimador se mantiene por
+encima del parámetro verdadero, confirmando el sesgo positivo.
+
+No obstante, a medida que el tamaño muestral aumenta, el valor esperado
+de $\hat\beta$ se aproxima cada vez más a $\beta$, lo que evidencia
+la propiedad de insesgamiento asintótico del estimador.
+
+#### b) Consistencia
+
+Recordemos que el estimador de máxima verosimilitud para $\beta$ está
+dado por
+
+$$
+\hat{\beta} = \frac{n}{\sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right)} = \frac{n}{T},
+$$
+
+donde
+
+$$
+T = \sum_{i=1}^n (Y_i - Y_{(1)}), \quad Y_i = \ln\left(\frac{X_i}{\alpha}\right).
+$$
+
+Se sabe que
+
+$$
+\frac{T}{n} \xrightarrow{p} E(Y_i) = \frac{1}{\beta},
+$$
+
+por la Ley de los Grandes Números. Por el teorema de continuidad,
+
+$$
+\hat{\beta}
+= \frac{1}{T/n}
+\xrightarrow{p} \beta.
+$$
+
+Por lo tanto, $\hat{\beta}$ es un estimador consistente del parámetro
+$\beta$.
+
+Como se mostró previamente, el estimador EMV de $\beta$ presenta sesgo
+positivo para muestras finitas. Además, la varianza del estimador disminuye conforme aumenta el tamaño muestral. Al cumplirse que el sesgo y la varianza tienden a cero, se concluye que $\hat\beta$ es un estimador consistente del parámetro $\beta$.
+```{r include=FALSE}
+# =============================================================================
+# VARIANZA TEÓRICA DEL EMV DE beta
+# =============================================================================
+
+n_var <- seq(10, 1000, by = 10)
+
+var_beta_emv <- (n_var^2 * beta_true^2) / ((n_var - 2)^2 * (n_var - 3))
+
+results_var <- data.frame(n = n_var, varianza = var_beta_emv)
+
+```
+
+```{r echo=FALSE}
+ggplot(results_var, aes(x = n, y = varianza)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Convergencia de la Varianza del EMV de beta hacia Cero",
+    subtitle = "Var(beta_EMV) → 0 cuando n → ∞",
+    x = "Tamaño de muestra (n)",
+    y = "Var(beta_EMV)"
+  ) +
+  theme_minimal() +
+  annotate(
+    "text",
+    x = 600,
+    y = max(var_beta_emv) / 2,
+    label = "Var(beta_EMV) tiende a 0",
+    size = 5
+  )
+
+```
+Como se observa, la varianza del estimador EMV de $\beta$ tiende a
+cero conforme el tamaño muestral aumenta. Dado que el sesgo del
+estimador también tiende a cero, se concluye que el estimador $\hat\beta$ es consistente. En otras palabras, el estimador
+converge en probabilidad al verdadero valor del parámetro $\beta$.
+
+#### c) Suficiencia
+
+$$
+L(\beta;\mathbf{x})
+= \beta^n \exp\left\{-\beta \sum_{i=1}^n
+\ln\left(\frac{x_i}{x_{(1)}}\right)\right\}
+\cdot \prod_{i=1}^n \frac{1}{x_i}.
+$$
+
+Se define el estadístico
+
+$$
+T = \sum_{i=1}^n \ln\left(\frac{X_i}{X_{(1)}}\right).
+$$
+
+Entonces la verosimilitud puede factorizarse como
+
+$$
+L(\beta;\mathbf{x}) =
+\underbrace{\beta^n e^{-\beta T}}_{g(T,\beta)}
+\cdot
+\underbrace{\prod_{i=1}^n \frac{1}{x_i}}_{h(\mathbf{x})}.
+$$
+
+Por el teorema de factorización de Neyman--Fisher, el estadístico $T$ es
+suficiente para el parámetro $\beta$.
+
+#### d) Anciliaridad
+
+El estadístico de orden mínimo $$
+X_{(1)} = \min\{X_1,\dots,X_n\}
+$$
+
+tiene distribución
+
+$$
+f_{X_{(1)}}(x) = n \beta \frac{\alpha^{n\beta}}{x^{n\beta+1}},
+\quad x > \alpha,
+$$
+
+la cual no depende del parámetro $\beta$ cuando se considera la variable
+transformada $X_{(1)}/\alpha$.
+
+Por lo tanto, $X_{(1)}$ es un estadístico ancilar y aporta información
+únicamente sobre $\alpha$, mas no sobre $\beta$.
+
+#### e) Completitud
+
+El estadístico
+
+$$
+T = \sum_{i=1}^n (Y_i - Y_{(1)})
+$$
+
+tiene distribución Gamma$(n-1,\beta)$, que pertenece a la familia exponencial
+de un solo parámetro.
+
+Dado que la familia Gamma con parámetro de forma conocido es completa, se
+concluye que el estadístico $T$ es completo para el parámetro $\beta$.
+
+#### f) Optimalidad
+
+El estimador de máxima verosimilitud $\hat{\beta}$ es un estimador sesgado, por lo que no puede ser óptimo en el sentido clásico de mínima varianza entre los estimadores insesgados (UMVU).
+
+No obstante, al ser un estimador de máxima verosimilitud, $\hat{\beta}$ es consistente y asintóticamente eficiente, alcanzando la cota de
+Cramér--Rao cuando $n \to \infty$.
+
+Por lo tanto, $\hat{\beta}$ no es óptimo en muestras finitas, pero sí es
+óptimo en sentido asintótico.
+
+Un estimador insesgado para $\beta$ es
+
+$$
+\tilde{\beta} = \frac{n-2}{n}\hat{\beta},
+$$
+
+el cual depende únicamente del estadístico suficiente y completo $T$.
+Por el teorema de Lehmann--Scheffé, $\tilde{\beta}$ es el estimador UMVU
+del parámetro $\beta$.
+
+
 
 ## 1.3 Estimador para la Media Poblacional ($\mu$)
 
@@ -525,13 +812,14 @@ suficiente y completo.
 **Conclusión:** $\bar{X}$ **no es un estimador óptimo** para la media de
 una población Pareto, aunque sea fácil de calcular e insesgado.
 
+## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto
 
+El método de momentos consiste en igualar los $k$ primeros momentos
+poblacionales con los correspondientes momentos muestrales, donde $k$ es
+el número de parámetros a estimar. Para la distribución Pareto con dos
+parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
 
-## 1.4 Método de Momentos para los parámetros de $\alpha$ y $\beta$ de la Distribución Pareto 
-
-El método de momentos consiste en igualar los $k$ primeros momentos poblacionales con los correspondientes momentos muestrales, donde $k$ es el número de parámetros a estimar. Para la distribución Pareto con dos parámetros $(\alpha, \beta)$, utilizaremos los dos primeros momentos.
-
-### Definición de la distribución Pareto  
+### Definición de la distribución Pareto
 
 Sea $X \sim \text{Pareto}(\alpha, \beta)$ con función de densidad:
 
@@ -548,13 +836,10 @@ E[X] = \int_{\alpha}^{\infty} x \cdot f_X(x) \, dx
      = \int_{\alpha}^{\infty} x \cdot \frac{\beta \alpha^\beta}{x^{\beta+1}} \, dx
 $$
 
-
 $$
 E[X] = \beta \alpha^\beta \int_{\alpha}^{\infty} x \cdot x^{-(\beta+1)} \, dx
      = \beta \alpha^\beta \int_{\alpha}^{\infty} x^{-\beta} \, dx
 $$
-
-
 
 Para $\beta > 1$ (condición de convergencia):
 
@@ -564,13 +849,11 @@ $$
 
 Evaluando los límites:
 
-Límite superior cuando $x \to \infty$:
-$$
+Límite superior cuando $x \to \infty$: $$
 \lim_{x \to \infty} \frac{x^{1-\beta}}{1-\beta} = 0 \quad \text{porque } 1-\beta < 0
 $$
 
-Límite inferior cuando $x = \alpha$:
-$$
+Límite inferior cuando $x = \alpha$: $$
 \frac{\alpha^{1-\beta}}{1-\beta}
 $$
 
@@ -582,15 +865,13 @@ E[X] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{1-\beta}}{1-\beta} \right)
      = \frac{\beta \alpha}{\beta-1}
 $$
 
-**Primer momento poblacional:**
-$$
+**Primer momento poblacional:** $$
 \boxed{E[X] = \frac{\alpha\beta}{\beta-1}}, \quad \beta > 1
 $$
 
 ### P2:Cálculo del segundo momento poblacional $E[X^2]$
 
 #### Planteamiento de la integral
-
 
 $$
 E[X^2] = \int_{\alpha}^{\infty} x^2 \cdot f_X(x) \, dx 
@@ -600,8 +881,7 @@ $$
 $$
 E[X^2] = \beta \alpha^\beta \int_{\alpha}^{\infty} x^2 \cdot x^{-(\beta+1)} \, dx
        = \beta \alpha^\beta \int_{\alpha}^{\infty} x^{1-\beta} \, dx
-$$
-Para $\beta > 2$ (condición de convergencia):
+$$ Para $\beta > 2$ (condición de convergencia):
 
 $$
 \int_{\alpha}^{\infty} x^{1-\beta} \, dx = \left[ \frac{x^{2-\beta}}{2-\beta} \right]_{\alpha}^{\infty}
@@ -609,31 +889,30 @@ $$
 
 Evaluando los límites:
 
-Límite superior cuando $x \to \infty$:
-$$
+Límite superior cuando $x \to \infty$: $$
 \lim_{x \to \infty} \frac{x^{2-\beta}}{2-\beta} = 0 \quad \text{porque } 2-\beta < 0
 $$
 
-Límite inferior cuando $x = \alpha$:
-$$
+Límite inferior cuando $x = \alpha$: $$
 \frac{\alpha^{2-\beta}}{2-\beta}
 $$
-  
+
 ### Resultado del segundo momento
+
 $$
 E[X^2] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{2-\beta}}{2-\beta} \right)
        = \beta \alpha^\beta \cdot \frac{\alpha^{2-\beta}}{\beta-2}
        = \frac{\beta \alpha^2}{\beta-2}
 $$
 
-**Segundo momento poblacional:**
-$$
+**Segundo momento poblacional:** $$
 \boxed{E[X^2] = \frac{\alpha^2\beta}{\beta-2}}, \quad \beta > 2
 $$
 
 ### P3: Momentos muestrales
 
-Dada una muestra aleatoria $X_1, X_2, \dots, X_n \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$:
+Dada una muestra aleatoria
+$X_1, X_2, \dots, X_n \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$:
 
 #### Primer momento muestral (media muestral)
 
@@ -653,8 +932,7 @@ $$
 S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2
 $$
 
-Nota: Existe relación entre $m_2$, $\bar{X}$ y $S^2$:
-$$
+Nota: Existe relación entre $m_2$, $\bar{X}$ y $S^2$: $$
 m_2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
 $$
 
@@ -673,20 +951,17 @@ $$
 
 #### Despejar $\alpha$ de la Ecuación I
 
-De (I):
-$$
+De (I): $$
 \frac{\alpha\beta}{\beta-1} = \bar{X} \quad \Rightarrow \quad \alpha\beta = \bar{X}(\beta-1)
 $$
 
-Despejando $\alpha$:
-$$
+Despejando $\alpha$: $$
 \boxed{\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}} \quad \text{(Ecuación III)}
 $$
 
 #### Sustituir en la Ecuación II
 
-Sustituyendo (III) en (II):
-$$
+Sustituyendo (III) en (II): $$
 \frac{\left(\bar{X} \cdot \frac{\beta-1}{\beta}\right)^2 \beta}{\beta-2} = m_2
 $$
 
@@ -700,20 +975,17 @@ $$
 \frac{\bar{X}^2 \cdot \frac{(\beta-1)^2}{\beta}}{\beta-2} = m_2
 $$
 
-Reordenando:
-$$
+Reordenando: $$
 \frac{(\beta-1)^2}{\beta(\beta-2)} = \frac{m_2}{\bar{X}^2} \quad \text{(Ecuación IV)}
 $$
 
 ### P5: Definición de R
 
-Sea:
-$$
+Sea: $$
 R = \frac{m_2}{\bar{X}^2}
 $$
 
-La Ecuación IV se convierte en:
-$$
+La Ecuación IV se convierte en: $$
 \frac{(\beta-1)^2}{\beta(\beta-2)} = R
 $$
 
@@ -721,21 +993,17 @@ $$
 
 #### Eliminar fracción
 
-Multiplicando en cruz:
-$$
+Multiplicando en cruz: $$
 (\beta-1)^2 = R\beta(\beta-2)
 $$
 
-
 #### Expandir ambos lados
 
-**Lado izquierdo:**
-$$
+**Lado izquierdo:** $$
 (\beta-1)^2 = \beta^2 - 2\beta + 1
 $$
 
-**Lado derecho:**
-$$
+**Lado derecho:** $$
 R\beta(\beta-2) = R\beta^2 - 2R\beta
 $$
 
@@ -745,44 +1013,36 @@ $$
 \beta^2 - 2\beta + 1 = R\beta^2 - 2R\beta
 $$
 
-Llevando todo a un lado:
-$$
+Llevando todo a un lado: $$
 \beta^2 - 2\beta + 1 - R\beta^2 + 2R\beta = 0
 $$
 
-Agrupando términos:
-$$
+Agrupando términos: $$
 (1 - R)\beta^2 + 2(R - 1)\beta + 1 = 0
 $$
 
 #### Forma estándar de ecuación cuadrática
 
-Multiplicando por -1 para mayor claridad:
-$$
+Multiplicando por -1 para mayor claridad: $$
 (R - 1)\beta^2 + 2(1 - R)\beta - 1 = 0
 $$
 
-Factor común $(R-1)$:
-$$
+Factor común $(R-1)$: $$
 (R-1)(\beta^2 - 2\beta) - 1 = 0
 $$
 
 #### Aplicar fórmula general
 
-Para una ecuación $a\beta^2 + b\beta + c = 0$:
-- $a = 1$
-- $b = -2$
-- $c = -\frac{1}{R-1}$
+Para una ecuación $a\beta^2 + b\beta + c = 0$: - $a = 1$ - $b = -2$ -
+$c = -\frac{1}{R-1}$
 
-Solución:
-$$
+Solución: $$
 \beta = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} 
        = \frac{2 \pm \sqrt{4 + \frac{4}{R-1}}}{2}
        = \frac{2 \pm 2\sqrt{1 + \frac{1}{R-1}}}{2}
 $$
 
-Simplificando:
-$$
+Simplificando: $$
 \beta = 1 \pm \sqrt{1 + \frac{1}{R-1}}
 $$
 
@@ -790,17 +1050,17 @@ $$
 
 #### Consideraciones físicas
 
-1. $\beta > 0$ (parámetro de forma positivo)
-2. Para la existencia de $E[X]$: $\beta > 1$
-3. Para la existencia de $Var(X)$: $\beta > 2$
+1.  $\beta > 0$ (parámetro de forma positivo)
+2.  Para la existencia de $E[X]$: $\beta > 1$
+3.  Para la existencia de $Var(X)$: $\beta > 2$
 
 #### Análisis de las raíces
 
-- Raíz 1: $\beta_1 = 1 + \sqrt{1 + \frac{1}{R-1}} > 1$ ✓
-- Raíz 2: $\beta_2 = 1 - \sqrt{1 + \frac{1}{R-1}} < 1$ ✗ (no cumple $\beta > 1$)
+-   Raíz 1: $\beta_1 = 1 + \sqrt{1 + \frac{1}{R-1}} > 1$ ✓
+-   Raíz 2: $\beta_2 = 1 - \sqrt{1 + \frac{1}{R-1}} < 1$ ✗ (no cumple
+    $\beta > 1$)
 
-Por lo tanto, seleccionamos la raíz positiva:
-$$
+Por lo tanto, seleccionamos la raíz positiva: $$
 \hat{\beta}_{MM} = 1 + \sqrt{1 + \frac{1}{R-1}}
 $$
 
@@ -808,13 +1068,11 @@ $$
 
 #### Expresión de R en términos de $S^2$
 
-
 Recordemos que:
 
 $$
 m_2 = \frac{1}{n} \sum X_i^2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
 $$
-
 
 Entonces:
 
@@ -822,9 +1080,7 @@ $$
 R = \frac{m_2}{\bar{X}^2} = \frac{S^2}{\bar{X}^2} \cdot \frac{n-1}{n} + 1
 $$
 
-
 #### Aproximación para n grande
-
 
 Para $n$ suficientemente grande, $\frac{n-1}{n} \approx 1$, entonces:
 
@@ -832,15 +1088,11 @@ $$
 R \approx \frac{S^2}{\bar{X}^2} + 1 = 1 + \left(\frac{S}{\bar{X}}\right)^2
 $$
 
+#### Sustitución en la fórmula
 
-
-#### Sustitución en la fórmula 
-
-Si $R \approx 1 + \left(\frac{S}{\bar{X}}\right)^2$, entonces:
-$$
+Si $R \approx 1 + \left(\frac{S}{\bar{X}}\right)^2$, entonces: $$
 R - 1 \approx \left(\frac{S}{\bar{X}}\right)^2
 $$
-
 
 Y:
 
@@ -848,16 +1100,13 @@ $$
 \frac{1}{R-1} \approx \left(\frac{\bar{X}}{S}\right)^2
 $$
 
-Sustituyendo en la fórmula de $\hat{\beta}_{MM}$:
-$$
+Sustituyendo en la fórmula de $\hat{\beta}_{MM}$: $$
 \hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}
 $$
 
 ### P9: Obtención del estimador
 
-
 #### Retomando la Ecuación III
-
 
 De la Ecuación III:
 
@@ -866,7 +1115,6 @@ $$
 $$
 
 #### Sustitución
-
 
 Sustituyendo $\hat{\beta}_{MM}$:
 
@@ -877,36 +1125,42 @@ $$
 ### P10: Resumen final de estimadores
 
 #### Estimador para el parámetro de forma $\beta$:
+
 $$
 \boxed{\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}}
 $$
 
 #### Estimador para el parámetro de escala $\alpha$:
+
 $$
 \boxed{\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}}
 $$
 
-
-donde:  
-- $\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$ (media muestral)  
-- $S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2$ (varianza muestral)  
+donde:\
+- $\bar{X} = \frac{1}{n} \sum_{i=1}^n X_i$ (media muestral)\
+- $S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2$ (varianza
+muestral)\
 - $S = \sqrt{S^2}$ (desviación estándar muestral)
-
 
 ## 1.4.1 Propiedades del Estimador $\hat{\alpha}_{MM}$
 
 ### a) Insesgamiento
 
-El estimador $\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}$ es una **función no lineal** de variables aleatorias ($\bar{X}$ y $S$). Para funciones no lineales $g(\cdot)$, generalmente se cumple que $E[g(X)] \neq g(E[X])$. En particular:
+El estimador
+$\hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}$
+es una **función no lineal** de variables aleatorias ($\bar{X}$ y $S$).
+Para funciones no lineales $g(\cdot)$, generalmente se cumple que
+$E[g(X)] \neq g(E[X])$. En particular:
 
-\[
+$$
 E\left[\bar{X} \cdot \frac{\hat{\beta}_{MM}-1}{\hat{\beta}_{MM}}\right] \neq E[\bar{X}] \cdot \frac{E[\hat{\beta}_{MM}]-1}{E[\hat{\beta}_{MM}]}
-\]
+$$
 
-Aunque $\hat{\alpha}_{MM}$ es **asintóticamente insesgado** ($\lim_{n\to\infty} E[\hat{\alpha}_{MM}] = \alpha$), para cualquier $n$ finito existe sesgo sistemático.
+Aunque $\hat{\alpha}_{MM}$ es **asintóticamente insesgado**
+($\lim_{n\to\infty} E[\hat{\alpha}_{MM}] = \alpha$), para cualquier $n$
+finito existe sesgo sistemático.
 
 **Verificación empírica con nuestros datos:**
-
 
 ```{r demo_no_insesgado, echo=TRUE, fig.height=4.5, fig.width=6}
 # Usando nuestra base de datos original 'reclamos'
@@ -942,30 +1196,35 @@ hist(boot_vals, col = "lightblue", border = "white",
 
 **Cálculos obtenidos:**
 
-**1. Estimación puntual en la data original:**
-$\hat{\alpha}_{MM}$ calculado = 2.06082
+**1. Estimación puntual en la data original:** $\hat{\alpha}_{MM}$
+calculado = 2.06082
 
-**2. Análisis bootstrap (300 réplicas):**
-Promedio de $\hat{\alpha}_{MM}$ M = 2.069037
+**2. Análisis bootstrap (300 réplicas):** Promedio de
+$\hat{\alpha}_{MM}$ M = 2.069037
 
-**3. Comparación con el valor verdadero:**  
-Valor verdadero $\alpha$ = 2.00000  
+**3. Comparación con el valor verdadero:**\
+Valor verdadero $\alpha$ = 2.00000\
 Diferencia = 2.069037 - 2 = 0.069037
 
-**4. Sesgo relativo:**  
-Sesgo absoluto = 0.069037  
-Sesgo relativo = (0.069037 / 2) × 100% = 3.45%  
-¿E[$\hat{\alpha}_{MM}$] = $\alpha$? → **NO** (existe sesgo positivo de 0.069037)
+**4. Sesgo relativo:**\
+Sesgo absoluto = 0.069037\
+Sesgo relativo = (0.069037 / 2) × 100% = 3.45%\
+¿E[$\hat{\alpha}_{MM}$] = $\alpha$? → **NO** (existe sesgo positivo de
+0.069037)
 
-El estimador $\hat{\alpha}_{MM}$ sobrestima sistemáticamente el parámetro $\alpha$ en aproximadamente 3.45%.
+El estimador $\hat{\alpha}_{MM}$ sobrestima sistemáticamente el
+parámetro $\alpha$ en aproximadamente 3.45%.
 
-**Conclusión:** $\hat{\alpha}_{MM}$ **no es un estimador insesgado** para el parámetro $\alpha$ de la distribución Pareto. Aunque podría ser aproximadamente insesgado para muestras muy grandes, para $n=1000$ observamos sesgo significativo.
-
+**Conclusión:** $\hat{\alpha}_{MM}$ **no es un estimador insesgado**
+para el parámetro $\alpha$ de la distribución Pareto. Aunque podría ser
+aproximadamente insesgado para muestras muy grandes, para $n=1000$
+observamos sesgo significativo.
 
 ### b) Consistencia
 
-**Definición:** Un estimador es consistente si cuando n tiende al infinito, se acerca al valor verdader
-Demostrar que $\hat{\alpha}_{MM}$ es **consistente** para $\alpha$, es decir:
+**Definición:** Un estimador es consistente si cuando n tiende al
+infinito, se acerca al valor verdader Demostrar que $\hat{\alpha}_{MM}$
+es **consistente** para $\alpha$, es decir:
 
 $$
 \hat{\alpha}_{MM} \xrightarrow{P} \alpha \quad \text{cuando } n \to \infty
@@ -973,13 +1232,15 @@ $$
 
 #### Consistencia de $\bar{X}$ y $S^2$
 
-Por la **Ley Débil de los Grandes Números (LGN)** para variables i.i.d. con primer momento finito:
+Por la **Ley Débil de los Grandes Números (LGN)** para variables i.i.d.
+con primer momento finito:
 
 $$
 \bar{X} \xrightarrow{P} \mu
 $$
 
-Para la varianza muestral, dado que $E[X^2] < \infty$ (pues $\beta > 2$), se cumple:
+Para la varianza muestral, dado que $E[X^2] < \infty$ (pues
+$\beta > 2$), se cumple:
 
 $$
 S^2 \xrightarrow{P} \sigma^2
@@ -993,7 +1254,8 @@ $$
 T_n = \frac{\bar{X}^2}{S^2}
 $$
 
-Por el **teorema de Slutsky** y continuidad de la función $(a,b) \mapsto a^2/b$:
+Por el **teorema de Slutsky** y continuidad de la función
+$(a,b) \mapsto a^2/b$:
 
 $$
 T_n \xrightarrow{P} \frac{\mu^2}{\sigma^2}
@@ -1012,7 +1274,9 @@ $$
 T_n \xrightarrow{P} \beta(\beta - 2)
 $$
 
-Ahora, $\hat{\beta}_{MM} = 1 + \sqrt{1 + T_n}$. La función $h(t) = 1 + \sqrt{1 + t}$ es continua para $t \geq 0$. Por el **teorema de la aplicación continua**:
+Ahora, $\hat{\beta}_{MM} = 1 + \sqrt{1 + T_n}$. La función
+$h(t) = 1 + \sqrt{1 + t}$ es continua para $t \geq 0$. Por el **teorema
+de la aplicación continua**:
 
 $$
 \hat{\beta}_{MM} \xrightarrow{P} 1 + \sqrt{1 + \beta(\beta - 2)}
@@ -1059,26 +1323,28 @@ U_n \xrightarrow{P} \mu = \frac{\beta \alpha}{\beta - 1}, \quad
 \hat{\beta}_{MM} \xrightarrow{P} \beta
 $$
 
-La función $v(b) = \frac{b-1}{b}$ es continua en $b = \beta > 0$. Por el **teorema de la aplicación continua**:
+La función $v(b) = \frac{b-1}{b}$ es continua en $b = \beta > 0$. Por el
+**teorema de la aplicación continua**:
 
 $$
 V_n \xrightarrow{P} \frac{\beta - 1}{\beta}
 $$
 
-Finalmente, por el **teorema de Slutsky** aplicado al producto $U_n \cdot V_n$:
+Finalmente, por el **teorema de Slutsky** aplicado al producto
+$U_n \cdot V_n$:
 
 $$
 \hat{\alpha}_{MM} \xrightarrow{P} \mu \cdot \frac{\beta - 1}{\beta} = 
 \frac{\beta \alpha}{\beta - 1} \cdot \frac{\beta - 1}{\beta} = \alpha
 $$
 
-**Conclusión**
-Bajo las hipótesis:
+**Conclusión** Bajo las hipótesis:
 
-- $X_i \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$ con $\beta > 2$
-- Uso de la Ley Débil de los Grandes Números
-- Aplicación del teorema de la aplicación continua
-- Uso del teorema de Slutsky para productos/cocientes
+-   $X_i \stackrel{iid}{\sim} \text{Pareto}(\alpha, \beta)$ con
+    $\beta > 2$
+-   Uso de la Ley Débil de los Grandes Números
+-   Aplicación del teorema de la aplicación continua
+-   Uso del teorema de Slutsky para productos/cocientes
 
 se ha demostrado rigurosamente que:
 
@@ -1086,12 +1352,13 @@ $$
 \boxed{\hat{\alpha}_{MM} \xrightarrow{P} \alpha}
 $$
 
-Por lo tanto, $\hat{\alpha}_{MM}$ es un **estimador consistente** del parámetro de escala $\alpha$ de la distribución Pareto.  
-  
-  
-Aunque $\hat{\alpha}_{MM}$ **no es insesgado** en general (puede verificarse por expansión de Taylor o simulaciones), la propiedad de consistencia garantiza que converge al valor verdadero cuando $n \to \infty$, lo cual es suficiente para su validez asintótica.  
+Por lo tanto, $\hat{\alpha}_{MM}$ es un **estimador consistente** del
+parámetro de escala $\alpha$ de la distribución Pareto.
 
-
+Aunque $\hat{\alpha}_{MM}$ **no es insesgado** en general (puede
+verificarse por expansión de Taylor o simulaciones), la propiedad de
+consistencia garantiza que converge al valor verdadero cuando
+$n \to \infty$, lo cual es suficiente para su validez asintótica.
 
 ```{r consistencia12, echo=FALSE, fig.height=4.5, fig.width=6}
 # ----------------------------------------------------------
@@ -1220,15 +1487,13 @@ for (nv in n_verificar) {
 }
 ```
 
-
 ### c) Eficiencia
 
 El estimador $\hat{\theta}$ no es **eficiente** para $\theta$ porque:
 
-**$\hat{\alpha}_{MM}$ falla en ambas:**  
-- **No es insesgado** = Ya no puede ser eficiente  
+$\hat{\alpha}_{MM}$ falla en ambas:\
+- **No es insesgado** = Ya no puede ser eficiente\
 - **Su varianza es mayor** que el mínimo teórico
-
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(ggplot2)
@@ -1266,27 +1531,30 @@ ggplot(df, aes(x = n)) +
 
 ```
 
-
 ### d) Suficiencia
 
-Para verificar esta propiedad para el estimador se va a utilizar el teorema de Criterio de Factorización de Neyman-Fisher
-  
-**Teorema (Neyman-Fisher):** Una estadística $T(X)$ es suficiente para $\theta$ si y solo si la función de verosimilitud puede factorizarse como:
+Para verificar esta propiedad para el estimador se va a utilizar el
+teorema de Criterio de Factorización de Neyman-Fisher
+
+**Teorema (Neyman-Fisher):** Una estadística $T(X)$ es suficiente para
+$\theta$ si y solo si la función de verosimilitud puede factorizarse
+como:
 
 $$
 L(\theta; x) = g(T(x); \theta) \cdot h(x)
 $$
 
-donde $g$ depende de los datos solo a través de $T(x)$, y $h$ no depende de $\theta$.
+donde $g$ depende de los datos solo a través de $T(x)$, y $h$ no depende
+de $\theta$.
 
 La función de verosimilitud para la muestra es:
 
-\[
+$$
 \begin{aligned}
 L(\alpha, \beta; x) &= \prod_{i=1}^n \frac{\beta \alpha^\beta}{x_i^{\beta+1}} \mathbf{1}_{[\alpha, \infty)}(x_i) \\
 &= \beta^n \alpha^{n\beta} \left( \prod_{i=1}^n x_i \right)^{-\beta-1} \cdot \mathbf{1}_{\{x_{(1)} \geq \alpha\}}
 \end{aligned}
-\]
+$$
 
 donde $x_{(1)} = \min\{x_1, \dots, x_n\}$.
 
@@ -1302,31 +1570,32 @@ $$
 T(X) = \left( x_{(1)}, \sum_{i=1}^n \log x_i \right)
 $$
 
-es **suficiente mínima** para $(\alpha, \beta)$.  
-  
-  
-**¿Es $\hat{\alpha}_{MM}$ suficiente?**  
-  
+es **suficiente mínima** para $(\alpha, \beta)$.
+
+**¿Es** $\hat{\alpha}_{MM}$ suficiente?
+
 **Observación clave:** El estimador $\hat{\alpha}_{MM}$ se expresa como:
 
 $$
 \hat{\alpha}_{MM} = \bar{X} \cdot \frac{\hat{\beta}_{MM} - 1}{\hat{\beta}_{MM}}
 $$
 
-donde $\bar{X}$ y $\hat{\beta}_{MM}$ dependen únicamente de:  
-1. $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$  
+donde $\bar{X}$ y $\hat{\beta}_{MM}$ dependen únicamente de:\
+1. $\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i$\
 2. $S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2$
 
-Estas estadísticas **no incluyen** información sobre $x_{(1)}$, que es componente esencial de la estadística suficiente mínima.  
+Estas estadísticas **no incluyen** información sobre $x_{(1)}$, que es
+componente esencial de la estadística suficiente mínima.
 
-  
 **Conclusión**
 
-Dado que:  
-1. La estadística suficiente mínima para $(\alpha, \beta)$ es $T(X) = \left( x_{(1)}, \sum \log x_i \right)$  
-2. $\hat{\alpha}_{MM}$ no depende de $x_{(1)}$  
-3. No existe función $h$ tal que $\hat{\alpha}_{MM} = h(T(X))$ preservando toda la información sobre $\alpha$  
-  
+Dado que:\
+1. La estadística suficiente mínima para $(\alpha, \beta)$ es
+$T(X) = \left( x_{(1)}, \sum \log x_i \right)$\
+2. $\hat{\alpha}_{MM}$ no depende de $x_{(1)}$\
+3. No existe función $h$ tal que $\hat{\alpha}_{MM} = h(T(X))$
+preservando toda la información sobre $\alpha$
+
 Se concluye que:
 
 $$
@@ -1335,7 +1604,9 @@ $$
 
 **Implicación**
 
-Al no ser suficiente, $\hat{\alpha}_{MM}$ **podría mejorarse** aplicando el teorema de Rao-Blackwell, condicionando sobre la estadística suficiente $T(X)$. El estimador mejorado sería:
+Al no ser suficiente, $\hat{\alpha}_{MM}$ **podría mejorarse** aplicando
+el teorema de Rao-Blackwell, condicionando sobre la estadística
+suficiente $T(X)$. El estimador mejorado sería:
 
 $$
 \hat{\alpha}_{RB} = E\left[ \hat{\alpha}_{MM} \mid x_{(1)}, \sum \log x_i \right]
@@ -1347,74 +1618,91 @@ el cual tendría menor o igual varianza que $\hat{\alpha}_{MM}$.
 
 Una estadística $T(X)$ es **completa** para $\alpha$ si:
 
-\[
+$$
 E_\alpha[g(T(X))] = 0 \ \forall \alpha > 0 \ \Rightarrow \ P_\alpha(g(T(X)) = 0) = 1 \ \forall \alpha > 0
-\]
+$$
 
-Es decir: si una función de $T$ tiene esperanza cero para todo $\alpha$, entonces esa función es casi seguramente cero.
+Es decir: si una función de $T$ tiene esperanza cero para todo $\alpha$,
+entonces esa función es casi seguramente cero.
 
 ### Estadística completa para $\alpha$ (con $\beta$ conocido)
 
-La densidad se simplifica:
-\[
+La densidad se simplifica: $$
 f(x; \alpha) = \frac{\beta \alpha^\beta}{x^{\beta+1}} \mathbf{1}_{[\alpha, \infty)}(x), \quad \beta \text{ conocido}
-\]
+$$
 
-La verosimilitud es:
-\[
+La verosimilitud es: $$
 L(\alpha; x) = \beta^n \alpha^{n\beta} \left( \prod_{i=1}^n x_i \right)^{-\beta-1} \cdot \mathbf{1}_{\{x_{(1)} \geq \alpha\}}
-\]
+$$
 
-Por el **criterio de factorización**:
-\[
+Por el **criterio de factorización**: $$
 T(X) = X_{(1)} \quad \text{es suficiente para } \alpha
-\]
+$$
 
-Además, $X_{(1)}$ tiene densidad:
-\[
+Además, $X_{(1)}$ tiene densidad: $$
 f_{X_{(1)}}(t) = \frac{n\beta}{\alpha^{n\beta}} t^{n\beta-1} \mathbf{1}_{[\alpha, \infty)}(t), \quad t > 0
-\]
+$$
 
-Para verificar completitud, sea $g$ tal que:
-\[
+Para verificar completitud, sea $g$ tal que: $$
 E_\alpha[g(X_{(1)})] = \int_\alpha^\infty g(t) \cdot \frac{n\beta}{\alpha^{n\beta}} t^{n\beta-1} dt = 0 \ \forall \alpha > 0
-\]
+$$
 
-Derivando respecto a $\alpha$ (bajo condiciones de regularidad):
-\[
+Derivando respecto a $\alpha$ (bajo condiciones de regularidad): $$
 \frac{d}{d\alpha} E_\alpha[g(X_{(1)})] = -g(\alpha) \cdot \frac{n\beta}{\alpha} = 0 \ \forall \alpha > 0
-\]
+$$
 
 Por tanto $g(\alpha) = 0$ para todo $\alpha > 0$. Luego:
 
-\[
+$$
 \boxed{X_{(1)} \text{ es completa para } \alpha \text{ cuando } \beta \text{ es conocido}}
-\]
+$$
 
-**¿$\hat{\alpha}_{MM}$ es función de una estadística completa?**  
-  
+**¿**$\hat{\alpha}_{MM}$ es función de una estadística completa?
+
 **NO**, porque:
 
-1. La estadística completa para $\alpha$ (con $\beta$ conocido) es $X_{(1)}$
-2. $\hat{\alpha}_{MM}$ depende de $\bar{X}$ y $S^2$
-3. $\hat{\alpha}_{MM}$ **no puede expresarse como función de $X_{(1)}$ solamente**
+1.  La estadística completa para $\alpha$ (con $\beta$ conocido) es
+    $X_{(1)}$
+2.  $\hat{\alpha}_{MM}$ depende de $\bar{X}$ y $S^2$
+3.  $\hat{\alpha}_{MM}$ **no puede expresarse como función de**
+    $X_{(1)}$ solamente
 
-### f) Optimalidad  
+### f) Optimalidad
 
-  
-El estimador $\hat{\alpha}_{MM}$ obtenido por método de momentos para el parámetro de escala $\alpha$ de la distribución Pareto **no es óptimo** por tres razones fundamentales que se encadenan lógicamente. Primero, el estimador **no es insesgado**, lo que significa que en promedio no coincide con el valor verdadero del parámetro $\alpha$; esto ya lo descalifica como candidato a óptimo bajo el marco clásico que busca minimizar la varianza entre estimadores insesgados.
+El estimador $\hat{\alpha}_{MM}$ obtenido por método de momentos para el
+parámetro de escala $\alpha$ de la distribución Pareto **no es óptimo**
+por tres razones fundamentales que se encadenan lógicamente. Primero, el
+estimador **no es insesgado**, lo que significa que en promedio no
+coincide con el valor verdadero del parámetro $\alpha$; esto ya lo
+descalifica como candidato a óptimo bajo el marco clásico que busca
+minimizar la varianza entre estimadores insesgados.
 
-Segundo, y más importante, $\hat{\alpha}_{MM}$ **no utiliza toda la información relevante** contenida en la muestra sobre el parámetro $\alpha$: ignora completamente el valor mínimo muestral $X_{(1)}$, que es la estadística suficiente y completa para $\alpha$ cuando el parámetro de forma $\beta$ es conocido. Al basarse únicamente en la media muestral $\bar{X}$ y la varianza muestral $S^2$, desperdicia la pieza de información más crucial para estimar el límite inferior de la distribución
+Segundo, y más importante, $\hat{\alpha}_{MM}$ **no utiliza toda la
+información relevante** contenida en la muestra sobre el parámetro
+$\alpha$: ignora completamente el valor mínimo muestral $X_{(1)}$, que
+es la estadística suficiente y completa para $\alpha$ cuando el
+parámetro de forma $\beta$ es conocido. Al basarse únicamente en la
+media muestral $\bar{X}$ y la varianza muestral $S^2$, desperdicia la
+pieza de información más crucial para estimar el límite inferior de la
+distribución
 
- Tercero, como consecuencia directa de lo anterior, **existe otro estimador claramente superior**: el estimador $\hat{\alpha}_{EIVUM} = \frac{n\beta-1}{n\beta} X_{(1)}$, que sí es insesgado, está basado en la estadística suficiente y completa $X_{(1)}$, y por el teorema de Lehmann-Scheffé posee varianza mínima entre todos los estimadores insesgados. Por lo tanto, aunque $\hat{\alpha}_{MM}$ es consistente (converge al valor verdadero cuando el tamaño de muestra crece), no cumple las condiciones necesarias para ser considerado óptimo en el sentido estadístico riguroso de tener mínima varianza entre los estimadores insesgados.
- 
+Tercero, como consecuencia directa de lo anterior, **existe otro
+estimador claramente superior**: el estimador
+$\hat{\alpha}_{EIVUM} = \frac{n\beta-1}{n\beta} X_{(1)}$, que sí es
+insesgado, está basado en la estadística suficiente y completa
+$X_{(1)}$, y por el teorema de Lehmann-Scheffé posee varianza mínima
+entre todos los estimadores insesgados. Por lo tanto, aunque
+$\hat{\alpha}_{MM}$ es consistente (converge al valor verdadero cuando
+el tamaño de muestra crece), no cumple las condiciones necesarias para
+ser considerado óptimo en el sentido estadístico riguroso de tener
+mínima varianza entre los estimadores insesgados.
 
- 
 ## 1.4.2. Propiedades del Estimador $\hat{\beta}_{MM}$
 
 ### a) Insesgamiento:
 
-Un estimador $\hat{\beta}$ es **insesgado** si su esperanza coincide con el parámetro verdadero:
+Un estimador $\hat{\beta}$ es **insesgado** si su esperanza coincide con
+el parámetro verdadero:
 
 $$
 E(\hat{\beta})=\beta.
@@ -1430,14 +1718,16 @@ $$
 
 donde $\bar X$ es la media muestral y $S^2$ es la varianza muestral.
 
-Como $\hat{\beta}_{MM}$ es una **función no lineal** de $(\bar X,S^2)$, no se espera que cumpla en general que:
+Como $\hat{\beta}_{MM}$ es una **función no lineal** de $(\bar X,S^2)$,
+no se espera que cumpla en general que:
 
 $$
 E\left(1+\sqrt{1+\frac{\bar X^2}{S^2}}\right)=1+\sqrt{1+\frac{E(\bar X)^2}{E(S^2)}},
 $$
 
-por lo que **no es insesgado en muestras finitas**.  
-Para verificarlo de manera empírica, estimamos el sesgo mediante simulación Monte Carlo:
+por lo que **no es insesgado en muestras finitas**.\
+Para verificarlo de manera empírica, estimamos el sesgo mediante
+simulación Monte Carlo:
 
 $$
 \text{Sesgo}(\hat{\beta}_{MM}) = E(\hat{\beta}_{MM})-\beta.
@@ -1466,7 +1756,6 @@ sesgo_betaMM
 
 ```
 
-
 ```{r}
 library(ggplot2)
 
@@ -1485,22 +1774,24 @@ theme_minimal()
 
 ```
 
-
 **Conclusión:**
 
-Dado que $E(\hat{\beta}{MM})\neq\beta$ (sesgo empírico distinto de 0), se concluye que el estimador $\hat{\beta}{MM}$ no es insesgado en muestras finitas.
-
-
+Dado que $E(\hat{\beta}{MM})\neq\beta$ (sesgo empírico distinto de 0),
+se concluye que el estimador $\hat{\beta}{MM}$ no es insesgado en
+muestras finitas.
 
 ### b) Consistencia:
 
-Un estimador $\hat{\beta}_n$ es **consistente** para el parámetro $\beta$ si converge en probabilidad al valor verdadero cuando el tamaño muestral tiende a infinito, es decir,
+Un estimador $\hat{\beta}_n$ es **consistente** para el parámetro
+$\beta$ si converge en probabilidad al valor verdadero cuando el tamaño
+muestral tiende a infinito, es decir,
 
 $$
 \hat{\beta}_n \xrightarrow{p} \beta \quad \text{cuando } n \to \infty.
 $$
 
-El estimador de método de momentos para el parámetro $\beta$ está dado por:
+El estimador de método de momentos para el parámetro $\beta$ está dado
+por:
 
 $$
 \hat{\beta}_{MM}
@@ -1508,7 +1799,8 @@ $$
 1+\sqrt{1+\frac{\bar X^2}{S^2}},
 $$
 
-donde $\bar X$ y $S^2$ representan la media y la varianza muestral, respectivamente.
+donde $\bar X$ y $S^2$ representan la media y la varianza muestral,
+respectivamente.
 
 Para la distribución Pareto con $\beta>2$, se cumple que:
 
@@ -1518,7 +1810,8 @@ $$
 S^2 \xrightarrow{p} \operatorname{Var}(X),
 $$
 
-por la Ley de los Grandes Números y la consistencia de la varianza muestral cuando la varianza existe.
+por la Ley de los Grandes Números y la consistencia de la varianza
+muestral cuando la varianza existe.
 
 Definiendo la función:
 
@@ -1542,10 +1835,11 @@ g\big(E(X),\operatorname{Var}(X)\big)
 \beta.
 $$
 
-Por lo tanto, el estimador de método de momentos $\hat{\beta}_{MM}$ es **consistente** para el parámetro $\beta$.
+Por lo tanto, el estimador de método de momentos $\hat{\beta}_{MM}$ es
+**consistente** para el parámetro $\beta$.
 
-Para visualizar esta propiedad, se analiza el comportamiento del estimador al aumentar el tamaño muestral.
-
+Para visualizar esta propiedad, se analiza el comportamiento del
+estimador al aumentar el tamaño muestral.
 
 ```{r, echo=FALSE,warning=FALSE}
 # ============================================================
@@ -1577,13 +1871,17 @@ ggplot(df_cons, aes(x = n, y = betaMM)) +
 
 **Conclusión:**
 
-Al cumplirse que $\bar X \xrightarrow{p} E(X)$ y $S^2 \xrightarrow{p} \operatorname{Var}(X)$, y dado que $\hat{\beta}{MM}$ es una función continua de estos estadísticos, se concluye que el estimador $\hat{\beta}{MM}$ es consistente para el parámetro $\beta$.
-
-
+Al cumplirse que $\bar X \xrightarrow{p} E(X)$ y
+$S^2 \xrightarrow{p} \operatorname{Var}(X)$, y dado que
+$\hat{\beta}{MM}$ es una función continua de estos estadísticos, se
+concluye que el estimador $\hat{\beta}{MM}$ es consistente para el
+parámetro $\beta$.
 
 ### c) Suficiencia:
 
-Un estadístico $T=T(X_1,\dots,X_n)$ es **suficiente** para un parámetro $\beta$ si la distribución condicional de la muestra, dado $T$, no depende de dicho parámetro.
+Un estadístico $T=T(X_1,\dots,X_n)$ es **suficiente** para un parámetro
+$\beta$ si la distribución condicional de la muestra, dado $T$, no
+depende de dicho parámetro.
 
 El estimador de método de momentos para $\beta$ está dado por:
 
@@ -1593,28 +1891,35 @@ $$
 1+\sqrt{1+\frac{\bar X^2}{S^2}},
 $$
 
-donde $\bar X$ y $S^2$ corresponden a la media y varianza muestral, respectivamente.
+donde $\bar X$ y $S^2$ corresponden a la media y varianza muestral,
+respectivamente.
 
-En la distribución Pareto, cuando ambos parámetros $\alpha$ y $\beta$ son desconocidos, la estadística suficiente para $\beta$ está asociada a la estructura de la función de verosimilitud y viene dada por funciones del estadístico
+En la distribución Pareto, cuando ambos parámetros $\alpha$ y $\beta$
+son desconocidos, la estadística suficiente para $\beta$ está asociada a
+la estructura de la función de verosimilitud y viene dada por funciones
+del estadístico
 
 $$
 T = \sum_{i=1}^{n} \ln\left(\frac{X_i}{X_{(1)}}\right).
 $$
 
-Dado que el estimador $\hat{\beta}_{MM}$ depende únicamente de $(\bar X,S^2)$ y no es función del estadístico suficiente $T$, se concluye que **no se basa en una estadística suficiente** para el parámetro $\beta$.
+Dado que el estimador $\hat{\beta}_{MM}$ depende únicamente de
+$(\bar X,S^2)$ y no es función del estadístico suficiente $T$, se
+concluye que **no se basa en una estadística suficiente** para el
+parámetro $\beta$.
 
 **Conclusión:**
 
 El estimador $\hat{\beta}_{MM}$ **no es suficiente**.
 
-
-
-
 ### d) Ancilaridad
 
-Un estadístico $T$ se denomina **ancilar** si su distribución no depende del parámetro de interés. Es decir, $T$ es ancilar para $\beta$ si la ley de probabilidad de $T$ es independiente de $\beta$.
+Un estadístico $T$ se denomina **ancilar** si su distribución no depende
+del parámetro de interés. Es decir, $T$ es ancilar para $\beta$ si la
+ley de probabilidad de $T$ es independiente de $\beta$.
 
-El estimador de método de momentos para el parámetro $\beta$ está definido como:
+El estimador de método de momentos para el parámetro $\beta$ está
+definido como:
 
 $$
 \hat{\beta}_{MM}
@@ -1622,21 +1927,24 @@ $$
 1+\sqrt{1+\frac{\bar X^2}{S^2}}.
 $$
 
-Este estimador está construido con el objetivo explícito de aproximar el valor del parámetro $\beta$. En consecuencia, su distribución muestral depende del valor de dicho parámetro.
+Este estimador está construido con el objetivo explícito de aproximar el
+valor del parámetro $\beta$. En consecuencia, su distribución muestral
+depende del valor de dicho parámetro.
 
-Por lo tanto, la distribución de $\hat{\beta}_{MM}$ **no es invariante respecto a $\beta$**, lo que implica que el estimador no cumple la propiedad de ancilaridad.
+Por lo tanto, la distribución de $\hat{\beta}_{MM}$ **no es invariante
+respecto a** $\beta$, lo que implica que el estimador no cumple la
+propiedad de ancilaridad.
 
 **Conclusión:**
 
 El estimador $\hat{\beta}_{MM}$ **no es ancilar**.
 
-
-
-
 ### e) Completitud
 
-La **completitud** es una propiedad que se define para **estadísticas suficientes**.  
-Un estadístico suficiente $T$ para un parámetro $\beta$ es completo si, para toda función medible $g(\cdot)$, se cumple que:
+La **completitud** es una propiedad que se define para **estadísticas
+suficientes**.\
+Un estadístico suficiente $T$ para un parámetro $\beta$ es completo si,
+para toda función medible $g(\cdot)$, se cumple que:
 
 $$
 E_\beta[g(T)] = 0 \ \text{para todo } \beta
@@ -1644,9 +1952,12 @@ E_\beta[g(T)] = 0 \ \text{para todo } \beta
 P_\beta\big(g(T)=0\big)=1.
 $$
 
-Esta propiedad resulta fundamental en la teoría de la estimación óptima, ya que permite garantizar la unicidad del estimador insesgado de varianza mínima mediante el Teorema de Lehmann--Scheffé.
+Esta propiedad resulta fundamental en la teoría de la estimación óptima,
+ya que permite garantizar la unicidad del estimador insesgado de
+varianza mínima mediante el Teorema de Lehmann--Scheffé.
 
-En el presente caso, el estimador de método de momentos para el parámetro $\beta$ está dado por:
+En el presente caso, el estimador de método de momentos para el
+parámetro $\beta$ está dado por:
 
 $$
 \hat{\beta}_{MM}
@@ -1654,38 +1965,46 @@ $$
 1+\sqrt{1+\frac{\bar X^2}{S^2}},
 $$
 
-el cual depende de la media y la varianza muestral $(\bar X, S^2)$.  
-Sin embargo, como se mostró en la sección anterior, estos estadísticos **no constituyen una estadística suficiente** para el parámetro $\beta$ en la distribución Pareto.
+el cual depende de la media y la varianza muestral $(\bar X, S^2)$.\
+Sin embargo, como se mostró en la sección anterior, estos estadísticos
+**no constituyen una estadística suficiente** para el parámetro $\beta$
+en la distribución Pareto.
 
-Por lo tanto, **no corresponde analizar la propiedad de completitud** para el estimador $\hat{\beta}_{MM}$, ya que dicha propiedad solo es aplicable a estadísticas suficientes.
+Por lo tanto, **no corresponde analizar la propiedad de completitud**
+para el estimador $\hat{\beta}_{MM}$, ya que dicha propiedad solo es
+aplicable a estadísticas suficientes.
 
 **Conclusión:**
 
-La propiedad de completitud **no aplica** al estimador de método de momentos $\hat{\beta}_{MM}$.
-
-
-
-
+La propiedad de completitud **no aplica** al estimador de método de
+momentos $\hat{\beta}_{MM}$.
 
 ### f) Optimalidad:
 
-Un estimador se considera **óptimo** si alcanza la mínima varianza posible dentro de una clase determinada de estimadores, usualmente dentro de la clase de estimadores insesgados.
+Un estimador se considera **óptimo** si alcanza la mínima varianza
+posible dentro de una clase determinada de estimadores, usualmente
+dentro de la clase de estimadores insesgados.
 
-El estimador de método de momentos para el parámetro $\beta$ se obtiene igualando momentos teóricos y muestrales, sin hacer uso de la función de verosimilitud ni de la estructura de la distribución muestral completa. En consecuencia, el método de momentos **no garantiza eficiencia ni mínima varianza**.
+El estimador de método de momentos para el parámetro $\beta$ se obtiene
+igualando momentos teóricos y muestrales, sin hacer uso de la función de
+verosimilitud ni de la estructura de la distribución muestral completa.
+En consecuencia, el método de momentos **no garantiza eficiencia ni
+mínima varianza**.
 
-Además, como se mostró previamente, el estimador $\hat{\beta}_{MM}$ **no es insesgado** en muestras finitas, lo que impide que pueda ser considerado óptimo bajo criterios clásicos de optimalidad, como los establecidos por el Teorema de Lehmann--Scheffé.
+Además, como se mostró previamente, el estimador $\hat{\beta}_{MM}$ **no
+es insesgado** en muestras finitas, lo que impide que pueda ser
+considerado óptimo bajo criterios clásicos de optimalidad, como los
+establecidos por el Teorema de Lehmann--Scheffé.
 
-Por el contrario, el estimador EIVUM obtenido en la sección correspondiente es insesgado, función de una estadística suficiente y completa, y por tanto posee varianza uniformemente mínima dentro de su clase.
-
+Por el contrario, el estimador EIVUM obtenido en la sección
+correspondiente es insesgado, función de una estadística suficiente y
+completa, y por tanto posee varianza uniformemente mínima dentro de su
+clase.
 
 **Conclusión:**
 
-El estimador de método de momentos $\hat{\beta}_{MM}$ **no es óptimo** para el parámetro $\beta$ de la distribución Pareto.
-
-
-
-
-
+El estimador de método de momentos $\hat{\beta}_{MM}$ **no es óptimo**
+para el parámetro $\beta$ de la distribución Pareto.
 
 ## 1.5 Estimador : Estimador Insesgado de Varianza Uniformemente Mínima (EIVUM) para el parámetro $\beta$
 
@@ -2030,12 +2349,11 @@ Insesgado de Varianza Uniformemente Mínima (EIVUM)** para el parámetro
 $\beta$ de la distribución Pareto. No existe otro estimador insesgado
 con menor varianza que este.
 
-
 # 2) Pregunta 2 - Intervalos de confianza
 
 ## 2.1 Estimador 1 (el mínimo para alfa)
 
-Vamos a hallar un intervalo de confianza del 90%:   
+Vamos a hallar un intervalo de confianza del 90%:
 
 $$
 \begin{aligned}
@@ -2043,23 +2361,27 @@ $$
 f_Y(y) &= \frac{n\beta \alpha^{n\beta}}{y^{n\beta+1}}, \quad y > \alpha
 \end{aligned}
 $$
-  
-Un posible pivote es $W = Y_1 / \alpha$, porque su distribución no debería depender de $\alpha$. Hacemos un cambio de variable $Q = W = \frac{Y_1}{\alpha}$. Con el jacobiano $dy_1 = \alpha \, dw$, se tiene:
 
-\[
+Un posible pivote es $W = Y_1 / \alpha$, porque su distribución no
+debería depender de $\alpha$. Hacemos un cambio de variable
+$Q = W = \frac{Y_1}{\alpha}$. Con el jacobiano $dy_1 = \alpha \, dw$, se
+tiene:
+
+$$
 f_W(w) = f_{Y_1}(\alpha w) \cdot \alpha
 = n\beta \, \alpha^{n\beta} (\alpha w)^{-(n\beta+1)} \cdot \alpha
-\]
-\[
+$$ 
+$$
 = n\beta \, \alpha^{n\beta} \alpha^{-n\beta-1} w^{-(n\beta+1)} \alpha
-\]
-\[
+$$ 
+$$
 = n\beta \, w^{-(n\beta+1)}, \quad w > 1.
-\]
+$$
 
-La densidad resultante \text{no depende de $\alpha$}, por lo tanto $W$ es un \text{pivote}.
+La densidad resultante \text{no depende de $\alpha$}, por lo tanto $W$
+es un \text{pivote}.
 
-Hallamos la función de distribución de W:  
+Hallamos la función de distribución de W:
 
 $$
 \begin{aligned}
@@ -2068,17 +2390,18 @@ F_W(w) &= \int_1^w n\beta t^{-(n\beta+1)} \, dt \\
 &= n\beta \left[ -\frac{t^{-n\beta}}{n\beta} \right]_1^w \\
 &= 1 - w^{-n\beta}, \quad w > 1.
 \end{aligned}
-$$  
+$$
 
-Usando el método de pivote: $P(a \le W \le b) = 0.90$. Un posible intervalo sería el siguiente: 
+Usando el método de pivote: $P(a \le W \le b) = 0.90$. Un posible
+intervalo sería el siguiente:
 
 $$
 \begin{aligned}
 P(w \leq a) = F_W(a) &= 1 - a^{-n\beta} = 0.05 \quad \rightarrow \quad a = (0.95)^{-1/(n\beta)} \\
 P(w \leq b) = F_W(b) &= 1 - b^{-n\beta} = 0.95 \quad \rightarrow \quad b = (0.05)^{-1/(n\beta)}
 \end{aligned}
-$$  
-Entonces:   
+$$\
+Entonces:
 
 $$
 \begin{array}{r}
@@ -2086,34 +2409,197 @@ P\left[a \leq \frac{Y_1}{\alpha} \leq b\right]=0.90 \rightarrow P\left[\frac{Y_1
 \text { I.C }=\left[Y_1 \cdot(0.05)^{1 /(n \beta)} ; Y_1 \cdot(0.95)^{1 /(n \beta)}\right]
 \end{array}
 $$
+## 2.2 Estimador 2: Suma Log de T
+
+Sea $X_1, \ldots, X_n$ una muestra aleatoria i.i.d. de una distribución
+Pareto$(\alpha,\beta)$ con densidad
+
+$$
+f(x)=\frac{\beta \alpha^\beta}{x^{\beta+1}} I_{(\alpha,\infty)}(x).
+$$
+
+El estimador de máxima verosimilitud de $\beta$ es
+
+$$
+\hat{\beta}_{EMV}
+= \frac{n}{\sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right)}.
+$$
+
+Definimos la variable aleatoria
+
+$$
+T = \sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right).
+$$
+
+Sabemos que, si $X \sim \text{Pareto}(\alpha,\beta)$, entonces
+$\ln(X/\alpha) \sim \text{Exponencial}(\beta)$.
+Por lo tanto,
+
+$$
+T \sim \text{Gamma}(n,\beta).
+$$
+
+Un pivote adecuado es
+
+$$
+W = 2\beta T,
+$$
+
+ya que
+
+$$
+W \sim \chi^2_{2n}.
+$$
+
+Para un nivel de confianza del $90\%$ se tiene $\alpha = 0.10$, por lo que
+
+$$
+P\left(
+\chi^2_{2n,0.05}
+\le 2\beta T
+\le \chi^2_{2n,0.95}
+\right) = 0.90.
+$$
+
+Despejando $\beta$:
+
+$$
+P\left(
+\frac{\chi^2_{2n,0.05}}{2T}
+\le \beta
+\le
+\frac{\chi^2_{2n,0.95}}{2T}
+\right) = 0.90.
+$$
+
+Por lo tanto, el intervalo de confianza al $90\%$ para $\beta$ es
+
+$$
+\boxed{
+\text{I.C.}_{90\%}(\beta)=
+\left[
+\frac{\chi^2_{2n,0.05}}{2\sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right)}
+\; ; \;
+\frac{\chi^2_{2n,0.95}}{2\sum_{i=1}^n \ln\left(\frac{X_i}{\alpha}\right)}
+\right]
+}
+$$
+
+En la práctica, si $\alpha$ es desconocido, se reemplaza por
+$\hat{\alpha}_{EMV} = \min(X_1,\ldots,X_n)$.
+
+### 2.3.1 Aplicación 
+```{r include=FALSE}
+# tamaño de muestra
+n <- length(reclamos)
+
+# alpha EMV
+alpha_hat <- min(reclamos)
+
+# estadístico T
+T <- sum(log(reclamos / alpha_hat))
+
+T
+```
+Sea
+$$
+T = \sum_{i=1}^n \ln\left(\frac{X_i}{\hat{\alpha}_{EMV}}\right).
+$$
+
+Bajo el supuesto de una distribución Pareto$(\alpha,\beta)$ se tiene que:
+$$
+2\beta T \sim \chi^2_{2n}.
+$$
+
+Entonces, un intervalo de confianza del 90\% para el parámetro $\beta$ está dado por:
+$$
+\text{IC}_{90\%}(\beta)=
+\left[
+\frac{\chi^2_{2n,\,0.05}}{2T}
+\; ; \;
+\frac{\chi^2_{2n,\,0.95}}{2T}
+\right].
+$$
+
+Para los datos observados se obtuvo:
+$$
+T = 328.563,
+$$
+por lo que el intervalo queda completamente determinado al sustituir dicho valor.
+
+```{r include=FALSE}
+# ===============================
+# Intervalo de Confianza 90% para beta (Pareto)
+# ===============================
+
+T <- 328.563
+n <- length(reclamos)
+
+alpha_ic <- 0.10
+
+li <- qchisq(alpha_ic/2, df = 2*n) / (2*T)
+ls <- qchisq(1 - alpha_ic/2, df = 2*n) / (2*T)
+
+c(li, ls)
+
+```
+
+```{r echo=FALSE}
+paste0(
+  "IC 90% para beta: [",
+  round(li, 4), ", ",
+  round(ls, 4), "]"
+)
+
+```
+Esto significa que, bajo el supuesto de que la muestra proviene de una
+distribución Pareto$(\alpha,\beta)$, el intervalo contiene al verdadero valor del parámetro $\beta$ con una probabilidad del 90\%.
+
+Asimismo, se observa que el valor verdadero del parámetro
+($\beta = 3$) pertenece al intervalo estimado, lo cual es consistente con las propiedades teóricas del estimador de máxima verosimilitud y respalda la adecuación del modelo ajustado.
+
+Finalmente, el ancho relativamente reducido del intervalo se explica por
+el tamaño muestral grande ($n = 1000$), lo que refleja una mayor precisión en la estimación del parámetro.
 
 ## 2.3 Estimador 3: Media Muestral ($\bar{X}$) para la media poblacional $\mu$
 
-Para la construcción del intervalo de confianza de la media poblacional $\mu = E(X)$, utilizaremos el **Método Asintótico** basado en el Teorema del Límite Central (TLC).
+Para la construcción del intervalo de confianza de la media poblacional
+$\mu = E(X)$, utilizaremos el **Método Asintótico** basado en el Teorema
+del Límite Central (TLC).
 
 ### 2.3.1 Justificación Teórica
 
-Dado que el tamaño de muestra es suficientemente grande ($n = 1000$) y que en nuestro modelo la varianza poblacional existe (puesto que $\beta = 3 > 2$), el estadístico media muestral $\bar{X}$ sigue una distribución aproximadamente normal:
+Dado que el tamaño de muestra es suficientemente grande ($n = 1000$) y
+que en nuestro modelo la varianza poblacional existe (puesto que
+$\beta = 3 > 2$), el estadístico media muestral $\bar{X}$ sigue una
+distribución aproximadamente normal:
 
 $$ \bar{X} \xrightarrow{d} N\left( \mu, \frac{\sigma^2}{n} \right) $$
 
-Como la varianza poblacional $\sigma^2$ es desconocida, utilizamos la varianza muestral $S^2$ como estimador consistente, definiendo la siguiente **Cantidad Pivotal Asintótica**:
+Como la varianza poblacional $\sigma^2$ es desconocida, utilizamos la
+varianza muestral $S^2$ como estimador consistente, definiendo la
+siguiente **Cantidad Pivotal Asintótica**:
 
 $$ Z = \frac{\bar{X} - \mu}{S / \sqrt{n}} \sim N(0, 1) $$
 
 ### 2.3.2 Construcción del Intervalo
 
-Para un nivel de confianza del $(1 - \gamma)$, buscamos los valores críticos de la distribución normal estándar tales que:
+Para un nivel de confianza del $(1 - \gamma)$, buscamos los valores
+críticos de la distribución normal estándar tales que:
 
 $$ P\left( -z_{1-\gamma/2} \leq \frac{\bar{X} - \mu}{S / \sqrt{n}} \leq z_{1-\gamma/2} \right) = 1 - \gamma $$
 
-Despejando el parámetro $\mu$, obtenemos la expresión del intervalo de confianza:
+Despejando el parámetro $\mu$, obtenemos la expresión del intervalo de
+confianza:
 
-$$ IC(\mu)_{1-\gamma} = \left[ \bar{X} - z_{1-\gamma/2} \frac{S}{\sqrt{n}} \quad ; \quad \bar{X} + z_{1-\gamma/2} \frac{S}{\sqrt{n}} \right] $$
+$$ 
+IC(\mu)_{1-\gamma} = \left[ \bar{X} - z_{1-\gamma/2} \frac{S}{\sqrt{n}} \quad ; \quad \bar{X} + z_{1-\gamma/2} \frac{S}{\sqrt{n}} \right] 
+$$
 
 ### 2.3.3 Aplicación en R
 
-Utilizamos los datos de la variable `reclamos` para calcular el intervalo al 95% de confianza.
+Utilizamos los datos de la variable `reclamos` para calcular el
+intervalo al 95% de confianza.
 
 ```{r intervalo_mu, echo=TRUE}
 # ==============================================================================
@@ -2155,13 +2641,17 @@ cat(
 
 ### 2.3.4 Interpretación
 
-Con un nivel de confianza del 95%, el valor esperado de los reclamos se encuentra entre `r round(lim_inf_mu, 4)` y `r round(lim_sup_mu, 4)`. Observamos que el **valor teórico ($\mu = 3$)** se encuentra contenido dentro del intervalo, lo que valida la precisión del estimador $\bar{X}$ y la eficacia de la aproximación por el Teorema del Límite Central para este tamaño de muestra.
-
+Con un nivel de confianza del 95%, el valor esperado de los reclamos se
+encuentra entre `r round(lim_inf_mu, 4)` y `r round(lim_sup_mu, 4)`.
+Observamos que el **valor teórico (**$\mu = 3$) se encuentra contenido
+dentro del intervalo, lo que valida la precisión del estimador $\bar{X}$
+y la eficacia de la aproximación por el Teorema del Límite Central para
+este tamaño de muestra.
 
 ## 2.5 Estimador 5 (para $\beta$ con el EIVUM)
 
 Para la construcción del intervalo de confianza para el parámetro de
-forma $\beta$, usaremos el **Método de la Cantidad Pivotal**. 
+forma $\beta$, usaremos el **Método de la Cantidad Pivotal**.
 
 ### 2.5.1 Deducción de la Cantidad Pivotal
 
@@ -2192,7 +2682,6 @@ La variable $Q$ constituye una **cantidad pivotal válida**, dado que su
 distribución es una Chi-cuadrado con $2n-2$ grados de libertad, la cual
 no depende de los parámetros desconocidos de la población.
 
-
 ### 2.5.2 Construcción del Intervalo
 
 Para obtener un intervalo con un nivel de confianza del $(1 - \alpha)$,
@@ -2219,8 +2708,7 @@ $$
 IC(\beta) = \left[ \frac{\chi^2_{\alpha/2, \, 2(n-1)}}{2T} \, ; \, \frac{\chi^2_{1-\alpha/2, \, 2(n-1)}}{2T} \right]
 $$
 
-
-### 2.5.3 Aplicación 
+### 2.5.3 Aplicación
 
 A continuación, aplicamos este método a nuestra base de datos `reclamos`
 generada en la simulación ($n=1000$, $\alpha=2$, $\beta=3$).
@@ -2265,7 +2753,6 @@ cat(
 )
 ```
 
-
 ### 2.5.4 Interpretación de Resultados
 
 Con un nivel de confianza del 95%, estimamos que el verdadero valor del
@@ -2294,18 +2781,31 @@ estimación. Esto es consecuencia directa de dos factores:
 
 ## 4.3 Prueba de Hipótesis para la Media Poblacional ($\mu$)
 
-En esta sección, evaluamos la validez de una afirmación sobre el valor central de la población mediante la media muestral $\bar{X}$. A diferencia de los estimadores de los parámetros de forma ($\beta$), la media muestral nos permite realizar inferencia sobre el valor esperado de la variable "reclamos".
+En esta sección, evaluamos la validez de una afirmación sobre el valor
+central de la población mediante la media muestral $\bar{X}$. A
+diferencia de los estimadores de los parámetros de forma ($\beta$), la
+media muestral nos permite realizar inferencia sobre el valor esperado
+de la variable "reclamos".
 
 ### 4.3.1 Fundamento Asintótico
-Para la construcción de esta prueba, no nos basamos en una distribución exacta (como la Gamma), sino en el **Teorema del Límite Central (TLC)**. Dado que nuestra muestra $n=1000$ es grande y hemos verificado que $\beta > 2$ (lo que garantiza la existencia de una varianza finita), se cumple que:
+
+Para la construcción de esta prueba, no nos basamos en una distribución
+exacta (como la Gamma), sino en el **Teorema del Límite Central (TLC)**.
+Dado que nuestra muestra $n=1000$ es grande y hemos verificado que
+$\beta > 2$ (lo que garantiza la existencia de una varianza finita), se
+cumple que:
 
 1.  Por TLC: $\bar{X} \sim N(\mu, \sigma^2/n)$ asintóticamente.
 2.  Por Consistencia: $S^2 \xrightarrow{P} \sigma^2$.
-3.  Por **Teorema de Slutsky**: El estadístico pivot $Z = \frac{\bar{X} - \mu}{S/\sqrt{n}}$ converge en distribución a una Normal Estándar $N(0,1)$.
+3.  Por **Teorema de Slutsky**: El estadístico pivot
+    $Z = \frac{\bar{X} - \mu}{S/\sqrt{n}}$ converge en distribución a
+    una Normal Estándar $N(0,1)$.
 
 ### 4.3.2 Planteamiento Formal de la Prueba
 
-Definimos una prueba de hipótesis de dos colas para verificar si la media poblacional es consistente con el valor teórico esperado bajo los parámetros originales ($\mu_0 = 3$).
+Definimos una prueba de hipótesis de dos colas para verificar si la
+media poblacional es consistente con el valor teórico esperado bajo los
+parámetros originales ($\mu_0 = 3$).
 
 $$
 \begin{aligned}
@@ -2314,14 +2814,17 @@ H_1: \mu \neq 3 \quad &\text{(Hipótesis Alternativa)}
 \end{aligned}
 $$
 
-**Nivel de Significancia ($\alpha$):** 0.05.
+**Nivel de Significancia (**$\alpha$): 0.05.
 
-**Regla de Decisión:**
-Se rechaza $H_0$ si $|Z_{calc}| > Z_{1-\alpha/2}$, donde $Z_{0.975} = 1.96$. Alternativamente, se rechaza si el $p-valor < 0.05$.
+**Regla de Decisión:** Se rechaza $H_0$ si
+$|Z_{calc}| > Z_{1-\alpha/2}$, donde $Z_{0.975} = 1.96$.
+Alternativamente, se rechaza si el $p-valor < 0.05$.
 
 ### 4.3.3 Ejecución y Visualización en R
 
-Para darle mayor peso al análisis, incluiremos una gráfica de la densidad normal que muestre la ubicación de nuestro estadístico respecto a la zona de rechazo.
+Para darle mayor peso al análisis, incluiremos una gráfica de la
+densidad normal que muestre la ubicación de nuestro estadístico respecto
+a la zona de rechazo.
 
 ```{r prueba_d_robusta, echo=TRUE, fig.height=5,warning=FALSE}
 # 1. Configuración de parámetros
@@ -2357,24 +2860,35 @@ ggplot(df_plot, aes(x = x, y = y)) +
 
 ### 4.3.4 Análisis de Resultados y Dualidad
 
-1.  **Estadístico Observado:** El valor de $Z_{calc} = `r round(z_calc, 4)`$ cae dentro de la región de **no rechazo** (área blanca entre -1.96 y 1.96).
-2.  **Conclusión Estadística:** Dado que el $p-valor = `r round(p_val, 4)` > 0.05$, no existe evidencia suficiente para rechazar la hipótesis nula. Se concluye que la media de la muestra de reclamos es estadísticamente igual a 3.
-3.  **Diferencia con los estimadores de Beta:** A diferencia de las pruebas de hipótesis realizadas para los estimadores EIVUM o EMV, que se basan en la distribución Gamma o Chi-cuadrado, esta prueba utiliza la **Normalidad Asintótica**. Esto es válido únicamente por el gran tamaño de la muestra ($n=1000$).
-4.  **Relación con el Intervalo de Confianza:** Esta conclusión refuerza lo hallado en el punto 2.3. Se cumple la propiedad de **Dualidad de la Inferencia**: un valor de hipótesis nula $\mu_0$ no se rechaza al nivel $\alpha$ si y solo si dicho valor está contenido en el intervalo de confianza del $(1-\alpha)100\%$.
-
-
-
-
-
-
+1.  **Estadístico Observado:** El valor de
+    $Z_{calc} = `r round(z_calc, 4)`$ cae dentro de la región de **no
+    rechazo** (área blanca entre -1.96 y 1.96).
+2.  **Conclusión Estadística:** Dado que el
+    $p-valor = `r round(p_val, 4)` > 0.05$, no existe evidencia
+    suficiente para rechazar la hipótesis nula. Se concluye que la media
+    de la muestra de reclamos es estadísticamente igual a 3.
+3.  **Diferencia con los estimadores de Beta:** A diferencia de las
+    pruebas de hipótesis realizadas para los estimadores EIVUM o EMV,
+    que se basan en la distribución Gamma o Chi-cuadrado, esta prueba
+    utiliza la **Normalidad Asintótica**. Esto es válido únicamente por
+    el gran tamaño de la muestra ($n=1000$).
+4.  **Relación con el Intervalo de Confianza:** Esta conclusión refuerza
+    lo hallado en el punto 2.3. Se cumple la propiedad de **Dualidad de
+    la Inferencia**: un valor de hipótesis nula $\mu_0$ no se rechaza al
+    nivel $\alpha$ si y solo si dicho valor está contenido en el
+    intervalo de confianza del $(1-\alpha)100\%$.
 
 ## 4.5 Prueba de Hipótesis para $\beta$ con el EIVUM
 
-Utilizando el estimador EIVUM y la cantidad pivotal deducida anteriormente, procederemos a verificar una hipótesis sobre el parámetro de forma $\beta$.
+Utilizando el estimador EIVUM y la cantidad pivotal deducida
+anteriormente, procederemos a verificar una hipótesis sobre el parámetro
+de forma $\beta$.
 
 ### 4.5.1 Planteamiento de la Hipótesis
 
-Dado que en nuestra simulación el valor verdadero es 3, plantearemos una prueba bilateral para verificar si la evidencia muestral soporta este valor:
+Dado que en nuestra simulación el valor verdadero es 3, plantearemos una
+prueba bilateral para verificar si la evidencia muestral soporta este
+valor:
 
 $$
 \begin{cases}
@@ -2385,23 +2899,28 @@ $$
 
 ### 4.5.2 Estadístico de Prueba
 
-Bajo el supuesto de que la Hipótesis Nula ($H_0$) es cierta ($\beta = \beta_0$), utilizamos la cantidad pivotal $Q$ como nuestro estadístico de prueba.
+Bajo el supuesto de que la Hipótesis Nula ($H_0$) es cierta
+($\beta = \beta_0$), utilizamos la cantidad pivotal $Q$ como nuestro
+estadístico de prueba.
 
 $$
 Q_{cal} = 2\beta_0 T = 2\beta_0 \sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \right)
 $$
 
-Sabemos que bajo $H_0$:
-$$
+Sabemos que bajo $H_0$: $$
 Q_{cal} \sim \chi^2_{(2(n-1))}
 $$
 
 ### 4.5.3 Regla de Decisión
 
-Para un nivel de significancia $\alpha = 0.05$, rechazaremos $H_0$ si el estadístico calculado cae en la región de rechazo (colas de la distribución):
+Para un nivel de significancia $\alpha = 0.05$, rechazaremos $H_0$ si el
+estadístico calculado cae en la región de rechazo (colas de la
+distribución):
 
-* **Rechazar $H_0$ si:** $Q_{cal} < \chi^2_{\alpha/2}$  ó  $Q_{cal} > \chi^2_{1-\alpha/2}$
-* **No Rechazar $H_0$ si:** $\chi^2_{\alpha/2} \le Q_{cal} \le \chi^2_{1-\alpha/2}$
+-   **Rechazar** $H_0$ si: $Q_{cal} < \chi^2_{\alpha/2}$ ó
+    $Q_{cal} > \chi^2_{1-\alpha/2}$
+-   **No Rechazar** $H_0$ si:
+    $\chi^2_{\alpha/2} \le Q_{cal} \le \chi^2_{1-\alpha/2}$
 
 Donde los grados de libertad son $gl = 2(n-1)$.
 
@@ -2492,11 +3011,21 @@ ggplot(df_plot, aes(x = x, y = y)) +
 
 ### 4.5.5 Interpretación de la Prueba
 
-Basándonos en los resultados obtenidos con la muestra simulada ($n=1000$):
+Basándonos en los resultados obtenidos con la muestra simulada
+($n=1000$):
 
-1.  **Evidencia Estadística:** El estadístico de prueba calculado ($Q_{cal} \approx 1971.38$) se encuentra dentro de la región de aceptación definida por los valores críticos $[1876.01, \, 2123.78]$.
-2.  **P-valor:** El P-valor obtenido ($0.68$) es muy superior al nivel de significancia ($\alpha = 0.05$).
+1.  **Evidencia Estadística:** El estadístico de prueba calculado
+    ($Q_{cal} \approx 1971.38$) se encuentra dentro de la región de
+    aceptación definida por los valores críticos
+    $[1876.01, \, 2123.78]$.
+2.  **P-valor:** El P-valor obtenido ($0.68$) es muy superior al nivel
+    de significancia ($\alpha = 0.05$).
 
 **Conclusión:**
 
-No existe evidencia suficiente para rechazar la hipótesis nula $H_0: \beta = 3$. Esto confirma que el estimador EIVUM y los datos generados son consistentes con el verdadero parámetro poblacional utilizado en la simulación. Gráficamente, observamos claramente cómo la línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona de no rechazo).
+No existe evidencia suficiente para rechazar la hipótesis nula
+$H_0: \beta = 3$. Esto confirma que el estimador EIVUM y los datos
+generados son consistentes con el verdadero parámetro poblacional
+utilizado en la simulación. Gráficamente, observamos claramente cómo la
+línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
+de no rechazo).
