@@ -88,7 +88,21 @@ n <- 1000
 reclamos <- alpha_true / (1 - runif(n))^(1/beta_true)
 ```
 
-## Distribución Pareto:
+# Introducción y Contexto de la Simulación
+
+El presente trabajo tiene como objetivo analizar el comportamiento de una cartera de **siniestros (reclamos) de una compañía aseguradora**. En la industria actuarial, es común que los montos de los reclamos no sigan una distribución normal, sino que presenten "colas pesadas" (eventos extremos con baja probabilidad pero alto impacto), por lo cual se ha seleccionado la **Distribución Pareto** como modelo generador de los datos.
+
+Para fines de esta simulación, se ha generado una muestra aleatoria de tamaño **$n=1000$**, que representa los montos de los reclamos individuales reportados por los asegurados en un periodo inicial ($t_0$).
+
+Los parámetros verdaderos de la población son:
+* **Escala ($\alpha = 2$):** Representa el monto mínimo deducible o umbral a partir del cual se registran los reclamos (en miles de unidades monetarias).
+* **Forma ($\beta = 3$):** Determina la pesadez de la cola de la distribución; un $\beta$ más bajo indicaría una mayor probabilidad de reclamos catastróficos.
+
+Adicionalmente, para evaluar la evolución temporal de la cartera (Análisis de Datos Pareados), se simula una segunda medición sobre los **mismos 1000 asegurados** transcurridos 6 meses ($t_1$). Este escenario busca determinar si existe una variación sistemática significativa en la severidad de los reclamos o en la categorización del riesgo (Alto/Bajo) de los clientes a lo largo del tiempo.
+
+## Definición de la Distribución Pareto
+
+Se asume que la variable aleatoria $X$ (monto de los reclamos) sigue una distribución Pareto con parámetros de forma $\beta$ y escala $\alpha$. Su densidad y momentos principales son:
 
 $$
 \begin{aligned}
@@ -97,7 +111,9 @@ $$
 \end{aligned}
 $$
 
-# Pregunta 1
+# Pregunta 1 - Estimadores y Propiedades
+
+En esta sección se derivan cinco estimadores distintos para los parámetros del modelo. Para cada uno de ellos, **se evaluará el cumplimiento de las propiedades fundamentales de la inferencia estadística**, tales como *insesgadez, consistencia, eficiencia, suficiencia y completitud*, con el fin de determinar la calidad y robustez de cada estimador propuesto.
 
 ## 1.1 EMV para parametro alfa:
 
