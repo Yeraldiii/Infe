@@ -6,11 +6,17 @@ output:
     highlight: tango
 header-includes:
 - \usepackage{graphicx}
+- \usepackage{setspace}
+- \usepackage{parskip}
+- \setlength{\parskip}{0pt}
+- \setlength{\parindent}{0pt}
+- \setlength{\topsep}{0pt}
+- \setlength{\partopsep}{0pt}
+- \setstretch{1.15}
 editor_options: 
   markdown: 
     wrap: 72
 ---
-
 \pagenumbering{gobble}
 
 ```{=tex}
@@ -4642,5 +4648,3 @@ $$
 -   Este procedimiento es válido aun cuando la población no es normal,
     ya que se fundamenta en la convergencia asintótica garantizada por
     el Teorema de Wilks.
-
-
