@@ -13,6 +13,7 @@ editor_options:
 
 \pagenumbering{gobble}
 
+```{=tex}
 \begin{center}
 \vspace{0.1cm}
 {\large DEPARTAMENTO DE ESTADÍSTICA E INFORMÁTICA}
@@ -56,14 +57,15 @@ Zavala Malpartida Kay Daniela L. & 20230420 \\
 \vspace{1cm}
 \textbf{LA MOLINA - LIMA - PERÚ 2025}
 \end{center}
-
+```
 \newpage
 
+```{=tex}
 \pagenumbering{roman}
 \setcounter{tocdepth}{2}
 \tableofcontents
 \newpage
-
+```
 \pagenumbering{arabic}
 
 ```{r setup, include=FALSE}
@@ -644,8 +646,7 @@ suficiente para el parámetro $\beta$.
 #### d) Anciliaridad
 
 El estadístico de orden mínimo $$
-X_{(1)} = \min\{X_1,\dots,X_n\}
-$$
+X_{(1)} = \min\{X_1,\dots,X_n\}$$
 
 tiene distribución
 
@@ -865,12 +866,10 @@ $$
 Evaluando los límites:
 
 Límite superior cuando $x \to \infty$: $$
-\lim_{x \to \infty} \frac{x^{1-\beta}}{1-\beta} = 0 \quad \text{porque } 1-\beta < 0
-$$
+\lim_{x \to \infty} \frac{x^{1-\beta}}{1-\beta} = 0 \quad \text{porque } 1-\beta < 0$$
 
 Límite inferior cuando $x = \alpha$: $$
-\frac{\alpha^{1-\beta}}{1-\beta}
-$$
+\frac{\alpha^{1-\beta}}{1-\beta}$$
 
 ### Resultado del primer momento
 
@@ -881,8 +880,7 @@ E[X] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{1-\beta}}{1-\beta} \right)
 $$
 
 **Primer momento poblacional:** $$
-\boxed{E[X] = \frac{\alpha\beta}{\beta-1}}, \quad \beta > 1
-$$
+\boxed{E[X] = \frac{\alpha\beta}{\beta-1}}, \quad \beta > 1$$
 
 ### P2:Cálculo del segundo momento poblacional $E[X^2]$
 
@@ -921,8 +919,7 @@ E[X^2] = \beta \alpha^\beta \left( 0 - \frac{\alpha^{2-\beta}}{2-\beta} \right)
 $$
 
 **Segundo momento poblacional:** $$
-\boxed{E[X^2] = \frac{\alpha^2\beta}{\beta-2}}, \quad \beta > 2
-$$
+\boxed{E[X^2] = \frac{\alpha^2\beta}{\beta-2}}, \quad \beta > 2$$
 
 ### P3: Momentos muestrales
 
@@ -948,8 +945,7 @@ S^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2
 $$
 
 Nota: Existe relación entre $m_2$, $\bar{X}$ y $S^2$: $$
-m_2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2
-$$
+m_2 = S^2 \cdot \frac{n-1}{n} + \bar{X}^2$$
 
 ### P4: Sistema de ecuaciones del método de momentos
 
@@ -971,14 +967,12 @@ De (I): $$
 $$
 
 Despejando $\alpha$: $$
-\boxed{\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}} \quad \text{(Ecuación III)}
-$$
+\boxed{\alpha = \bar{X} \cdot \frac{\beta-1}{\beta}} \quad \text{(Ecuación III)}$$
 
 #### Sustituir en la Ecuación II
 
 Sustituyendo (III) en (II): $$
-\frac{\left(\bar{X} \cdot \frac{\beta-1}{\beta}\right)^2 \beta}{\beta-2} = m_2
-$$
+\frac{\left(\bar{X} \cdot \frac{\beta-1}{\beta}\right)^2 \beta}{\beta-2} = m_2$$
 
 #### Simplificación algebraica
 
@@ -991,36 +985,30 @@ $$
 $$
 
 Reordenando: $$
-\frac{(\beta-1)^2}{\beta(\beta-2)} = \frac{m_2}{\bar{X}^2} \quad \text{(Ecuación IV)}
-$$
+\frac{(\beta-1)^2}{\beta(\beta-2)} = \frac{m_2}{\bar{X}^2} \quad \text{(Ecuación IV)}$$
 
 ### P5: Definición de R
 
 Sea: $$
-R = \frac{m_2}{\bar{X}^2}
-$$
+R = \frac{m_2}{\bar{X}^2}$$
 
 La Ecuación IV se convierte en: $$
-\frac{(\beta-1)^2}{\beta(\beta-2)} = R
-$$
+\frac{(\beta-1)^2}{\beta(\beta-2)} = R$$
 
 ### P6: Resolución de la ecuación en $\beta$
 
 #### Eliminar fracción
 
 Multiplicando en cruz: $$
-(\beta-1)^2 = R\beta(\beta-2)
-$$
+(\beta-1)^2 = R\beta(\beta-2)$$
 
 #### Expandir ambos lados
 
 **Lado izquierdo:** $$
-(\beta-1)^2 = \beta^2 - 2\beta + 1
-$$
+(\beta-1)^2 = \beta^2 - 2\beta + 1$$
 
 **Lado derecho:** $$
-R\beta(\beta-2) = R\beta^2 - 2R\beta
-$$
+R\beta(\beta-2) = R\beta^2 - 2R\beta$$
 
 #### Igualar y reordenar
 
@@ -1029,22 +1017,18 @@ $$
 $$
 
 Llevando todo a un lado: $$
-\beta^2 - 2\beta + 1 - R\beta^2 + 2R\beta = 0
-$$
+\beta^2 - 2\beta + 1 - R\beta^2 + 2R\beta = 0$$
 
 Agrupando términos: $$
-(1 - R)\beta^2 + 2(R - 1)\beta + 1 = 0
-$$
+(1 - R)\beta^2 + 2(R - 1)\beta + 1 = 0$$
 
 #### Forma estándar de ecuación cuadrática
 
 Multiplicando por -1 para mayor claridad: $$
-(R - 1)\beta^2 + 2(1 - R)\beta - 1 = 0
-$$
+(R - 1)\beta^2 + 2(1 - R)\beta - 1 = 0$$
 
 Factor común $(R-1)$: $$
-(R-1)(\beta^2 - 2\beta) - 1 = 0
-$$
+(R-1)(\beta^2 - 2\beta) - 1 = 0$$
 
 #### Aplicar fórmula general
 
@@ -1054,12 +1038,10 @@ $c = -\frac{1}{R-1}$
 Solución: $$
 \beta = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} 
        = \frac{2 \pm \sqrt{4 + \frac{4}{R-1}}}{2}
-       = \frac{2 \pm 2\sqrt{1 + \frac{1}{R-1}}}{2}
-$$
+       = \frac{2 \pm 2\sqrt{1 + \frac{1}{R-1}}}{2}$$
 
 Simplificando: $$
-\beta = 1 \pm \sqrt{1 + \frac{1}{R-1}}
-$$
+\beta = 1 \pm \sqrt{1 + \frac{1}{R-1}}$$
 
 ### P7: Selección de la raíz apropiada
 
@@ -1076,8 +1058,7 @@ $$
     $\beta > 1$)
 
 Por lo tanto, seleccionamos la raíz positiva: $$
-\hat{\beta}_{MM} = 1 + \sqrt{1 + \frac{1}{R-1}}
-$$
+\hat{\beta}_{MM} = 1 + \sqrt{1 + \frac{1}{R-1}}$$
 
 ### P8: Relación con el coeficiente de variación
 
@@ -1106,8 +1087,7 @@ $$
 #### Sustitución en la fórmula
 
 Si $R \approx 1 + \left(\frac{S}{\bar{X}}\right)^2$, entonces: $$
-R - 1 \approx \left(\frac{S}{\bar{X}}\right)^2
-$$
+R - 1 \approx \left(\frac{S}{\bar{X}}\right)^2$$
 
 Y:
 
@@ -1116,8 +1096,7 @@ $$
 $$
 
 Sustituyendo en la fórmula de $\hat{\beta}_{MM}$: $$
-\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}
-$$
+\hat{\beta}_{MM} = 1 + \sqrt{1 + \left(\frac{\bar{X}}{S}\right)^2}$$
 
 ### P9: Obtención del estimador
 
@@ -1744,9 +1723,7 @@ por lo que **no es insesgado en muestras finitas**.\
 Para verificarlo de manera empírica, estimamos el sesgo mediante
 simulación Monte Carlo:
 
-$$
-\text{Sesgo}(\hat{\beta}_{MM}) = E(\hat{\beta}_{MM})-\beta.
-$$
+$$\text{Sesgo}(\hat{\beta}_{MM}) = E(\hat{\beta}_{MM})-\beta.$$
 
 ```{r, echo=FALSE, }
 # ============================================================
@@ -2502,7 +2479,7 @@ $$
 En la práctica, si $\alpha$ es desconocido, se reemplaza por
 $\hat{\alpha}_{EMV} = \min(X_1,\ldots,X_n)$.
 
-### 2.3.1 Aplicación
+### 2.2.1 Aplicación
 
 ```{r include=FALSE}
 # tamaño de muestra
@@ -2666,6 +2643,604 @@ Observamos que el **valor teórico (**$\mu = 3$) se encuentra contenido
 dentro del intervalo, lo que valida la precisión del estimador $\bar{X}$
 y la eficacia de la aproximación por el Teorema del Límite Central para
 este tamaño de muestra.
+
+## 2.4 Estimador 4 : para $\alpha$ y $\beta$
+
+### 2.4.1 Intervalos de Confianza para $\alpha$ con el estimador de momentos
+
+Se busca construir **intervalos de confianza** para el parámetro de
+escala $\alpha$ de una distribución Pareto($\alpha, \beta$), cuando
+$\beta$ es **conocido**, utilizando el **estimador de momentos de**
+$\alpha$:
+
+$$
+\hat{\alpha} = \bar{X} \cdot \frac{\beta-1}{\beta}
+$$
+
+El procedimiento se realizará mediante el **método del pivote
+asintótico**, dado que no existe un pivote exacto de distribución libre
+de parámetros para este estimador específico.
+
+**Supuestos del método asintótico**\
+1. **Población:** $X \sim \text{Pareto}(\alpha, \beta)$ con densidad:
+$$f(x; \alpha, \beta) = \frac{\beta \alpha^\beta}{x^{\beta+1}}, \quad x \ge \alpha$$
+2. **Parámetro conocido:** $\beta > 2$ (se requiere para varianza
+finita)
+
+3.  **Muestra:** $X_1, \dots, X_n$ aleatoria e independiente
+
+4.  **Estimador:** $\hat{\alpha} = \bar{X} \cdot \frac{\beta-1}{\beta}$
+
+**Procedimiento para hallar el intervalo**
+
+Paso 1: Momentos poblacionales
+
+Para la distribución Pareto($\alpha, \beta$):
+
+$$
+\begin{aligned}
+E[X] &= \frac{\beta \alpha}{\beta-1}, \quad \beta > 1 \\
+Var(X) &= \frac{\beta \alpha^2}{(\beta-1)^2(\beta-2)}, \quad \beta > 2
+\end{aligned}
+$$
+
+Paso 2: Propiedades del estimador
+
+Definimos $c = \frac{\beta-1}{\beta}$, entonces
+$\hat{\alpha} = c \bar{X}$.
+
+**Esperanza:** $$
+E[\hat{\alpha}] = c \cdot E[\bar{X}] = c \cdot \frac{\beta \alpha}{\beta-1} = \alpha
+$$ $\Rightarrow \hat{\alpha}$ es insesgado. Esta propiedad se cumple
+porque $\beta$ es conocido (no estimado). Si $\beta$ se estimara
+simultáneamente, el estimador
+$\hat{\alpha}{MM} = \bar{X} \cdot \frac{\hat{\beta}{MM}-1}{\hat{\beta}{MM}}$
+sería sesgado para muestras finitas debido a la no-linealidad
+$E[g(\hat{\beta}{MM})] \neq g(E[\hat{\beta}_{MM}])$.
+
+**Varianza:** $$
+\begin{aligned}
+Var(\hat{\alpha}) &= c^2 \cdot Var(\bar{X}) \\
+&= \left(\frac{\beta-1}{\beta}\right)^2 \cdot \frac{Var(X)}{n} \\
+&= \left(\frac{\beta-1}{\beta}\right)^2 \cdot \frac{1}{n} \cdot \frac{\beta \alpha^2}{(\beta-1)^2(\beta-2)} \\
+&= \frac{\alpha^2}{n \beta (\beta-2)}
+\end{aligned}
+$$ **Observación:** La varianza de $\hat{\alpha}$ depende del parámetro
+$\alpha$ que queremos estimar. Sin embargo, para construir el intervalo
+usaremos la cantidad pivotal $\frac{\hat{\alpha}-\alpha}{\alpha}$ cuya
+distribución asintótica no depende de $\alpha$ después de estandarizar
+apropiadamente.
+
+Paso 3: Distribución asintótica
+
+Por el **Teorema del Límite Central (TCL)**, para $n$ grande y
+$\beta > 2$:
+
+$$
+\sqrt{n}(\hat{\alpha} - \alpha) \xrightarrow{d} N\left(0, \frac{\alpha^2}{\beta(\beta-2)}\right)
+$$
+
+Paso 4: Construcción del pivote asintótico
+
+De la distribución asintótica, estandarizamos:
+
+$$
+Z = \frac{\hat{\alpha} - \alpha}{\alpha / \sqrt{n \beta (\beta-2)}} \xrightarrow{d} N(0,1)
+$$
+
+Equivalentemente:
+
+$$
+Z = \sqrt{n \beta (\beta-2)} \cdot \frac{\hat{\alpha} - \alpha}{\alpha} \xrightarrow{d} N(0,1)
+$$
+
+Este es nuestro **pivote asintótico**: su distribución límite no depende
+de parámetros desconocidos (excepto $\alpha$ en la expresión, que se
+despejará).
+
+Paso 5: Obtención del intervalo de confianza
+
+Para un nivel de confianza $1-\delta$, sea $z_{1-\delta/2}$ el cuantil
+de la $N(0,1)$ tal que
+$P(-z_{1-\delta/2} \leq Z \leq z_{1-\delta/2}) = 1-\delta$.
+
+Aplicando al pivote:
+
+$$
+P\left(-z_{1-\delta/2} \leq \sqrt{n \beta (\beta-2)} \cdot \frac{\hat{\alpha} - \alpha}{\alpha} \leq z_{1-\delta/2}\right) \approx 1-\delta
+$$
+
+**Definimos:** $A = \dfrac{z_{1-\delta/2}}{\sqrt{n \beta (\beta-2)}}$
+
+Entonces:
+
+$$
+\begin{aligned}
+&\left| \frac{\hat{\alpha} - \alpha}{\alpha} \right| \leq A \\
+&-A \leq \frac{\hat{\alpha}}{\alpha} - 1 \leq A \\
+&1 - A \leq \frac{\hat{\alpha}}{\alpha} \leq 1 + A
+\end{aligned}
+$$
+
+**Despejando** $\alpha$:
+
+1.  De
+    $\dfrac{\hat{\alpha}}{\alpha} \leq 1+A \quad\Rightarrow\quad \alpha \geq \dfrac{\hat{\alpha}}{1+A}$
+2.  De
+    $1-A \leq \dfrac{\hat{\alpha}}{\alpha} \quad\Rightarrow\quad \alpha \leq \dfrac{\hat{\alpha}}{1-A}$
+
+Resultado final
+
+**Intervalo de confianza asintótico al** $100(1-\delta)\%$ para
+$\alpha$:
+
+$$
+\boxed{IC_{1-\delta}(\alpha) \approx \left[ \frac{\hat{\alpha}}{1 + A},\ \frac{\hat{\alpha}}{1 - A} \right]}
+$$
+
+donde:
+
+$$
+A = \frac{z_{1-\delta/2}}{\sqrt{n \beta (\beta-2)}}
+$$
+
+Finalmente hallamos el intervalo de confianza debido que se empleó el
+método del pivote asintótico porque, al usar específicamente el
+estimador $\hat{\alpha} = \bar{X}\cdot\frac{\beta-1}{\beta}$ con $\beta$
+conocido, no se dispone de un pivote exacto con distribución libre de
+parámetros.
+
+Aunque el estimador de máxima verosimilitud $X_{(1)}$ permite construir
+intervalos exactos, decidimos buscar otro metodo para obtener el
+intervalo usando este estimador de momentos. Dado que la distribución
+exacta de $\hat{\alpha}$ es compleja, se recurre a su normalidad
+asintótica, la cual se garantiza para $\beta>2$ (varianza finita) y $n$
+grande por el Teorema del Límite Central.
+
+Este enfoque proporciona una expresión cerrada y fácil de calcular,
+utilizando únicamente $\bar{X}$, $\beta$ y cuantiles normales,
+cumpliendo así con la solicitud de emplear el estimador especificado.
+
+```{r intervalo momentos, echo=TRUE , warning=FALSE}
+# ============================================
+# APLICACIÓN: Intervalo de confianza para α
+# con β conocido usando estimador de momentos
+# ============================================
+
+# Configuración -----------------------------------------------------------
+set.seed(123)
+alpha_verdadero <- 2      # Valor verdadero de α
+beta_conocido <- 3        # β es CONOCIDO (no estimado)
+n <- 1000                 # Tamaño de muestra
+nivel_confianza <- 0.95   # Nivel de confianza
+alfa <- 1 - nivel_confianza
+
+# Generar datos Pareto(α=2, β=3) -----------------------------------------
+datos_pareto <- alpha_verdadero / (1 - runif(n))^(1/beta_conocido)
+
+# 1. Cálculo del estimador α̂ ----------------------------------------------
+media_muestral <- mean(datos_pareto)
+alpha_estimado <- media_muestral * (beta_conocido - 1) / beta_conocido
+
+# 2. Factor A para el intervalo -------------------------------------------
+z_cuantil <- qnorm(1 - alfa/2)  # z_{1-α/2}
+A <- z_cuantil / sqrt(n * beta_conocido * (beta_conocido - 2))
+
+# 3. Límites del intervalo de confianza -----------------------------------
+limite_inferior <- alpha_estimado / (1 + A)
+limite_superior <- alpha_estimado / (1 - A)
+
+# 4. Presentación de resultados -------------------------------------------
+resultados <- data.frame(
+  Descripción = c(
+    "Tamaño de muestra (n)",
+    "Media muestral (X̄)",
+    " Betha conocido",
+    "Estimador de alpha",
+    "Valor verdadero de α",
+    "Nivel de confianza",
+    "z_{1-alpha/2}",
+    "Factor A",
+    "Límite inferior",
+    "Límite superior",
+    "Longitud del intervalo",
+    "¿Contiene al α verdadero?"
+  ),
+  Valor = c(
+    n,
+    round(media_muestral, 4),
+    beta_conocido,
+    round(alpha_estimado, 4),
+    alpha_verdadero,
+    paste0(nivel_confianza*100, "%"),
+    round(z_cuantil, 4),
+    round(A, 6),
+    round(limite_inferior, 4),
+    round(limite_superior, 4),
+    round(limite_superior - limite_inferior, 4),
+    ifelse(limite_inferior <= alpha_verdadero & 
+           alpha_verdadero <= limite_superior, "SÍ", "NO")
+  )
+)
+
+# Mostrar tabla
+knitr::kable(resultados, 
+             caption = "Intervalo de confianza asintótico para alpha con beta conocido",
+             col.names = c("Descripción", "Valor"),
+             align = c("l", "r"))
+
+
+```
+
+```{r Grafica , echo=FALSE , warning=FALSE,fig.align='center',fig.height=3.5, fig.width=5}
+# 5. Gráfico del intervalo ------------------------------------------------
+library(ggplot2)
+
+ggplot(data.frame(x = c(1.8, 2.2)), aes(x = x)) +
+  stat_function(fun = dnorm, 
+                args = list(mean = alpha_estimado, 
+                            sd = alpha_estimado/sqrt(n*beta_conocido*(beta_conocido-2))),
+                color = "steelblue", size = 1) +
+  geom_vline(xintercept = alpha_verdadero, 
+             color = "red", linetype = "dashed", size = 1,
+             aes(color = "α verdadero")) +
+  geom_vline(xintercept = alpha_estimado, 
+             color = "darkgreen", linetype = "solid", size = 1,
+             aes(color = "α estimado")) +
+  geom_rect(aes(xmin = limite_inferior, xmax = limite_superior,
+                ymin = -0.5, ymax = 0.5),
+            fill = "orange", alpha = 0.3) +
+  geom_point(aes(x = alpha_estimado, y = 0), 
+             color = "darkgreen", size = 3) +
+  labs(title = "Intervalo de confianza del 95% para alpha",
+       subtitle = paste0("β conocido = ", beta_conocido, 
+                        ", n = ", n, ", IC: [", 
+                        round(limite_inferior, 3), ", ", 
+                        round(limite_superior, 3), "]"),
+       x = "Valor de alpha",
+       y = "Densidad") +
+  scale_color_manual(name = "Referencias",
+                     values = c("α verdadero" = "red", 
+                                "α estimado" = "darkgreen"),
+                     labels = c("α verdadero", "α estimado")) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+La gráfica presenta visualmente el intervalo de confianza asintótico del
+95% para el parámetro $\alpha$ de la distribución Pareto. A continuación
+se describe cada elemento:
+
+1.  Curva azul: Representa la distribución normal asintótica del
+    estimador $\hat{\alpha}$, centrada en el valor estimado
+    $\hat{\alpha} =$ r round(alpha_estimado, 4) con desviación estándar
+    $\frac{\hat{\alpha}}{\sqrt{n\beta(\beta-2)}}$.
+
+2.  Línea roja discontinua: Indica el valor verdadero de $\alpha = 2$,
+    el cual fue utilizado para generar los datos.
+
+3.  Línea verde sólida: Representa la estimación puntual $\hat{\alpha}$
+    calculada a partir de los datos.
+
+4.  Rectángulo naranja: Muestra visualmente el intervalo de confianza
+    $[r round(limite_inferior, 3), r round(limite_superior, 3)]$, que
+    tiene una probabilidad aproximada del 95% de contener al verdadero
+    valor $\alpha$.
+
+5.  Punto verde: Refuerza la posición del estimador puntual en el eje
+    horizontal.
+
+**Interpretación** El intervalo $[1.911,2.052]$ contiene al valor
+verdadero $\alpha = 2$, lo cual es coherente con el nivel de confianza
+del 95% (se espera que aproximadamente 95 de cada 100 intervalos
+construidos de esta manera contengan el parámetro verdadero).
+
+**Conclusión**: El método del pivote asintótico proporciona un intervalo
+de confianza práctico y fácil de calcular para $\alpha$ cuando $\beta$
+es conocido. Además se observa que el estimador $\hat{\alpha}$ está
+cerca del valor verdadero, evidenciando su consistencia.
+
+### 2.4.2 Intervalos de Confianza para $\beta$ con el estimador de momentos
+
+Se busca construir **intervalos de confianza** para el parámetro de
+forma $\beta$ de una distribución $\text{Pareto}(\alpha,\beta)$,
+utilizando el **estimador de método de momentos** de $\beta$:
+
+$$
+\hat{\beta}_{MM}
+=
+1+\sqrt{1+\frac{\bar X^2}{S^2}},
+$$
+
+donde $\bar X$ es la media muestral y $S^2$ la varianza muestral.
+
+El procedimiento se realizará mediante el **método del pivote
+asintótico**, dado que no existe un pivote exacto con distribución libre
+de parámetros para este estimador específico.
+
+**Supuestos del método asintótico**
+
+1.  **Población:** $$
+    X \sim \text{Pareto}(\alpha,\beta), \qquad
+    f(x;\alpha,\beta)=\frac{\beta\alpha^\beta}{x^{\beta+1}}, \quad x \ge \alpha.
+    $$
+
+2.  **Condición de momentos:** $\beta>2$, necesaria para la existencia
+    de la media y la varianza.
+
+3.  **Muestra:** $X_1,\dots,X_n$ aleatoria e independiente.
+
+4.  **Estimador:** $$
+    \hat{\beta}_{MM}
+    =
+    1+\sqrt{1+\frac{\bar X^2}{S^2}}.
+    $$
+
+**Procedimiento para hallar el intervalo**
+
+**Paso 1: Momentos poblacionales**
+
+Para la distribución Pareto$(\alpha,\beta)$:
+
+$$
+\begin{aligned}
+E[X] &= \frac{\beta\alpha}{\beta-1}, \quad \beta>1, \\
+\operatorname{Var}(X) &= \frac{\beta\alpha^2}{(\beta-1)^2(\beta-2)}, \quad \beta>2.
+\end{aligned}
+$$
+
+**Paso 2: Propiedades del estimador**
+
+El estimador $\hat{\beta}_{MM}$ es una **función no lineal** de los
+momentos muestrales $(\bar X, S^2)$.\
+Debido a esta no linealidad, no se dispone de una distribución exacta
+cerrada para $\hat{\beta}_{MM}$, ni de una cantidad pivotal exacta
+asociada.
+
+Sin embargo, dado que $\bar X$ y $S^2$ son estimadores consistentes de
+los momentos poblacionales y que $\hat{\beta}_{MM}$ es una función
+diferenciable de ellos, se tiene que $\hat{\beta}_{MM}$ es un
+**estimador consistente** para $\beta$.
+
+**Paso 3: Distribución asintótica**
+
+Por el **Teorema del Límite Central** y el **Método Delta
+multivariado**, para $n$ grande y $\beta>2$:
+
+$$
+\sqrt{n}\,(\hat{\beta}_{MM}-\beta)
+\;\xrightarrow{d}\;
+\mathcal N\!\left(0,\sigma_\beta^2\right),
+$$
+
+donde $\sigma_\beta^2$ representa la varianza asintótica del estimador,
+cuya expresión cerrada es algebraicamente compleja.
+
+**Paso 4: Construcción del pivote asintótico**
+
+A partir de la normalidad asintótica, se define el pivote:
+
+$$
+Z
+=
+\frac{\hat{\beta}_{MM}-\beta}
+{\sqrt{\widehat{\operatorname{Var}}(\hat{\beta}_{MM})}}
+\;\xrightarrow{d}\;
+\mathcal N(0,1),
+$$
+
+donde $\widehat{\operatorname{Var}}(\hat{\beta}_{MM})$ es un estimador
+consistente de la varianza asintótica, obtenido mediante aproximación
+*plug-in*.
+
+**Paso 5: Obtención del intervalo de confianza**
+
+Para un nivel de confianza $1-\delta$, sea $z_{1-\delta/2}$ el cuantil
+de la distribución normal estándar. Entonces:
+
+$$
+P\!\left(
+-z_{1-\delta/2}
+\le
+\frac{\hat{\beta}_{MM}-\beta}
+{\sqrt{\widehat{\operatorname{Var}}(\hat{\beta}_{MM})}}
+\le
+z_{1-\delta/2}
+\right)
+\approx
+1-\delta.
+$$
+
+**Resultado final**
+
+El **intervalo de confianza asintótico al** $100(1-\delta)\%$ para
+$\beta$ está dado por:
+
+$$
+\boxed{
+IC_{1-\delta}(\beta)
+\approx
+\left[
+\hat{\beta}_{MM}
+-
+z_{1-\delta/2}
+\sqrt{\widehat{\operatorname{Var}}(\hat{\beta}_{MM})},
+\;
+\hat{\beta}_{MM}
++
+z_{1-\delta/2}
+\sqrt{\widehat{\operatorname{Var}}(\hat{\beta}_{MM})}
+\right]
+}
+$$
+
+Se ha construido un intervalo de confianza asintótico para el parámetro
+$\beta$ utilizando el estimador de método de momentos.\
+Dado que no existe un pivote exacto asociado a $\hat{\beta}_{MM}$ y que
+su distribución exacta es analíticamente intratable, se recurre a la
+normalidad asintótica garantizada por el Teorema del Límite Central y el
+Método Delta.
+
+Este enfoque permite obtener un intervalo de confianza coherente y
+aplicable para tamaños muestrales grandes, cumpliendo con la condición
+de emplear exclusivamente el estimador especificado.
+
+```{r intervalo_beta_MM, echo=TRUE, warning=FALSE}
+# ============================================
+# Intervalo de confianza asintótico para β
+# usando estimador de momentos
+# ============================================
+
+set.seed(123)
+
+# Usamos los mismos datos Pareto
+# (si ya los generaste antes, este bloque NO los vuelve a generar)
+reclamos <- datos_pareto
+n <- length(reclamos)
+
+nivel_confianza <- 0.95
+delta <- 1 - nivel_confianza
+z_cuantil <- qnorm(1 - delta/2)
+
+# 1. Estimador de método de momentos para β
+xbar <- mean(reclamos)
+s2   <- var(reclamos)
+
+beta_MM <- 1 + sqrt(1 + (xbar^2 / s2))
+
+# 2. Error estándar asintótico (bootstrap, consistente)
+B <- 2000
+
+boot_beta <- replicate(B, {
+  x_star <- sample(reclamos, size = n, replace = TRUE)
+  xbar_s <- mean(x_star)
+  s2_s   <- var(x_star)
+  1 + sqrt(1 + (xbar_s^2 / s2_s))
+})
+
+se_beta_MM <- sd(boot_beta)
+
+# 3. Intervalo de confianza
+limite_inferior <- beta_MM - z_cuantil * se_beta_MM
+limite_superior <- beta_MM + z_cuantil * se_beta_MM
+
+beta_MM
+limite_inferior
+limite_superior
+```
+
+```{r, echo=FALSE, warning=FALSE,fig.align='center', fig.height=3.5, fig.width=5}
+
+library(ggplot2)
+
+# --------------------------------------------
+# Supón que ya tienes calculado:
+# beta_MM            -> estimador de beta
+# se_beta_MM         -> error estándar asintótico (bootstrap o plug-in)
+# limite_inferior    -> límite inferior del IC
+# limite_superior    -> límite superior del IC
+# n                  -> tamaño muestral
+# --------------------------------------------
+
+# Rango razonable para el eje x
+rango_beta <- c(
+  beta_MM - 4 * se_beta_MM,
+  beta_MM + 4 * se_beta_MM
+)
+
+ggplot(data.frame(x = rango_beta), aes(x = x)) +
+  stat_function(
+    fun = dnorm,
+    args = list(mean = beta_MM, sd = se_beta_MM),
+    color = "steelblue",
+    size = 1
+  ) +
+  geom_vline(
+    xintercept = beta_MM,
+    color = "darkgreen",
+    linetype = "solid",
+    size = 1,
+    aes(color = "β estimado")
+  ) +
+  geom_rect(
+    aes(
+      xmin = limite_inferior,
+      xmax = limite_superior,
+      ymin = -0.5,
+      ymax = 0.5
+    ),
+    fill = "orange",
+    alpha = 0.3
+  ) +
+  geom_point(
+    aes(x = beta_MM, y = 0),
+    color = "darkgreen",
+    size = 3
+  ) +
+  labs(
+    title = "Intervalo de confianza del 95% para β",
+    subtitle = paste0(
+      "n = ", n,
+      ", IC: [",
+      round(limite_inferior, 3), ", ",
+      round(limite_superior, 3), "]"
+    ),
+    x = "Valor de β",
+    y = "Densidad"
+  ) +
+  scale_color_manual(
+    name = "Referencias",
+    values = c("β estimado" = "darkgreen"),
+    labels = c("β estimado")
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+**Interpretación del gráfico**
+
+La figura muestra el **intervalo de confianza asintótico del 95% para el
+parámetro** $\beta$ de la distribución Pareto, construido a partir del
+**estimador de método de momentos** y su **aproximación normal
+asintótica**, válida para tamaños muestrales grandes.
+
+La **curva azul** representa la distribución normal asintótica del
+estimador $\hat{\beta}_{MM}$, centrada en el valor estimado obtenido a
+partir de la muestra. Esta aproximación se sustenta en el Teorema del
+Límite Central y el Método Delta.
+
+La **línea vertical verde**, junto con el **punto verde**, indica la
+**estimación puntual** $\hat{\beta}_{MM}$ del parámetro $\beta$,
+alrededor de la cual se construye el intervalo de confianza.
+
+El **rectángulo naranja** corresponde al **intervalo de confianza del
+95%**, dado por: $$
+IC_{0.95}(\beta) = [2.90,\; 3.638].
+$$ Este intervalo representa el conjunto de valores plausibles para
+$\beta$ compatibles con los datos observados y el modelo asumido.
+
+**Interpretación estadística**
+
+El intervalo obtenido indica que, con un nivel de confianza aproximado
+del 95%, el verdadero valor del parámetro $\beta$ se encuentra entre
+**2.90 y 3.638**. Esto significa que, si se repitiera el procedimiento
+de muestreo y construcción del intervalo bajo las mismas condiciones,
+aproximadamente **95 de cada 100 intervalos construidos de esta manera
+contendrían al verdadero valor de** $\beta$.
+
+La forma simétrica del intervalo alrededor de $\hat{\beta}_{MM}$ es
+coherente con el uso de una aproximación normal asintótica, y su
+amplitud refleja la variabilidad del estimador, la cual disminuye
+conforme aumenta el tamaño muestral.
+
+**Conclusión**
+
+La representación gráfica confirma que el **método del pivote
+asintótico** proporciona un intervalo de confianza adecuado para el
+parámetro $\beta$ cuando se utiliza el estimador de método de momentos.
+El tamaño muestral grande ($n=1000$) garantiza una buena aproximación
+normal, haciendo que el intervalo sea estable y estadísticamente
+confiable.
 
 ## 2.5 Estimador 5 (para $\beta$ con el EIVUM)
 
@@ -3310,6 +3885,391 @@ ggplot(df_plot, aes(x = x, y = y)) +
     nivel $\alpha$ si y solo si dicho valor está contenido en el
     intervalo de confianza del $(1-\alpha)100\%$.
 
+## 4.4 Prueba de Hipótesis mediante el estimador de momentos $\alpha$ y $\beta$
+
+### 4.4.1 Prueba de Hipótesis usando estimador de $\alpha$
+
+Paso 1: Planteamiento de hipótesis
+
+Sea $X_1, \dots, X_n \sim \text{Pareto}(\alpha, \beta)$ con $\beta > 2$
+**conocido**.
+
+Las hipótesis más comunes son:
+
+**Bilateral:**
+$$H_0: \alpha = \alpha_0 \quad \text{vs} \quad H_1: \alpha \neq \alpha_0$$
+
+**Unilateral derecha:**
+$$H_0: \alpha \leq \alpha_0 \quad \text{vs} \quad H_1: \alpha > \alpha_0$$
+
+**Unilateral izquierda:**
+$$H_0: \alpha \geq \alpha_0 \quad \text{vs} \quad H_1: \alpha < \alpha_0$$
+
+Paso 2: Estadístico de prueba
+
+Usando el estimador $\hat{\alpha} = \bar{X} \cdot \frac{\beta-1}{\beta}$
+y su distribución asintótica, el estadístico es:
+
+$$
+  Z_0 = \sqrt{n\beta(\beta-2)} \cdot \frac{\hat{\alpha} - \alpha_0}{\alpha_0}
+$$
+
+Bajo $H_0$ (cuando $\alpha = \alpha_0$), $Z_0 \xrightarrow{d} N(0,1)$
+para $n$ grande.
+
+Paso 3: Región de rechazo y valor p
+
+**Para prueba bilateral (**$\alpha \neq \alpha_0$): - Región de rechazo:
+$|Z_0| > z_{1-\alpha/2}$ - Valor p: $p = 2 \cdot P(Z > |Z_0|)$
+
+**Para prueba unilateral derecha (**$\alpha > \alpha_0$): - Región de
+rechazo: $Z_0 > z_{1-\alpha}$ - Valor p: $p = P(Z > Z_0)$
+
+**Para prueba unilateral izquierda (**$\alpha < \alpha_0$): - Región de
+rechazo: $Z_0 < -z_{1-\alpha}$
+
+Paso 4: Implementación en R con la base de datos
+
+```{r prueba-hipotesis-alpha, echo=TRUE, message=FALSE, warning=FALSE , fig.align='center'}
+# Configuración
+alpha_0 <- 2               # Valor bajo H0
+beta_conocido <- 3         # β conocido
+nivel_signif <- 0.05       # Nivel de significancia
+tipo_prueba <- "bilateral" # "bilateral", "derecha" o "izquierda"
+
+# Usando los datos generados previamente
+x_barra <- mean(datos_pareto)
+alpha_hat <- x_barra * (beta_conocido - 1) / beta_conocido
+n <- length(datos_pareto)
+
+# Estadístico de prueba
+Z0 <- sqrt(n * beta_conocido * (beta_conocido - 2)) * (alpha_hat - alpha_0) / alpha_0
+
+# Valor p según tipo de prueba
+if(tipo_prueba == "bilateral") {
+  valor_p <- 2 * (1 - pnorm(abs(Z0)))
+  z_critico <- qnorm(1 - nivel_signif/2)
+} else if(tipo_prueba == "derecha") {
+  valor_p <- 1 - pnorm(Z0)
+  z_critico <- qnorm(1 - nivel_signif)
+} else if(tipo_prueba == "izquierda") {
+  valor_p <- pnorm(Z0)
+  z_critico <- qnorm(nivel_signif)
+}
+
+# Decisión
+decision <- ifelse(valor_p < nivel_signif, 
+                   "Rechazar H0", 
+                   "No rechazar H0")
+
+# Resultados en tabla
+resultados_prueba <- data.frame(
+  Descripción = c(
+    "Hipótesis nula (Ho)",
+    "Hipótesis alternativa (H1)",
+    "Tipo de prueba",
+    "Alpha estimado",
+    "Alpha bajo H0",
+    "Beta conocido",
+    "n",
+    "Estadístico Zo",
+    "Valor p",
+    "Nivel de significancia",
+    "Decisión"
+  ),
+  Valor = c(
+    paste0("alpha = ", alpha_0),
+    ifelse(tipo_prueba == "bilateral", "alpha != 2",
+           ifelse(tipo_prueba == "derecha", "alpha > 2", "alpha < 2")),
+    tipo_prueba,
+    round(alpha_hat, 4),
+    alpha_0,
+    beta_conocido,
+    n,
+    round(Z0, 4),
+    round(valor_p, 6),
+    nivel_signif,
+    decision
+  )
+)
+
+knitr::kable(resultados_prueba, 
+             caption = paste("Prueba de hipótesis para Alpha (Beta =", beta_conocido, "conocido)"),
+             col.names = c("Descripción", "Valor"),
+             align = c("l", "r"))
+
+
+```
+
+```{r hipot , echo=FALSE , warning=FALSE , fig.align='center', fig.height=4,fig.width=5 }
+# Gráfico de la prueba
+library(ggplot2)
+
+ggplot(data.frame(x = c(-4, 4)), aes(x = x)) +
+  stat_function(fun = dnorm, args = list(mean = 0, sd = 1),
+                color = "black", size = 1) +
+# Regiones de rechazo según tipo de prueba
+{
+  if(tipo_prueba == "bilateral") {
+    list(
+      geom_area(stat = "function", fun = dnorm,
+                  args = list(mean = 0, sd = 1),
+                  xlim = c(-4, -z_critico), fill = "red", alpha = 0.3),
+      geom_area(stat = "function", fun = dnorm,
+                  args = list(mean = 0, sd = 1),
+                  xlim = c(z_critico, 4), fill = "red", alpha = 0.3)
+      )
+    } else if(tipo_prueba == "derecha") {
+      geom_area(stat = "function", fun = dnorm,
+                args = list(mean = 0, sd = 1),
+                xlim = c(z_critico, 4), fill = "red", alpha = 0.3)
+    } else if(tipo_prueba == "izquierda") {
+      geom_area(stat = "function", fun = dnorm,
+                args = list(mean = 0, sd = 1),
+                xlim = c(-4, z_critico), fill = "red", alpha = 0.3)
+    }
+  } +
+# Estadístico observado
+geom_vline(xintercept = Z0, color = "blue", 
+             linetype = "dashed", size = 1.2) +
+# Valores críticos (líneas verticales)
+{
+  if(tipo_prueba == "bilateral") {
+    geom_vline(xintercept = c(-z_critico, z_critico), 
+                 color = "darkred", linetype = "dotted", size = 1)
+    } else {
+      geom_vline(xintercept = z_critico, 
+                 color = "darkred", linetype = "dotted", size = 1)
+    }
+  } +
+  # Texto informativo
+  annotate("text", x = 0, y = 0.2, 
+           label = paste("Zo =", round(Z0, 3), 
+                         "\nValor p =", round(valor_p, 4)),
+           size = 5, color = "blue") +
+  labs(title = paste("Prueba de hipótesis: Ho: alpha =", alpha_0, 
+                     ifelse(tipo_prueba == "bilateral", "vs H1: alpha != alpha_o",
+                            ifelse(tipo_prueba == "derecha", "vs H1: alpha > alpha_o", 
+                                   "vs H₁: α < αo"))),
+       subtitle = paste("Distribución bajo Ho: N(0,1)"),
+       x = "Valor del estadístico Z",
+       y = "Densidad") +
+  theme_minimal()
+```
+
+**Interpretación**: Existe una **equivalencia matemática** entre la
+prueba de hipótesis bilateral al nivel $\alpha$ y el intervalo de
+confianza del $(1-\alpha)100\%$:
+
+$$
+  \text{Se rechaza } H_0: \alpha = \alpha_0 \quad \Longleftrightarrow \quad \alpha_0 \notin IC_{1-\alpha}(\alpha)
+$$
+
+$$
+  \text{No se rechaza } H_0: \alpha = \alpha_0 \quad \Longleftrightarrow \quad \alpha_0 \in IC_{1-\alpha}(\alpha)
+$$
+
+En nuestro análisis:
+
+-   **Intervalo de confianza del 95%:** $[1.9168,\ 2.0965]$
+-   **Valor hipotético:** $\alpha_0 = 2$
+-   **Verificación:** $1.9168 \leq 2 \leq 2.0965$ → $\alpha_0$ SÍ está
+    contenido en el IC
+
+Esta **coherencia matemática** confirma la validez de ambos
+procedimientos: el intervalo de confianza contiene al valor hipotético,
+y la prueba de hipótesis no rechaza $H_0$.
+
+**Conclusión**:
+
+**Los datos no proporcionan evidencia estadísticamente significativa
+para rechazar la hipótesis de que** $\alpha = 2$. Esto significa que el
+valor observado $\hat{\alpha} = 1.9794$ es razonablemente consistente
+con una población donde $\alpha = 2$, considerando el tamaño muestral
+$n = 1000$ y el nivel de confianza del 95%.
+
+### 4.4.2 Prueba de Hipótesis usando el estimador de $\beta$\*\*
+
+Paso 1: Planteamiento de hipótesis
+
+Sea\
+$$
+  X_1, \dots, X_n \sim \text{Pareto}(\alpha,\beta), \qquad \beta > 2,
+  $$ una muestra aleatoria i.i.d.
+
+En la sección anterior se obtuvo el **estimador de método de momentos**
+para el parámetro $\beta$:
+
+$$
+    \hat{\beta}_{MM}
+    =
+      1+\sqrt{1+\frac{\bar X^2}{S^2}},
+    $$ donde $\bar X$ es la media muestral y $S^2$ la varianza muestral.
+
+Las hipótesis que se consideran son:
+
+**Prueba bilateral** $$
+    H_0:\ \beta = \beta_0 
+    \quad \text{vs} \quad 
+    H_1:\ \beta \neq \beta_0
+    $$
+
+**Prueba unilateral derecha** $$
+    H_0:\ \beta \le \beta_0 
+    \quad \text{vs} \quad 
+    H_1:\ \beta > \beta_0
+    $$
+
+**Prueba unilateral izquierda** $$
+    H_0:\ \beta \ge \beta_0 
+    \quad \text{vs} \quad 
+    H_1:\ \beta < \beta_0
+    $$
+
+Paso 2: Estadístico de prueba
+
+El estimador $\hat{\beta}_{MM}$ es una función diferenciable de los
+momentos muestrales $(\bar X,S^2)$ y, bajo la condición $\beta>2$, es
+**consistente y asintóticamente normal**.
+
+Por el **Teorema del Límite Central** y el **Método Delta**, se tiene
+que:
+
+$$
+    \sqrt{n}\,(\hat{\beta}_{MM}-\beta)
+    \;\xrightarrow{d}\;
+    \mathcal N(0,\sigma^2),
+    \quad n\to\infty.
+    $$
+
+Dado que la varianza exacta de $\hat{\beta}_{MM}$ no admite una
+expresión cerrada simple, se emplea una aproximación asintótica tipo
+*plug-in*:
+
+$$
+    \operatorname{Var}(\hat{\beta}_{MM})
+    \;\approx\;
+    \frac{\hat{\beta}_{MM}^{\,2}}{n}.
+    $$
+
+Por tanto, el estadístico de prueba tipo Wald es:
+
+$$
+    Z_0
+    =
+      \frac{\hat{\beta}_{MM}-\beta_0}
+    {\sqrt{\widehat{\operatorname{Var}}(\hat{\beta}_{MM})}}
+    \;\xrightarrow{d}\;
+    \mathcal N(0,1),
+    \quad \text{bajo } H_0.
+    $$
+
+Paso 3: Región de rechazo y p-valor
+
+Sea $\alpha$ el nivel de significancia.
+
+**Prueba bilateral (**$\beta \neq \beta_0$): $$
+    |Z_0| > z_{1-\alpha/2},
+    \qquad
+    p = 2\,P(Z>|Z_0|).
+    $$
+
+**Prueba unilateral derecha (**$\beta > \beta_0$): $$
+    Z_0 > z_{1-\alpha},
+    \qquad
+    p = P(Z>Z_0).
+    $$
+
+**Prueba unilateral izquierda (**$\beta < \beta_0$): $$
+    Z_0 < -z_{1-\alpha},
+    \qquad
+    p = P(Z<Z_0).
+    $$
+
+Paso 4: Implementación en R con la base de datos
+
+```{r prueba-hipotesis-beta-MM, echo=TRUE, message=FALSE, warning=FALSE}
+# Configuración
+beta_0 <- 3                 # Valor bajo H0
+nivel_signif <- 0.05        # Nivel de significancia
+tipo_prueba <- "bilateral"  # "bilateral", "derecha", "izquierda"
+
+# Momentos muestrales
+xbar <- mean(reclamos)
+s2   <- var(reclamos)
+n    <- length(reclamos)
+
+# Estimador de método de momentos
+beta_MM <- 1 + sqrt(1 + (xbar^2 / s2))
+
+# Error estándar asintótico (plug-in)
+se_beta_MM <- beta_MM / sqrt(n)
+
+# Estadístico de prueba
+Z0 <- (beta_MM - beta_0) / se_beta_MM
+
+# Valor p
+if(tipo_prueba == "bilateral") {
+  valor_p <- 2 * (1 - pnorm(abs(Z0)))
+  z_critico <- qnorm(1 - nivel_signif/2)
+} else if(tipo_prueba == "derecha") {
+  valor_p <- 1 - pnorm(Z0)
+  z_critico <- qnorm(1 - nivel_signif)
+} else {
+  valor_p <- pnorm(Z0)
+  z_critico <- qnorm(nivel_signif)
+}
+
+decision <- ifelse(valor_p < nivel_signif,
+                   "Rechazar H0",
+                   "No rechazar H0")
+
+valor_p
+decision
+```
+
+**Interpretación**
+
+El estadístico de prueba obtenido a partir del estimador de método de
+momentos $\hat{\beta}_{MM}$ produce un **p-valor igual a 0.009270871**,
+el cual es **menor** que el nivel de significancia considerado
+$\alpha = 0.05$.
+
+En consecuencia, bajo el marco de una **prueba asintótica tipo Wald**,
+se dispone de evidencia estadística suficiente para **rechazar la
+hipótesis nula**:
+
+$$
+  H_0:\ \beta = \beta_0.
+$$
+
+Este resultado indica que el valor hipotético $\beta_0 = 3$ **no es
+compatible** con los datos observados cuando el parámetro de forma
+$\beta$ se estima mediante el **método de momentos**.
+
+Debe enfatizarse que esta conclusión se fundamenta en la **normalidad
+asintótica** del estimador $\hat{\beta}_{MM}$, garantizada por el
+Teorema del Límite Central y el Método Delta. Dicha aproximación es
+válida para tamaños muestrales grandes, condición que se cumple en este
+estudio ($n = 1000$).
+
+**Conclusión**
+
+Se llevó a cabo una **prueba de hipótesis asintótica** para el parámetro
+de forma $\beta$ de una distribución Pareto utilizando el **estimador de
+método de momentos**.
+
+Dado que el **p-valor obtenido (0.009270871) es menor que el nivel de
+significancia del 5%**, se **rechaza la hipótesis nula**
+$H_0:\beta = 3$.
+
+Por lo tanto, se concluye que **existe evidencia estadística
+suficiente** para afirmar que el parámetro $\beta$ **es distinto de 3**.
+Este resultado es coherente con el intervalo de confianza asintótico
+construido previamente y constituye una alternativa válida de inferencia
+cuando no se dispone de cantidades pivotales exactas para el estimador
+considerado.
+
 ## 4.5 Prueba de Hipótesis para $\beta$ con el EIVUM
 
 Utilizando el estimador EIVUM y la cantidad pivotal deducida
@@ -3340,7 +4300,7 @@ Q_{cal} = 2\beta_0 T = 2\beta_0 \sum_{i=1}^{n} \ln\left( \frac{X_i}{X_{(1)}} \ri
 $$
 
 Sabemos que bajo $H_0$: $$
-Q_{cal} \sim \chi^2_{(2(n-1))} $$
+Q_{cal} \sim \chi^2_{(2(n-1))}$$
 
 ### 4.5.3 Regla de Decisión
 
@@ -3460,5 +4420,227 @@ generados son consistentes con el verdadero parámetro poblacional
 utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
+
+# 6. Pregunta 6 - Aplicación de una prueba de Distribución asintótica de la razón de verosimilitud.
+
+Sea $X_1,\dots,X_n$ una muestra aleatoria i.i.d. proveniente de una
+distribución Pareto$(\alpha,\beta)$, cuya función de densidad es:
+
+$$
+  f(x)=\frac{\beta \alpha^\beta}{x^{\beta+1}}\,
+\mathbf{1}_{(\alpha,\infty)}(x).
+$$
+
+Se desea aplicar una prueba de hipótesis basada en la distribución
+asintótica de la razón de verosimilitud, conforme al Teorema de Wilks.
+
+Los momentos poblacionales están dados por:
+
+$$
+  E(X)=\frac{\alpha\beta}{\beta-1},
+\qquad
+\operatorname{Var}(X)=
+  \left(\frac{\alpha}{\beta-1}\right)^2\frac{\beta}{\beta-2}.
+$$
+
+## 6.1 Justificación del parámetro elegido
+
+La prueba de razón de verosimilitud se aplica al parámetro de forma
+$\beta$ por las siguientes razones.
+
+El parámetro $\beta$ aparece de forma **regular y diferenciable** en la
+función de verosimilitud, lo que permite obtener un **estimador de
+máxima verosimilitud interior al espacio paramétrico**, dado por:
+
+$$
+  \hat{\beta}
+=
+  \frac{n}{\sum_{i=1}^{n}\ln\!\left(\dfrac{X_i}{X_{(1)}}\right)}.
+$$
+
+Bajo condiciones de regularidad estándar, el **Teorema de Wilks**
+garantiza que el estadístico de razón de verosimilitud asociado a
+$\beta$ converge en distribución a una chi–cuadrado con un grado de
+libertad:
+
+$$
+  -2\ln\Lambda
+\;\xrightarrow{d}\;
+\chi^2_{(1)},
+\qquad n \to \infty.
+$$
+
+En contraste, el estimador de máxima verosimilitud del parámetro de
+escala $\alpha$ está dado por:
+
+$$
+  \hat{\alpha} = X_{(1)},
+$$
+
+el cual depende directamente del **extremo inferior del soporte** de la
+distribución. Esta característica **viola las condiciones de
+regularidad** requeridas por el Teorema de Wilks, por lo que una prueba
+de razón de verosimilitud asintótica estándar **no es apropiada para el
+parámetro** $\alpha$.
+
+Por estas razones, la aplicación de la prueba de razón de verosimilitud
+sobre el parámetro $\beta$ es **teóricamente válida y estadísticamente
+correcta**.
+
+## 6.2 Formulación de hipótesis
+
+Se plantea la prueba bilateral:
+
+$$
+  H_0:\ \beta=\beta_0
+\qquad \text{vs} \qquad
+H_1:\ \beta\neq\beta_0,
+$$
+
+donde $\beta_0=3$.
+
+## 6.3 Función de verosimilitud
+
+La función de verosimilitud para una muestra Pareto es:
+
+$$
+  L(\alpha,\beta)
+=
+  \prod_{i=1}^{n}
+\frac{\beta\,\alpha^{\beta}}{x_i^{\beta+1}}
+\,\mathbf{1}_{(\alpha,\infty)}(x_i).
+$$
+
+## 6.4 Estimadores de Máxima Verosimilitud
+
+Bajo maximización conjunta, los estimadores de máxima verosimilitud son:
+
+$$
+  \hat{\alpha}=X_{(1)},
+$$
+
+$$
+  \hat{\beta}
+=
+  \frac{n}{\sum_{i=1}^{n}\ln\!\left(\frac{X_i}{X_{(1)}}\right)}.
+$$
+
+Definimos la estadística suficiente:
+
+$$
+  T
+=
+  \sum_{i=1}^{n}
+\ln\!\left(\frac{X_i}{X_{(1)}}\right).
+$$
+
+```{r}
+x_min <- min(reclamos)
+T_stat <- sum(log(reclamos / x_min))
+T_stat
+```
+
+## 6.5 Razón de Verosimilitud
+
+La razón de verosimilitud se define como:
+
+$$
+  \Lambda
+=
+  \frac{L(\hat{\alpha}_0,\beta_0)}
+{L(\hat{\alpha},\hat{\beta})}.
+$$
+
+El estadístico de prueba es:
+
+$$
+  -2\ln\Lambda
+=
+  2n\left[
+    \ln\!\left(\frac{\hat{\beta}}{\beta_0}\right)
+    +
+      \frac{\beta_0}{\hat{\beta}}
+    -
+      1
+    \right].
+$$
+
+```{r}
+beta_hat <- n / T_stat
+beta_0 <- 3
+
+LR_stat <- 2 * n * (log(beta_hat / beta_0) + beta_0 / beta_hat - 1)
+LR_stat
+
+```
+
+## 6.6 Distribución asintótica (Teorema de Wilks)
+
+Bajo condiciones regulares y suponiendo verdadera la hipótesis nula, el
+Teorema de Wilks establece que:
+
+$$
+  -2\ln\Lambda
+\;\xrightarrow{d}\;
+\chi^2_{(1)},
+\qquad n\to\infty.
+$$
+
+## 6.7 P-valor y Regla de decisión
+
+El p-valor de la prueba está dado por:
+
+$$
+  \text{p-valor}
+=
+  P\!\left(
+    \chi^2_{(1)} \ge -2\ln\Lambda
+    \right).
+$$
+
+```{r}
+p_value <- 1 - pchisq(LR_stat, df = 1)
+p_value
+
+```
+
+Para un nivel de significancia $\alpha=0.05$:
+
+$$
+  \text{Rechazar } H_0
+\quad \text{si} \quad
+\text{p-valor}<\alpha.
+$$
+
+**Interpretación**
+
+Dado que:
+
+$$
+  \text{p-valor}=0.6493008>0.05,
+$$
+
+no se rechaza la hipótesis nula al nivel de significancia del 5%.
+
+Por lo tanto, **no existe evidencia estadística suficiente** para
+afirmar que el parámetro de forma $\beta$ sea distinto de $3$.
+
+En consecuencia, se concluye que los datos son compatibles con:
+
+$$
+  \beta = 3.
+$$
+
+## 6.8 Conclusiones de la prueba
+
+-   El estadístico de razón de verosimilitud no es significativo
+-   La diferencia entre $\hat{\beta}$ y $\beta_0=3$ puede explicarse por
+    variabilidad muestral
+-   El modelo bajo $H_0$ no es rechazado
+-   La prueba basada en la razón de verosimilitud confirma que el modelo
+    bajo la hipótesis nula es consistente con los datos observados.
+-   Este procedimiento es válido aun cuando la población no es normal,
+    ya que se fundamenta en la convergencia asintótica garantizada por
+    el Teorema de Wilks.
 
 
