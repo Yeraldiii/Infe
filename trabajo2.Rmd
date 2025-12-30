@@ -4443,6 +4443,186 @@ utilizado en la simulación. Gráficamente, observamos claramente cómo la
 línea azul (nuestro estadístico) cae cómodamente en la zona verde (zona
 de no rechazo).
 
+# 5) Pregunta 5: (Análisis de la función potencia con una población Pareto)
+
+Aquí en particular, vamos a evaluar el desempeño de una prueba basada en la media muestral con una prueba basada en el estimador insesgado de varianza mínima (EIVUM), evaluando su capacidad para detectar desviaciones del parámetro respecto al valor planteado bajo la hipótesis nula.  
+
+Sea $X_1, X_2, \ldots, X_n \sim \text{Pareto}(\alpha, \beta)$, con $\alpha > 0$ conocido y $\beta > 1$.
+
+Se considera la prueba de hipótesis bilateral:
+
+$$
+H_0: \beta = \beta_0 = 3 \quad \text{vs} \quad H_1: \beta \neq 3
+$$
+
+con nivel de significancia $\alpha = 0.05$.  
+
+## 5.1 Definicón de la función potencia:    
+
+$$
+\pi(\beta) = P_\beta(\text{Rechazar } H_0) \quad \Longrightarrow \quad \pi(\beta) = P_\beta\left(|Z_{\text{calc}}| > z_{\alpha/2}\right)
+$$  
+
+donde $Z_{\text{calc}}$ es el estadístico de prueba y $z_{\alpha/2} = 1.96$.  El estadístico tipo Z se emplea como una aproximación para definir la regla de decisión.  
+
+## 5.2 Pruebas consideradas  
+
+### 5.2.1 Prueba basada en la media muestral   
+
+Se utiliza la media muestral $\bar{X}$ como estadístico de prueba. Bajo la hipótesis nula, la media teórica de la distribución Pareto es $E(X) = \frac{\alpha\beta}{\beta-1}$, $\beta > 1$.
+
+El estadístico de prueba se aproxima mediante $Z_{\bar{X}} = \frac{\bar{X} - E(X \mid \beta_0)}{S/\sqrt{n}}$, donde $S$ es la desviación estándar muestral. Esta prueba se emplea con fines comparativos, aun cuando la distribución Pareto presenta colas pesadas y no satisface supuestos de normalidad.  
+
+### 5.2.2 Prueba basada en el EIVUM para beta 
+
+El estimador de máxima verosimilitud del parámetro $\beta$ es:
+
+$$
+\hat{\beta}_{MLE} = \frac{n}{\sum_{i=1}^n \ln(X_i/\alpha)}
+$$
+
+A partir de este, el estimador insesgado de varianza mínima (EIVUM) está dado por:
+
+$$
+\tilde{\beta} = \frac{n-2}{n} \hat{\beta}_{MLE}
+$$
+  
+### 5.2.3 Estimación de la función potencia:  
+
+la función potencia se estima mediante simulación Monte Carlo.
+
+Para cada valor alternativo de $\beta$, se procede de la siguiente manera:
+
+\begin{enumerate}
+    \item Se generan $n_{\text{sim}}$ muestras independientes de tamaño $n$ provenientes de una distribución Pareto con parámetro $\beta$ verdadero.
+    
+    \item Para cada muestra, se calcula el estadístico de prueba correspondiente.
+    
+    \item Se registra si se rechaza o no la hipótesis nula.
+\end{enumerate}
+
+La potencia se estima como la proporción de rechazos:
+
+\[
+\hat{\pi}(\beta) = \frac{\text{Número de rechazos de } H_0}{n_{\text{sim}}}
+\]
+
+Este procedimiento se repite para un conjunto de valores alternativos de $\beta$.   
+
+```{r, include=FALSE}
+set.seed(123)
+
+alpha_param <- 2
+beta_0 <- 3
+n <- 100
+n_sim <- 1000
+
+sd_beta_eivum <- sd(replicate(n_sim, {
+  x <- alpha_param / (1 - runif(n))^(1/beta_0)
+  beta_mle <- n / sum(log(x / alpha_param))
+  beta_eivum <- ((n - 2)/n) * beta_mle
+  beta_eivum
+}), na.rm = TRUE)
+
+```
+   
+    
+**Función de potencia (media muestral)**  
+
+```{r}
+potencia_media <- function(beta_real) {
+  rechazos <- 0
+  
+  for(i in 1:n_sim){
+    muestra <- alpha_param / (1 - runif(n))^(1/beta_real)
+    
+    media_obs <- mean(muestra)
+    s_obs <- sd(muestra)
+    
+    z_calc <- (media_obs - (alpha_param*beta_0/(beta_0-1))) /
+              (s_obs/sqrt(n))
+    
+    if(abs(z_calc) > 1.96) rechazos <- rechazos + 1
+  }
+  
+  return(rechazos/n_sim)
+}
+```
+   
+    
+**Función de potencia (EIVUM)**  
+
+```{r}
+potencia_eivum <- function(beta_real) {
+  rechazos <- 0
+  
+  for(i in 1:n_sim){
+    
+    muestra <- alpha_param / (1 - runif(n))^(1/beta_real)
+    
+    denom <- sum(log(muestra / alpha_param))
+    
+    if(is.finite(denom) && denom > 0){
+      
+      beta_mle <- n / denom
+      beta_eivum <- ((n - 2)/n) * beta_mle
+      
+      z_beta <- (beta_eivum - beta_0) / sd_beta_eivum
+      
+      if(is.finite(z_beta) && abs(z_beta) > 1.96){
+        rechazos <- rechazos + 1
+      }
+    }
+  }
+  
+  return(rechazos / n_sim)
+}
+
+```
+  
+  
+**Calculo de la potencia:**  
+
+```{r}
+
+betas_alt <- seq(2.2, 4.5, length.out = 20)
+
+pot_media <- sapply(betas_alt, potencia_media)
+pot_eivum <- sapply(betas_alt, potencia_eivum)
+
+df_potencia <- data.frame(
+  beta = betas_alt,
+  Media = pot_media,
+  EIVUM = pot_eivum
+)
+```
+  
+## 5.3 Gráfica:  
+
+```{r, echo=FALSE}
+ggplot(df_potencia, aes(x = beta)) +
+  geom_line(aes(y = Media, linetype = "Media"), size = 1) +
+  geom_line(aes(y = EIVUM, linetype = "EIVUM"), size = 1) +
+  geom_hline(yintercept = 0.05, linetype = "dashed") +
+  labs(
+    title = "Función Potencia de la Prueba (Distribución Pareto)",
+    subtitle = "Comparación entre Media Muestral y EIVUM",
+    x = "Valor verdadero de β",
+    y = "Potencia"
+  ) +
+  scale_linetype_manual(values = c("solid", "dashed")) +
+  theme_minimal()
+```
+ 
+Podemos ver que en en casi todo el rango considerado, la prueba basada en el EIVUM presenta mayor potencia que la basada en la media muestral, lo que indica una mejor capacidad para detectar cambios en beta. La falta de simetría en la curva se debe a la asimetría y a las colas pesadas propias de la distribución Pareto.
+
+## 5.4 Interpretación de resultado  
+
+En distribuciones no normales como la Pareto, la potencia de la prueba depende del estimador utilizado. El uso de estimadores de varianza mínima permite obtener pruebas más eficientes, con mayor probabilidad de detectar desviaciones del parámetro respecto al valor nulo. En particular, la prueba basada en el EIVUM presenta un mejor desempeño que la prueba basada en la media muestral para la mayoría de los valores alternativos considerados.
+
+Asimismo, se observa que la potencia es mínima alrededor del valor planteado en la hipótesis nula y aumenta conforme el valor verdadero del parámetro se aleja de este. Este comportamiento es consistente con la definición de la función potencia y se ve influenciado por la asimetría y las colas pesadas propias de la distribución Pareto, lo que explica la falta de simetría en la curva y las diferencias observadas entre ambas pruebas.  
+
+
 # 6. Pregunta 6 - Aplicación de una prueba de Distribución asintótica de la razón de verosimilitud.
 
 Sea $X_1,\dots,X_n$ una muestra aleatoria i.i.d. proveniente de una
