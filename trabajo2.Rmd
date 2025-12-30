@@ -111,7 +111,7 @@ $$
 \end{aligned}
 $$
 
-# Pregunta 1 - Estimadores y Propiedades
+# 1) Pregunta 1 - Estimadores y Propiedades
 
 En esta sección se derivan cinco estimadores distintos para los parámetros del modelo. Para cada uno de ellos, **se evaluará el cumplimiento de las propiedades fundamentales de la inferencia estadística**, tales como *insesgadez, consistencia, eficiencia, suficiencia y completitud*, con el fin de determinar la calidad y robustez de cada estimador propuesto.
 
